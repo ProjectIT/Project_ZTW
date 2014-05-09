@@ -17,12 +17,14 @@
 
 {% block content %}
     <ul id="projects-list" class="main-panel-content">
-        <a href="{% url 'project' 123 %}">
+         {% for project in projects %}
+            <a href="{% url 'project' project.id %}">
             <li class="projects-list-item">
-                <h2>Project A</h2>
-                <span>Description DescriptionDescription Description Description</span>
-                <b>80% complete</b>
+                <h2>{{ project.name }}</h2>
+                <span>{{ project.description|slice:":40" }}</span>
+                <b>{{ project.complete }}% complete</b>
             </li>
         </a>
+        {% endfor %}
     </ul>
 {% endblock %}
