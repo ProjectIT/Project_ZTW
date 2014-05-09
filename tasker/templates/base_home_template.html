@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>app</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+
+	<!-- Style sheets -->
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" >
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'tasker/homepage.css' %}" />
+</head>
+
+<body>
+	<div id="page-content-home">
+
+		<!-- top navbar -->
+		<div id="navigation-bar" class="ui-mid-gray width-padding">
+			<span id="brand" class="left-panel-size">App tittle</span>
+
+            <!--
+                TODO Contact
+                TODO Gallery
+            -->
+			<a href="{% url 'login'%}">
+                <div class="navigation-bar-text">Login</div>
+            </a>
+            <div id="navigation-contact" class="navigation-bar-text">Contact</div>
+			<div id="navigation-gallery" class="navigation-bar-text">Gallery</div>
+			<a href="{% url 'about'%}">
+                <div id="navigation-about" class="navigation-bar-text">About</div>
+			</a>
+            <a href="{% url 'home'%}">
+                <div id="navigation-home" class="navigation-bar-text">Home</div>
+            </a>
+		</div>
+
+		{% block content %}{% endblock %}
+
+	</div>
+	<!--TODO some footer ?-->
+</body>
+
+</html>

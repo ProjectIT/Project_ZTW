@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>app</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+
+	<!-- Style sheets -->
+	{% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" >
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}" />
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
+	
+	{% block head %}{% endblock %}
+</head>
+
+<body id="page-background">
+	<div id="page-content">
+
+		<!-- top navbar -->
+		<div id="navigation-bar" class="ui-mid-gray">
+			<span id="navigation-bar-logout" class="glyphicon glyphicon-remove navigation-bar-icon hoverable"></span>
+			<span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
+			<div id="navigation-avatar" class="navigation-bar-icon"></div>
+			<span id="brand" class="left-panel-size">App tittle</span>
+		</div>
+
+		<!-- left panel with navigation buttons -->
+        <!--TODO settings-->
+        <!--TODO dashboard-->
+		<div id="navigation-panel" class="left-panel-size ui-mid-gray ui-content-min-h">
+			<div class="navigation-button">
+				<div id="color-strip-dashboard" class="navigation-button-color"></div>
+				<span class="glyphicon glyphicon-star navigation-panel-icon"></span>
+				<label>Dashboard</label>
+			</div>
+             <a href="{% url 'user_project_list' 123 %}">
+                <div class="navigation-button active">
+                    <div id="color-strip-projects" class="navigation-button-color"></div>
+                    <span class="glyphicon glyphicon-folder-open navigation-panel-icon"></span>
+                    <label>My projects</label>
+                </div>
+            </a>
+
+             <a href="{% url 'user_tasks_list' 123 %}">
+                <div class="navigation-button">
+                    <div id="color-strip-tasks" class="navigation-button-color"></div>
+                    <span class="glyphicon glyphicon-list navigation-panel-icon"></span>
+                    <label>My tasks</label>
+                    <p class="black-overlay">3</p>
+                </div>
+             </a>
+
+            <a href="{% url 'friends_list' 123 %}">
+                <div class="navigation-button">
+                    <div id="color-strip-friends" class="navigation-button-color"></div>
+                    <span class="glyphicon glyphicon-user navigation-panel-icon"></span>
+                    <label>Friends</label>
+                </div>
+            </a>
+		</div>
+
+		<!-- main content panel f.e. timeline, images, search etc. -->
+		<div id="main-panel" class="ui-content-min-h">
+			<header id="view-header">
+                <!-- TODO top strip color -->
+				<span class="glyphicon glyphicon-folder-open"></span>
+				<span id="view-title">{% block title %}{% endblock %}</span>
+
+				<div id="view-header-right">
+					{% block title_right %}{% endblock %}
+				</div>
+			</header>
+
+			<div id="center-content">
+                <!-- TODO edit button position, add 'show_edit_button' variable -->
+                {% if projectId %}
+                    <a href="{% url 'project_edit' projectId %}">
+                        <p class="tasks-cell tasks-col4 tasks-edit" style="position:absolute;right:0px;">Edit</p>
+                    </a>
+                {% endif %}
+
+
+			    {% block content %}{% endblock %}
+			</div>
+
+		</div>
+
+	<!--page content end-->
+	</div>
+
+	{% block page_end %}{% endblock %}
+
+</body>
+
+</html>

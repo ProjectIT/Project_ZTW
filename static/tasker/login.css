@@ -1,0 +1,132 @@
+/* utils */
+@font-face {
+	font-family: corbertregular;
+	src: url('../Corbert-Regular-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+textarea,
+input {
+	outline: none;
+}
+::-webkit-input-placeholder {
+	color: #ddd;
+}
+/*
+ * main
+ */
+
+#page-background {
+	background: url('../stub_imgs/img5.png') no-repeat center center fixed;
+	background-size: cover;
+	height: 100%;
+}
+.dialog {
+	width: 300px;
+	margin: auto;
+	padding: 0px;
+	height: inherit;
+	background: white;
+	padding: 15px 35px;
+	font-family: corbertregular;
+	position: relative;
+	margin-top: 10%; /*TODO better center vertically the login dialog*/
+}
+
+.login_ctr {
+	width: 100%;
+/*	border: 1px solid red;*/
+}
+
+#login-logo {
+/*	border:1px solid green;*/
+	font-size: 7.4em;
+	text-align: center;
+	color:#597eaa;
+	padding: 5px 0px;
+}
+
+#password-forgot {
+	color:#597eaa;
+	float: right;
+	text-decoration: underline;
+	font-size: 0.9em;
+	cursor: pointer;
+}
+
+#sign-up {
+	color:#597eaa;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+#register-hint {
+	text-align: center;
+}
+
+input[type="text"].login_ctr {
+	background-color: #a4a4a4;
+	color:white;
+	padding: 5px;
+	margin-top: 8px;
+}
+
+#register-close {
+	color:black;
+	position: absolute;
+	right: 15px;
+	top: 5px;
+	font-size: 22px;
+	transition: color 0.2s;
+	cursor: pointer;
+}
+#register-close:hover {
+	color: red;
+}
+
+#register-title {
+	font-weight: 600;
+	font-size: 1.2em;
+}
+
+.accept {
+	color: white;
+	background-color:#597eaa;
+	padding: 5px 0px;
+	font-size: 2em;
+	margin-top: 23px;
+	transition: background-color 0.5s;
+}
+.accept:hover {
+/*	background-color:hsl(213,48%,67%);*/
+	background-color:hsl(213,48%,72%);
+}
+
+#login-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.2);
+	left: 0px; bottom: 0px;
+	display: none;
+	overflow: hidden;
+}
+
+#register-dialog {
+	display: none;
+	height: auto;
+	position: absolute;
+	bottom: 30px; left:0px;
+	z-index: 10;
+}
+
+.login-overlay:after {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.2);
+	left: 0px; bottom: 0px;
+	content: "";
+	z-index: 5;
+}

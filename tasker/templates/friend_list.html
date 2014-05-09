@@ -1,0 +1,62 @@
+{% extends "base_app_template.html" %}
+
+{% block head %}
+    <!-- TODO clean up the 'friends.css' file - half the stuff is duplicated anyway.. -->
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}friends.css" />
+{% endblock %}
+
+{% block title %}
+	something here!
+{% endblock %}
+
+{% block content %}
+   <section class="data-section">
+        <!--TODO show only admins and make the 'view all' button ?-->
+        <ul id="people-list" class="clearfix">
+
+            <a href="{% url 'public_profile' 123 %}">
+                <li class="people-list-item">
+                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                    Aaa bbb
+                </li>
+            </a>
+
+              <a href="{% url 'public_profile' 123 %}">
+                <li class="people-list-item">
+                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                    Aaa bbb
+                </li>
+            </a>  <a href="{% url 'public_profile' 123 %}">
+                <li class="people-list-item">
+                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                    Aaa bbb
+                </li>
+            </a>  <a href="{% url 'public_profile' 123 %}">
+                <li class="people-list-item">
+                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                    Aaa bbb
+                </li>
+            </a>  <a href="{% url 'public_profile' 123 %}">
+                <li class="people-list-item">
+                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                    Aaa bbb
+                </li>
+            </a>  <a href="{% url 'public_profile' 123 %}">
+                <li class="people-list-item">
+                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                    Aaa bbb
+                </li>
+            </a>  <a href="{% url 'public_profile' 123 %}">
+                <li class="people-list-item">
+                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                    Aaa bbb
+                </li>
+            </a>  <a href="{% url 'public_profile' 123 %}">
+                <li class="people-list-item">
+                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                    Aaa bbb
+                </li>
+            </a>
+        </ul>
+    </section>
+{% endblock %}

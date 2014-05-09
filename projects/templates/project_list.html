@@ -1,0 +1,28 @@
+{% extends "base_app_template.html" %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}project.css" />
+{% endblock %}
+
+{% block title %}
+	My projects
+{% endblock %}
+
+{% block title_right %}
+	<div id="project-create">
+        <span class="glyphicon glyphicon-plus"></span>
+        add new project
+    </div>
+{% endblock %}
+
+{% block content %}
+    <ul id="projects-list" class="main-panel-content">
+        <a href="{% url 'project' 123 %}">
+            <li class="projects-list-item">
+                <h2>Project A</h2>
+                <span>Description DescriptionDescription Description Description</span>
+                <b>80% complete</b>
+            </li>
+        </a>
+    </ul>
+{% endblock %}

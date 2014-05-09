@@ -1,0 +1,75 @@
+{% extends "base_app_template.html" %}
+
+{% block head %}
+    <!-- TODO clean up the 'friends.css' file - half the stuff is duplicated anyway.. -->
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}friends.css" />
+{% endblock %}
+
+{% block title %}
+	Person name here!
+{% endblock %}
+
+{% block content %}
+    <section class="clearfix">
+        <div class="left-cell">
+            <!-- size of img should fit to size of div (with test)-->
+            <div id="login-img-div">
+                <img id="login-img" src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                <p>Aaa bbb <br />
+                aaaa@bbbb.com</p>
+            </div>
+            <h1>Projects</h1>
+            <ul id="person-projects-list">
+                <li class="person-projects-list-item">
+                    Project A
+                </li>
+                <li class="person-projects-list-item">
+                    Project B
+                </li>
+                <li class="person-projects-list-item">
+                    Project C
+                </li>
+            </ul>
+        </div>
+            <div class="right-cell">
+                <ul id="details-list">
+                    <li class="details-list-item">
+                        <p><b>Assigned to</b>
+                        <br />
+                        <span class="details-info">Bbb Abbaab</span></p>
+                    </li>
+                    <li class="details-list-item">
+                        <p><b>Deadline</b>
+                        <br />
+                        <span class="details-info">10-05-2014</span></p>
+                    </li>
+                    <li class="details-list-item">
+                        <p><b>Created by</b>
+                        <br />
+                        <span class="details-info">Aaa Bbbb</span></p>
+                    </li>
+                    <li class="details-list-item">
+                        <p><b>Creation date</b>
+                        <br />
+                        <span class="details-info">05-05-2014</span></p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <section class="last-activities-section">
+            <header>Last activities</header>
+            <ul id="last-activities-list">
+                <li class="last-activities-list-item">
+                <span class="glyphicon glyphicon-ok"></span>
+                <b>Aaa Bbb</b>
+                <span class="last-activities-time">11 min ago</span>
+                <p>Aaa Bbb changed task's status to 'finished'</p>
+            </li>
+            <li class="last-activities-list-item">
+                <b>Ababab Bababa</b>
+                <span class="last-activities-time">24 min ago</span>
+                <p>Add 'abc' to adsad in adsdas</p>
+            </li>
+            </ul>
+        </section>
+{% endblock %}

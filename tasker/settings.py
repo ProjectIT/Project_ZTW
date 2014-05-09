@@ -40,7 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles'
+    'django.contrib.staticfiles',
+	'projects'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -95,3 +96,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# TEMPLATE_LOADERS = (
+#     'django.template.loaders.filesystem.Loader',
+#     'django.template.loaders.app_directories.Loader',
+# )
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, "templates"),
+	os.path.join(BASE_DIR, "tasker", "templates"),
+	os.path.join(BASE_DIR, "projects","templates"),
+)
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+	os.path.join(BASE_DIR, "tasker", "static"),
+	os.path.join(BASE_DIR, "projects","static"),
+)

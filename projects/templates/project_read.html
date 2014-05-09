@@ -1,0 +1,141 @@
+{% extends "base_app_template.html" %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}project.css" />
+{% endblock %}
+
+{% block title %}
+	Project A
+{% endblock %}
+
+{% block title_right %}
+	<h2>80% complete</h2>
+{% endblock %}
+
+{% block content %}
+	<section class="clearfix">
+		<div class="read-cell">
+			<!--TODO chart-->
+			<h1>chart</h1>
+		</div>
+		<div class="read-cell">
+			<ul id="activity-list">
+				<li class="activity-list-item">
+					<span class="glyphicon glyphicon-ok"></span>
+					<b>80% complete</b>
+					<span class="activity-time">11 min ago</span>
+				</li>
+				<li class="activity-list-item">
+					<span class="glyphicon glyphicon-ok"></span>
+					<b>80% complete</b>
+					<span class="activity-time">11 min ago</span>
+				</li>
+				<li class="activity-list-item">
+					<span class="glyphicon glyphicon-ok"></span>
+					<b>80% complete</b>
+					<span class="activity-time">11 min ago</span>
+				</li>
+				<li class="activity-list-item">
+					<span class="glyphicon glyphicon-ok"></span>
+					<b>80% complete</b>
+					<span class="activity-time">11 min ago</span>
+				</li>
+			</ul>
+		</div>
+	</section>
+
+	<section class="data-section">
+		<header>Description</header>
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum, libero id adipiscing auctor, dui odio egestas urna, vel volutpat mi ipsum fringilla risus. Nullam luctus velit nunc, et tincidunt eros pulvinar sed. Fusce vulputate ultrices elementum. Donec est ante, tristique eget tempor nec, tempor sed nisl. Phasellus vitae scelerisque nibh. Phasellus lacinia pharetra porta. Sed at urna at lectus congue faucibus. Maecenas suscipit bibendum urna, quis dignissim sapien molestie in. Vestibulum ante ante, mollis id diam sed, semper varius ipsum. Suspendisse potenti. Nulla facilisi. Nam eget massa sed augue aliquet consectetur.</p>
+	</section>
+
+	<section class="data-section">
+		<header>Tasks</header>
+		<table id="tasks-table">
+			<tr>
+				<th class="tasks-cell tasks-col1">Active</th>
+				<th class="tasks-cell tasks-col2">Title</th>
+				<th class="tasks-cell tasks-col3">Assigned to</th>
+				<th class="tasks-cell tasks-col4">Deadline</th>
+			</tr>
+			<tr>
+				<td class="tasks-cell tasks-col1"></td>
+				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
+				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
+				<td class="tasks-cell tasks-col4">28-10-2152</td>
+			</tr>
+			<tr>
+				<td class="tasks-cell tasks-col1"></td>
+				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
+				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
+				<td class="tasks-cell tasks-col4">28-10-2152</td>
+			</tr>
+			<tr>
+				<td class="tasks-cell tasks-col1"></td>
+				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
+				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
+				<td class="tasks-cell tasks-col4">28-10-2152</td>
+			</tr>
+		</table>
+	</section>
+
+	<section class="data-section">
+		<header>People</header>
+		<!--TODO show only admins and make the 'view all' button ?-->
+		<ul id="people-list" class="clearfix">
+			<li class="people-list-item">
+				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+				Aaa bbb
+			</li>
+			<li class="people-list-item">
+				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+				Aaa bbb
+			</li>
+			<li class="people-list-item">
+				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+				Aaa bbb
+			</li>
+			<li class="people-list-item">
+				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+				Aaa bbb
+			</li>
+			<li class="people-list-item">
+				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+				Aaa bbb
+			</li>
+			<li class="people-list-item">
+				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+				Aaa bbb
+			</li>
+			<li class="people-list-item">
+				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+				Aaa bbb
+			</li>
+			<li class="people-list-item">
+				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+				Aaa bbb
+			</li>
+		</ul>
+	</section>
+	<section class="data-section">
+		<header>Files</header>
+		<ul id="files-list" class="clearfix">
+			<li class="files-list-item" data-type="document">
+				<span class="glyphicon glyphicon-file"></span>
+				<b>A.docx</b>
+			</li>
+			<li class="files-list-item" data-type="sound">
+				<span class="glyphicon glyphicon-music"></span>
+				<b>a.wav</b>
+			</li>
+			<li class="files-list-item" data-type="image">
+				<span class="glyphicon glyphicon-camera"></span>
+				<b>a.png</b>
+			</li>
+			<li class="files-list-item" data-type="other">
+				<span class="glyphicon glyphicon-paperclip"></span>
+				<b>a.zip</b>
+			</li>
+		</ul>
+	</section>
+{% endblock %}
