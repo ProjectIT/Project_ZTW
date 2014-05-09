@@ -4,6 +4,8 @@ from django.db import models
 # id = models.AutoField(primary_key=True)
 # https://docs.djangoproject.com/en/dev/topics/db/models/#automatic-primary-key-fields
 
+# foreign key docs:
+# https://docs.djangoproject.com/en/1.6/topics/db/queries/#backwards-related-objects
 
 class User(models.Model):
 	# TODO reuse the Django table ?
@@ -92,7 +94,7 @@ class File(models.Model):
 	created = models.DateTimeField(auto_now_add=True, editable=False)
 	createdBy = models.ForeignKey(User, editable=False)
 
-class personInProject(models.Model):
+class PersonInProject(models.Model):
 	PERSON_ROLE = (
 		('O','Observer'),
 		('A','Admin'),
