@@ -1,10 +1,13 @@
 from datetime import timezone
 from random import choice
+import django.core.files
 from django.utils.datetime_safe import datetime
 from projects.models import Project, User, Task, TaskComment, File, PersonInProject
 
 def __generateRandomDate():
-	return datetime.date()
+	#return datetime.date()
+	myStr = "2011-10-01 15:26"
+	return datetime.strptime(myStr, "%Y-%m-%d %H:%M")
 # default_timezone = timezone.get_default_timezone()
 # value = timezone.make_naive(value, default_timezone)
 # return value
@@ -26,6 +29,9 @@ def create_stub_user():
 	u.registerDate = __generateRandomDate()
 	u.modifiedDate = __generateRandomDate()
 	u.lastLoginDate = __generateRandomDate()
+	u.avatarPath = "stub_imgs/avatar2.jpg"
+	u.id=111
+	return u
 
 
 def create_stub_project(createdBy):
@@ -36,6 +42,8 @@ def create_stub_project(createdBy):
 	p.created = __generateRandomDate()
 	p.createdBy = createdBy
 	p.modifiedDate = __generateRandomDate()
+	p.id=222
+	return p
 
 def create_stub_task(projectId, createdBy, personResponsible):
 	t = Task()
@@ -49,6 +57,8 @@ def create_stub_task(projectId, createdBy, personResponsible):
 	t.created = __generateRandomDate()
 	t.createdBy = createdBy
 	t.modified = __generateRandomDate()
+	t.id=333
+	return t
 
 def create_stub_task_comment(taskId, createdBy):
 	tc = TaskComment()
@@ -56,15 +66,19 @@ def create_stub_task_comment(taskId, createdBy):
 	tc.text = "Praesent risus ipsum, faucibus vitae ipsum nec, scelerisque ultricies risus. Integer porttitor, lacus ut ullamcorper ullamcorper, turpis velit imperdiet ipsum, et ultricies ligula elit in libero. Quisque nec turpis diam. Praesent cursus nulla in libero euismod, a adipiscing urna auctor. Quisque congue lacinia vulputate"
 	tc.created = __generateRandomDate()
 	tc.createdBy = createdBy
+	return tc
 
 def create_stub_file(createdBy, projectId=None, taskId=None, ):
 	f = File()
 	f.taskId = taskId
 	f.projectId = projectId
 	f.type = choice(File.FILE_TYPE)[1]
-	f.path = ""
+	f.path.name = "avatar2.jpg" # TODO not working
+	# f.path.name = django.core.files.File("avatar2.jpg")
 	f.created = __generateRandomDate()
 	f.createdBy = createdBy
+	f.id=555
+	return f
 
 def create_stub_person_in_project(projectId, userId, createdBy):
 	pip = PersonInProject()
@@ -73,3 +87,5 @@ def create_stub_person_in_project(projectId, userId, createdBy):
 	pip.role = choice(PersonInProject.PERSON_ROLE)[1]
 	pip.created = __generateRandomDate()
 	pip.createdBy = createdBy
+	pip.id=666
+	return pip

@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block title %}
-	Project A
+    {{ project.name }}
 {% endblock %}
 
 {% block title_right %}
-	<h2>80% complete</h2>
+	<h2>{{ project.complete }}% complete</h2>
 {% endblock %}
 
 {% block content %}
@@ -19,6 +19,7 @@
 			<h1>chart</h1>
 		</div>
 		<div class="read-cell">
+            <!--TODO activity-list-->
 			<ul id="activity-list">
 				<li class="activity-list-item">
 					<span class="glyphicon glyphicon-ok"></span>
@@ -46,7 +47,7 @@
 
 	<section class="data-section">
 		<header>Description</header>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum, libero id adipiscing auctor, dui odio egestas urna, vel volutpat mi ipsum fringilla risus. Nullam luctus velit nunc, et tincidunt eros pulvinar sed. Fusce vulputate ultrices elementum. Donec est ante, tristique eget tempor nec, tempor sed nisl. Phasellus vitae scelerisque nibh. Phasellus lacinia pharetra porta. Sed at urna at lectus congue faucibus. Maecenas suscipit bibendum urna, quis dignissim sapien molestie in. Vestibulum ante ante, mollis id diam sed, semper varius ipsum. Suspendisse potenti. Nulla facilisi. Nam eget massa sed augue aliquet consectetur.</p>
+		<p>{{ project.description }}</p>
 	</section>
 
 	<section class="data-section">
@@ -58,24 +59,21 @@
 				<th class="tasks-cell tasks-col3">Assigned to</th>
 				<th class="tasks-cell tasks-col4">Deadline</th>
 			</tr>
-			<tr>
-				<td class="tasks-cell tasks-col1"></td>
-				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
-				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
-				<td class="tasks-cell tasks-col4">28-10-2152</td>
-			</tr>
-			<tr>
-				<td class="tasks-cell tasks-col1"></td>
-				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
-				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
-				<td class="tasks-cell tasks-col4">28-10-2152</td>
-			</tr>
-			<tr>
-				<td class="tasks-cell tasks-col1"></td>
-				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
-				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
-				<td class="tasks-cell tasks-col4">28-10-2152</td>
-			</tr>
+
+            {% for task in project.tasks %}
+            <tr>
+                <td class="tasks-cell tasks-col1"></td>
+                <td class="tasks-cell tasks-col2">
+                    <a href="{% url 'task' task.id %}"> {{ task.title }} </a>
+                </td>
+                <td class="tasks-cell tasks-col3">
+                     <a href="{% url 'public_profile' task.personResponsible.id %}">
+                        {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                    </a>
+                </td>
+                <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
+            </tr>
+            {% endfor %}
 		</table>
 	</section>
 
@@ -83,59 +81,49 @@
 		<header>People</header>
 		<!--TODO show only admins and make the 'view all' button ?-->
 		<ul id="people-list" class="clearfix">
-			<li class="people-list-item">
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
+            {% for person in project.people %}
+            <li class="people-list-item">
+                <a href="{% url 'public_profile' person.id %}">
+                    <img src="{{ STATIC_URL }}{{ person.avatarPath}}">
+                    {{ person.name }}&nbsp;{{ person.lastName }}
+                </a>
 			</li>
-			<li class="people-list-item">
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
+            {% endfor %}
 		</ul>
 	</section>
 	<section class="data-section">
 		<header>Files</header>
 		<ul id="files-list" class="clearfix">
-			<li class="files-list-item" data-type="document">
-				<span class="glyphicon glyphicon-file"></span>
-				<b>A.docx</b>
-			</li>
-			<li class="files-list-item" data-type="sound">
-				<span class="glyphicon glyphicon-music"></span>
-				<b>a.wav</b>
-			</li>
-			<li class="files-list-item" data-type="image">
-				<span class="glyphicon glyphicon-camera"></span>
-				<b>a.png</b>
-			</li>
-			<li class="files-list-item" data-type="other">
-				<span class="glyphicon glyphicon-paperclip"></span>
-				<b>a.zip</b>
-			</li>
-		</ul>
-	</section>
+
+            {% for file in project.files %}
+            <li class="files-list-item" data-type="{{file.type|lower}}">
+<!--<a href="{ { file.url }}">{{ document.docfile.name }}</a>-->
+<!--http://stackoverflow.com/questions/18947539/django-file-download-->
+<!--https://docs.djangoproject.com/en/dev/topics/http/file-uploads/-->
+
+                    <!--icon-->
+                    {% if file.type == "Document" %}
+                        <span class="glyphicon glyphicon-file"></span>
+                    {% else %}
+                        {% if file.type == "Image" %}
+                            <span class="glyphicon glyphicon-camera"></span>
+                        {% else %}
+                            {% if file.type == "Sound" %}
+                                <span class="glyphicon glyphicon-music"></span>
+                            {% else %}
+                                <span class="glyphicon glyphicon-paperclip"></span>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+
+                    <!--file name-->
+                    <!--<b>{{ file.short_name }}</b>-->
+                    <b>_{{ file.name }}_</b>
+
+                    <!--&lt;{{ file.type }}&gt;-->
+
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
 {% endblock %}
