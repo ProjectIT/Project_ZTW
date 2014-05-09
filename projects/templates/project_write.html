@@ -2,17 +2,17 @@
 
 {% block head %}
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}project.css" />
-    <!--https://github.com/seiyria/bootstrap-slider-->
-	<!--<script src="bootstrap/js/bootstrap-slider.js" type="text/javascript"></script> -->
 	<script src="{{ STATIC_URL }}bootstrap/js/bootstrap-slider.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block title %}
-	Project A
+	{{ project.name|default:"Create new project" }}
 {% endblock %}
 
 {% block title_right %}
-	<h2>80% complete</h2>
+        {% if not new_project %}
+            <h2>{{ project.complete }}% complete</h2>
+        {% endif %}
 {% endblock %}
 
 {% block page_end %}
@@ -23,14 +23,15 @@
 		$("#completion-slider").on('slide', function(slideEvt) {
 			$("#completion-slider-val").text(slideEvt.value+"% complete");
 		});
-		$("#completion-slider").slider('setValue', 50);
+        $("#completion-slider").slider('setValue', {{ project.complete|default:0 }});
+
 	</script>
 {% endblock %}
 
 {% block content %}
 	<section class="data-section">
 		<header>Name</header>
-		<input id="project-name" type="text" name="project-name" placeholder="Name..">
+        <input id="project-name" type="text" name="project-name" placeholder="Name.." value="{{ project.name|default:"" }}">
 	</section>
 	
 	<section class="data-section">
@@ -41,11 +42,11 @@
 	
 	<section class="data-section">
 		<header>Description</header>
-		<textarea id="project-note" rows="3" name="project-note" placeholder="Add description..">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum, libero id adipiscing auctor, dui odio egestas urna, vel volutpat mi ipsum fringilla risus. Nullam luctus velit nunc, et tincidunt eros pulvinar sed. Fusce vulputate ultrices elementum. Donec est ante, tristique eget tempor nec, tempor sed nisl. Phasellus vitae scelerisque nibh. Phasellus lacinia pharetra porta. Sed at urna at lectus congue faucibus. Maecenas suscipit bibendum urna, quis dignissim sapien molestie in. Vestibulum ante ante, mollis id diam sed, semper varius ipsum. Suspendisse potenti. Nulla facilisi. Nam eget massa sed augue aliquet consectetur.
-		</textarea>
+		<textarea id="project-note" rows="3" name="project-note" placeholder="Add description..">{{ project.description|default:"" }}</textarea>
 	</section>
-	
+
+{% if not new_project %}
+
 	<section class="data-section">
 		<div id="view-header-right">
 			<div id="task-create" class="project-button">
@@ -62,27 +63,24 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum, li
 				<th class="tasks-cell tasks-col4">Deadline</th>
 				<th class="tasks-cell tasks-col4"></th>
 			</tr>
-			<tr>
-				<td class="tasks-cell tasks-col1"></td>
-				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
-				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
-				<td class="tasks-cell tasks-col4">28-10-2152</td>
-				<td class="tasks-cell tasks-col4 tasks-edit">Edit</td>
-			</tr>
-			<tr>
-				<td class="tasks-cell tasks-col1"></td>
-				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
-				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
-				<td class="tasks-cell tasks-col4">28-10-2152</td>
-				<td class="tasks-cell tasks-col4 tasks-edit">Edit</td>
-			</tr>
-			<tr>
-				<td class="tasks-cell tasks-col1"></td>
-				<td class="tasks-cell tasks-col2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</td>
-				<td class="tasks-cell tasks-col3">Bob Barker Junior</td>
-				<td class="tasks-cell tasks-col4">28-10-2152</td>
-				<td class="tasks-cell tasks-col4 tasks-edit">Edit</td>
-			</tr>
+
+            {% for task in project.tasks %}
+            <tr>
+                <td class="tasks-cell tasks-col1"></td>
+                <td class="tasks-cell tasks-col2">{{ task.title }}</td>
+                <td class="tasks-cell tasks-col3">
+                        {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                </td>
+                <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
+                <td class="tasks-cell tasks-col4 tasks-edit">
+                    <!--TODO fill url to go back to project edit-->
+                    <a href="{% url 'task_edit' task.id %}">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+
 		</table>
 	</section>
 	
@@ -97,79 +95,53 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum, li
 		<!--TODO show only admins and make the 'view all' button ?-->
 		<!--TODO for each person add connection type: { admin/progr./etc}-->
 		<ul id="people-list" class="clearfix">
-			<li class="people-list-item">
-				<p class="person-remove">
+             {% for person in project.people %}
+            <li class="people-list-item">
+                <p class="person-remove">
+                    <!--TODO person remove from project-->
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
+				<img src="{{ STATIC_URL }}{{ person.avatarPath}}">
+				{{ person.name }}&nbsp;{{ person.lastName }}
 			</li>
-			<li class="people-list-item">
-				<p class="person-remove">
-					<span class="glyphicon glyphicon-remove"></span>
-				<p>
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<p class="person-remove">
-					<span class="glyphicon glyphicon-remove"></span>
-				<p>
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<p class="person-remove">
-					<span class="glyphicon glyphicon-remove"></span>
-				<p>
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
-			</li>
-			<li class="people-list-item">
-				<p class="person-remove">
-					<span class="glyphicon glyphicon-remove"></span>
-				<p>
-				<img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-				Aaa bbb
+            {% endfor %}
 
-			</li>
 		</ul>
 	</section>
 
 	<section class="data-section">
 		<header>Files</header>
 		<ul id="files-list" class="clearfix">
-			<li class="files-list-item" data-type="document">
-				<span class="glyphicon glyphicon-file"></span>
-				<b>A.docx</b>
-				<p class="person-remove">
+            {% for file in project.files %}
+            <li class="files-list-item" data-type="{{file.type|lower}}">
+                <!--TODO add some :hover, because there is a lot of confusion-->
+
+                <!--icon-->
+                {% if file.type == "Document" %}
+                    <span class="glyphicon glyphicon-file"></span>
+                {% else %}
+                    {% if file.type == "Image" %}
+                        <span class="glyphicon glyphicon-camera"></span>
+                    {% else %}
+                        {% if file.type == "Sound" %}
+                            <span class="glyphicon glyphicon-music"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-paperclip"></span>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+                 <!--file name-->
+                <b>_{{ file.name }}_</b>
+                <p class="person-remove">
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
-			</li>
-			<li class="files-list-item" data-type="sound">
-				<span class="glyphicon glyphicon-music"></span>
-				<b>a.wav</b>
-				<p class="person-remove">
-					<span class="glyphicon glyphicon-remove"></span>
-				<p>
-			</li>
-			<li class="files-list-item" data-type="image">
-				<span class="glyphicon glyphicon-camera"></span>
-				<b>a.png</b>
-				<p class="person-remove">
-					<span class="glyphicon glyphicon-remove"></span>
-				<p>
-			</li>
-			<li class="files-list-item" data-type="other">
-				<span class="glyphicon glyphicon-paperclip"></span>
-				<b>a.zip</b>
-				<p class="person-remove">
-					<span class="glyphicon glyphicon-remove"></span>
-				<p>
-			</li>
+            </li>
+            {% endfor %}
+
 		</ul>
 	</section>
-
+{% endif %}
 
 	<!--save and back buttons-->
 	<div class="project-button pull-left">

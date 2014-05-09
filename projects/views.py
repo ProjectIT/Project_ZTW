@@ -8,17 +8,19 @@ from projects.stubs import create_stub_project, create_stub_user, create_stub_ta
 # date format:
 #https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date
 
+def __createExampleProject():
+	# just for testing
+	project_creator = create_stub_user()
+	p = create_stub_project(project_creator)
+	p.tasks = [create_stub_task(p, project_creator, create_stub_user()) for i in range(4)]
+	p.people = [create_stub_user() for i in range(4)]
+	p.files = [create_stub_file(project_creator,projectId=p) for i in range(4)]
+	return p
+
 def project(request, id):
 	# get data
 	active_user = create_stub_user()
-	project_creator = create_stub_user()
-	p = create_stub_project(project_creator)
-	p.tasks = [create_stub_task(p,project_creator,active_user) for i in range(4)]
-	p.people = [create_stub_user() for i in range(4)]
-	p.files = [create_stub_file(project_creator,projectId=p) for i in range(4)]
-
-	# for f in p.files:
-	# 	f.short_name = str(f.path[f.path.rfind("/")+1:])
+	p = __createExampleProject()
 
 	# render
 	template = loader.get_template('project_read.html')
@@ -29,10 +31,29 @@ def project(request, id):
 	return HttpResponse(template.render(context))
 
 def project_edit(request, id):
+	# get data
+	active_user = create_stub_user()
+	p = __createExampleProject()
+
+	# render
 	template = loader.get_template('project_write.html')
 	context = RequestContext(request, {
+		'projectId': id,
+		'project': p,
 	})
 	return HttpResponse(template.render(context))
+
+def project_create(request):
+	# get data
+	active_user = create_stub_user()
+
+	# render
+	template = loader.get_template('project_write.html')
+	context = RequestContext(request, {
+		'new_project': True,
+	})
+	return HttpResponse(template.render(context))
+
 
 def project_list(request):
 	template = loader.get_template('project_list.html')
@@ -58,11 +79,15 @@ def task(request, id):
 	})
 	return HttpResponse(template.render(context))
 
-def task_edit(request, id):
+def task_edit(request, id, back_url=""):
+	# back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
 	template = loader.get_template('task_write.html')
 	context = RequestContext(request, {
 	})
 	return HttpResponse(template.render(context))
+
+def task_create(request):
+	return render(request, 'about.html') # !!! stub, cause emits error otherwise
 
 def user_tasks_list(request, id):
 	template = loader.get_template('task_list.html')

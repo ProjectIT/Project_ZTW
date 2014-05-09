@@ -4,6 +4,7 @@ from projects import views
 
 urlpatterns = [
 	url(r'^(?P<id>\d+)/edit$', views.project_edit, name='project_edit'),
+	url(r'^create$', views.project_create, name='project_create'),
     url(r'^(?P<id>\d+)$', views.project, name='project'),
 
 	#TODO lists
