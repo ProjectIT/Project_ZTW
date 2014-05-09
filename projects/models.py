@@ -1,3 +1,4 @@
+import os
 from django.db import models
 
 # ids:
@@ -23,7 +24,7 @@ class User(models.Model):
 	registerDate = models.DateTimeField(auto_now_add=True, editable=False)
 	modifiedDate = models.DateTimeField(auto_now=True, editable=False)
 	lastLoginDate = models.DateTimeField() # used for f.e. activity stream etc.
-	# avatar
+	avatarPath = models.CharField(max_length=128, editable=False) # path to image file
 	# ?description
 
 class Project(models.Model):
@@ -61,7 +62,7 @@ class Task(models.Model):
 	)
 
 	projectId = models.ForeignKey(Project)
-	personResponsible = models.ForeignKey(User, related_name='task_person_responsible')
+	personResponsible = models.ForeignKey(User, related_name='task_person_responsible', null = True)
 	title = models.CharField(max_length=50)
 	type = models.CharField(max_length=1, choices=TASK_TYPES, default='T')
 	# priority =models.CharField(max_length=1, choices=TASK_PRIORITY, default='M')
@@ -87,10 +88,13 @@ class File(models.Model):
 		('O','Other')
 	)
 
-	taskId = models.ForeignKey(Task, editable=False)
-	projectId = models.ForeignKey(Project, editable=False)
+	taskId = models.ForeignKey(Task, editable=False, null = True)
+	projectId = models.ForeignKey(Project, editable=False, null = True)
 	type = models.CharField(max_length=1, choices=FILE_TYPE, default='O', editable=False)
-	path = models.CharField(max_length=128, editable=False)
+	# https://docs.djangoproject.com/en/dev/ref/models/fields/#filefield
+	# path = models.CharField(max_length=128, editable=False)
+	# path = models.FileField(upload_to=os.path.join("projects", "attachments"))
+	path = models.FileField(upload_to="projects/attachments")
 	created = models.DateTimeField(auto_now_add=True, editable=False)
 	createdBy = models.ForeignKey(User, editable=False)
 

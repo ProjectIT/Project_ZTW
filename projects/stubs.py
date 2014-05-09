@@ -1,10 +1,13 @@
 from datetime import timezone
-from random import choice
+from random import choice, randint
+import django.core.files
 from django.utils.datetime_safe import datetime
 from projects.models import Project, User, Task, TaskComment, File, PersonInProject
 
 def __generateRandomDate():
-	return datetime.date()
+	#return datetime.date()
+	myStr = "2011-10-01 15:26"
+	return datetime.strptime(myStr, "%Y-%m-%d %H:%M")
 # default_timezone = timezone.get_default_timezone()
 # value = timezone.make_naive(value, default_timezone)
 # return value
@@ -26,16 +29,21 @@ def create_stub_user():
 	u.registerDate = __generateRandomDate()
 	u.modifiedDate = __generateRandomDate()
 	u.lastLoginDate = __generateRandomDate()
+	u.avatarPath = "stub_imgs/avatar2.jpg"
+	u.id = 11100 + randint(0, 99)
+	return u
 
 
 def create_stub_project(createdBy):
 	p = Project()
 	p.name = "Project A"
-	p.complete = 80
+	p.complete = randint(0, 20) * 5
 	p.description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed condimentum vel neque eget iaculis. Mauris placerat consectetur leo eget tempus. Nullam porta lacinia metus, in laoreet lectus cursus a. Praesent condimentum ligula vitae tellus vehicula, non sodales lectus ultricies. Sed nunc nisi, pulvinar eget pulvinar nec, posuere sed arcu. Vivamus et lacus ut est facilisis faucibus at quis ligula. Aliquam scelerisque dolor lorem, ut blandit libero dapibus id. Duis risus felis, mattis nec consequat non, pellentesque a sem. Maecenas at neque ut enim fermentum vulputate. Vivamus non auctor enim. Fusce sollicitudin ullamcorper massa, at posuere libero commodo sed. Nullam pharetra, diam et ultrices fermentum, tortor felis tincidunt risus, id condimentum nibh leo eu nisl. Cras leo ante, blandit ac bibendum eu, volutpat id nulla."
 	p.created = __generateRandomDate()
 	p.createdBy = createdBy
 	p.modifiedDate = __generateRandomDate()
+	p.id = 22200 + randint(0, 99)
+	return p
 
 def create_stub_task(projectId, createdBy, personResponsible):
 	t = Task()
@@ -49,6 +57,8 @@ def create_stub_task(projectId, createdBy, personResponsible):
 	t.created = __generateRandomDate()
 	t.createdBy = createdBy
 	t.modified = __generateRandomDate()
+	t.id = 33300 + randint(0, 99)
+	return t
 
 def create_stub_task_comment(taskId, createdBy):
 	tc = TaskComment()
@@ -56,15 +66,19 @@ def create_stub_task_comment(taskId, createdBy):
 	tc.text = "Praesent risus ipsum, faucibus vitae ipsum nec, scelerisque ultricies risus. Integer porttitor, lacus ut ullamcorper ullamcorper, turpis velit imperdiet ipsum, et ultricies ligula elit in libero. Quisque nec turpis diam. Praesent cursus nulla in libero euismod, a adipiscing urna auctor. Quisque congue lacinia vulputate"
 	tc.created = __generateRandomDate()
 	tc.createdBy = createdBy
+	return tc
 
 def create_stub_file(createdBy, projectId=None, taskId=None, ):
 	f = File()
 	f.taskId = taskId
 	f.projectId = projectId
 	f.type = choice(File.FILE_TYPE)[1]
-	f.path = ""
+	f.path.name = "avatar2.jpg"  # TODO not working
+	# f.path.name = django.core.files.File("avatar2.jpg")
 	f.created = __generateRandomDate()
 	f.createdBy = createdBy
+	f.id = 55500 + randint(0, 99)
+	return f
 
 def create_stub_person_in_project(projectId, userId, createdBy):
 	pip = PersonInProject()
@@ -73,3 +87,5 @@ def create_stub_person_in_project(projectId, userId, createdBy):
 	pip.role = choice(PersonInProject.PERSON_ROLE)[1]
 	pip.created = __generateRandomDate()
 	pip.createdBy = createdBy
+	pip.id = 66600 + randint(0, 99)
+	return pip

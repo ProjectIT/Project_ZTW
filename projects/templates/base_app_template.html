@@ -25,6 +25,7 @@
 			<span id="navigation-bar-logout" class="glyphicon glyphicon-remove navigation-bar-icon hoverable"></span>
 			<span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
 			<div id="navigation-avatar" class="navigation-bar-icon"></div>
+            <!--TODO App tittle-->
 			<span id="brand" class="left-panel-size">App tittle</span>
 		</div>
 
@@ -77,11 +78,11 @@
 
 			<div id="center-content">
                 <!-- TODO edit button position, add 'show_edit_button' variable -->
-                {% if projectId %}
-                    <a href="{% url 'project_edit' projectId %}">
-                        <p class="tasks-cell tasks-col4 tasks-edit" style="position:absolute;right:0px;">Edit</p>
-                    </a>
-                {% endif %}
+                <!--{% if projectId %}-->
+                    <!--<a href="{% url 'project_edit' projectId %}">-->
+                        <!--<p class="tasks-cell tasks-col4 tasks-edit" style="position:absolute;right:0px;">Edit</p>-->
+                    <!--</a>-->
+                <!--{% endif %}-->
 
 
 			    {% block content %}{% endblock %}
