@@ -17,6 +17,9 @@ urlpatterns = patterns('',
 	url(r'^about$', views.about, name="about"),
 	url(r'^login$', views.login, name="login"),
 
+	# settings TODO change views.login to views.settings etc.
+	url(r'^settings$', views.login, name="settings"),
+
 	# friends
 	url(r'^profile/(?P<id>\d+)$', views.public_profile, name="public_profile"),
 	url(r'^friends/user/(?P<id>\d+)$', views.friends_list, name="friends_list"),

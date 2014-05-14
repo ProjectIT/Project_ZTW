@@ -22,9 +22,13 @@
 
 		<!-- top navbar -->
 		<div id="navigation-bar" class="ui-mid-gray">
+            <!--TODO logout button-->
 			<span id="navigation-bar-logout" class="glyphicon glyphicon-remove navigation-bar-icon hoverable"></span>
-			<span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
-			<div id="navigation-avatar" class="navigation-bar-icon"></div>
+             <a href="{% url 'settings' %}">
+                 <span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
+             </a>
+            <img src="{{ STATIC_URL }}{{ currentUser.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
+
             <!--TODO App tittle-->
 			<span id="brand" class="left-panel-size">App tittle</span>
 		</div>
@@ -33,13 +37,13 @@
         <!--TODO settings-->
         <!--TODO dashboard-->
 		<div id="navigation-panel" class="left-panel-size ui-mid-gray ui-content-min-h">
-			<div class="navigation-button">
+			<div data-page-type="dashboard" class="navigation-button">
 				<div id="color-strip-dashboard" class="navigation-button-color"></div>
 				<span class="glyphicon glyphicon-star navigation-panel-icon"></span>
 				<label>Dashboard</label>
 			</div>
              <a href="{% url 'user_project_list' 123 %}">
-                <div class="navigation-button active">
+                <div data-page-type="projects" class="navigation-button">
                     <div id="color-strip-projects" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-folder-open navigation-panel-icon"></span>
                     <label>My projects</label>
@@ -47,16 +51,18 @@
             </a>
 
              <a href="{% url 'user_tasks_list' 123 %}">
-                <div class="navigation-button">
+                <div data-page-type="tasks" class="navigation-button">
                     <div id="color-strip-tasks" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-list navigation-panel-icon"></span>
                     <label>My tasks</label>
-                    <p class="black-overlay">3</p>
+                    {% if 0 < task_count %}
+                    <p class="black-overlay">{{ task_count }}</p>
+                    {% endif %}
                 </div>
              </a>
 
             <a href="{% url 'friends_list' 123 %}">
-                <div class="navigation-button">
+                <div data-page-type="friends" class="navigation-button">
                     <div id="color-strip-friends" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-user navigation-panel-icon"></span>
                     <label>Friends</label>
@@ -94,6 +100,14 @@
 	</div>
 
 	{% block page_end %}{% endblock %}
+
+    <script>
+    var a = $("[data-page-type='{{ data_page_type }}']");
+    var color = a.find(".navigation-button-color").css("background-color");
+    a.css("background-color",color);
+    $("#view-header").css("border-top-color",color);
+    // removed arrow, cause they are not js targetable
+    </script>
 
 </body>
 
