@@ -116,20 +116,6 @@
 	background-color: hsla(0, 91%, 70%, 0.8);
 	opacity: 1;
 }
-.navigation-button.active {
-	background-color: hsl(31, 75%, 65%) !important;
-}
-.navigation-button.active:before {
-	content: "";
-	position: absolute;
-	width: 20px;
-	height: 20px;
-	border-top: 28px solid transparent;
-	border-bottom: 28px solid transparent;
-	border-left: 28px solid hsl(31, 69%, 57%);
-	bottom: 0px;
-	right: -28px;
-}
 .navigation-button:hover:before {
 	opacity: 1;
 	border-left: 28px solid hsl(20, 10%, 65%);

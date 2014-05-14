@@ -52,6 +52,7 @@ def project(request, id):
 	context = RequestContext(request,  get_context({
 		'projectId': id,
 		'project': p,
+		'data_page_type':'projects'
 	}))
 	return HttpResponse(template.render(context))
 
@@ -62,6 +63,7 @@ def project_edit(request, id):
 	context = RequestContext(request,  get_context({
 		'projectId': id,
 		'project': p,
+		'data_page_type':'projects'
 	}))
 	return HttpResponse(template.render(context))
 
@@ -69,6 +71,7 @@ def project_create(request):
 	template = loader.get_template('project_write.html')
 	context = RequestContext(request,  get_context({
 		'new_project': True,
+		'data_page_type':'projects'
 	}))
 	return HttpResponse(template.render(context))
 
@@ -79,6 +82,7 @@ def project_list(request):
 	template = loader.get_template('project_list.html')
 	context = RequestContext(request, get_context({
 		'projects':ps,
+		'data_page_type':'projects'
 	}))
 	return HttpResponse(template.render(context))
 
@@ -98,7 +102,9 @@ def task(request, id):
 	context = RequestContext(request,  get_context({
 		'taskId': id,
 		'task': task,
-		'canAddComment':False
+		'canAddComment':False,
+		'data_page_type':'tasks',
+		'taskTypes': Task.TASK_TYPES,
 	}))
 	return HttpResponse(template.render(context))
 
@@ -110,7 +116,8 @@ def task_edit(request, id, back_url=""):
 	context = RequestContext(request,  get_context({
 		'taskId': id,
 		'task': task,
-		'taskTypes': Task.TASK_TYPES
+		'taskTypes': Task.TASK_TYPES,
+		'data_page_type':'tasks'
 	}))
 	return HttpResponse(template.render(context))
 
@@ -118,7 +125,8 @@ def task_create(request):
 	template = loader.get_template('task_write.html')
 	context = RequestContext(request,  get_context({
 		'new_project': True,
-		'taskTypes': Task.TASK_TYPES
+		'taskTypes': Task.TASK_TYPES,
+		'data_page_type':'tasks'
 	}))
 	return HttpResponse(template.render(context))
 
@@ -127,7 +135,8 @@ def user_tasks_list(request, id):
 
 	template = loader.get_template('task_list.html')
 	context = RequestContext(request,  get_context({
-		'tasks':ts
+		'tasks':ts,
+		'data_page_type':'tasks'
 	}))
 	return HttpResponse(template.render(context))
 
