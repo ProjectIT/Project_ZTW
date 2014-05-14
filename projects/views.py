@@ -19,6 +19,12 @@ def __createExampleProject():
 	p.files = [create_stub_file(project_creator,projectId=p) for _ in range(4)]
 	return p
 
+def __createExampleTask():
+	# just for testing
+	p = __createExampleProject()
+	return create_stub_task(p,create_stub_user(),create_stub_user())
+
+
 def project(request, id):
 	# get data
 	active_user = create_stub_user()
@@ -92,8 +98,11 @@ def task_create(request):
 	return render(request, 'about.html') # !!! stub, cause emits error otherwise
 
 def user_tasks_list(request, id):
+	ts = [__createExampleTask() for _ in range(7)]
+
 	template = loader.get_template('task_list.html')
 	context = RequestContext(request, {
+		'tasks':ts
 	})
 	return HttpResponse(template.render(context))
 
