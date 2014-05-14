@@ -55,7 +55,9 @@
                     <div id="color-strip-tasks" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-list navigation-panel-icon"></span>
                     <label>My tasks</label>
-                    <p class="black-overlay">3</p>
+                    {% if 0 < task_count %}
+                    <p class="black-overlay">{{ task_count }}</p>
+                    {% endif %}
                 </div>
              </a>
 

@@ -37,6 +37,7 @@ def get_context( tmplContext):
 	context = {
 		'currentUser':user,
 		'user_id':user.id,
+		'task_count':2,
 	}
 	# concat
 	return dict(list(context.items()) + list(tmplContext.items()))
