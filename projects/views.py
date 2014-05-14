@@ -3,7 +3,8 @@ from django.http import HttpResponse
 
 # Create your views here.
 from django.template import loader, RequestContext
-from projects.stubs import create_stub_project, create_stub_user, create_stub_task, create_stub_file
+from projects.stubs import create_stub_project, create_stub_user, create_stub_task, create_stub_file, \
+	create_stub_task_comment
 
 # TODO add 'user_project_list' for all users in public profile
 
@@ -22,7 +23,11 @@ def __createExampleProject():
 def __createExampleTask():
 	# just for testing
 	p = __createExampleProject()
-	return create_stub_task(p,create_stub_user(),create_stub_user())
+	project_creator = create_stub_user()
+	t = create_stub_task(p,create_stub_user(),create_stub_user())
+	t.files = [create_stub_file(project_creator,taskId=t) for _ in range(4)]
+	t.comments = [ create_stub_task_comment(t,project_creator) for _ in range(4)]
+	return t
 
 
 def project(request, id):
@@ -82,8 +87,11 @@ def user_project_list(request, id):
 
 def task(request, id):
 	template = loader.get_template('task_read.html')
+	task = __createExampleTask()
 	context = RequestContext(request, {
 		'taskId': id,
+		'task': task,
+		'canAddComment':False
 	})
 	return HttpResponse(template.render(context))
 

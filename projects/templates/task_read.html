@@ -6,83 +6,97 @@
 {% endblock %}
 
 {% block title %}
-	Task A
+	{{ task.title }}
 {% endblock %}
 
 {% block title_right %}
-	<h2>Bug</h2>
+	<h2>{{ task.type }}</h2>
 {% endblock %}
 
 {% block content %}
 	<section class="clearfix">
         <div class="left-cell">
             <h1>Description</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum, libero id adipiscing auctor, dui odio egestas urna, vel volutpat mi ipsum fringilla risus. Nullam luctus velit nunc, et tincidunt eros pulvinar sed. Fusce vulputate ultrices elementum. Donec est ante, tristique eget tempor nec, tempor sed nisl. Phasellus vitae scelerisque nibh. Phasellus lacinia pharetra porta. Sed at urna at lectus congue faucibus. Maecenas suscipit bibendum urna, quis dignissim sapien molestie in. Vestibulum ante ante, mollis id diam sed, semper varius ipsum. Suspendisse potenti. Nulla facilisi. Nam eget massa sed augue aliquet consectetur.</p>
+        <p>{{ task.description }}</p>
         </div>
         <div class="right-cell">
             <ul id="details-list">
                 <li class="details-list-item">
-                    <p><b>Assigned to</b>
-                    <br />
-                    <span class="details-info">Bbb Abbaab</span></p>
+                    <p>
+                        <b>Assigned to</b>
+                        <br />
+                        <span class="details-info">
+                            {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                        </span>
+                    </p>
                 </li>
                 <li class="details-list-item">
                     <p><b>Deadline</b>
                     <br />
-                    <span class="details-info">10-05-2014</span></p>
+                    <span class="details-info">{{ task.deadline|date:"d-m-Y" }}</span></p>
                 </li>
                 <li class="details-list-item">
                     <p><b>Created by</b>
                     <br />
-                    <span class="details-info">Aaa Bbbb</span></p>
+                    <span class="details-info">
+                        {{ task.createdBy.name }}&nbsp;{{ task.createdBy.lastName }}
+                    </span></p>
                 </li>
                 <li class="details-list-item">
                     <p><b>Creation date</b>
                     <br />
-                    <span class="details-info">05-05-2014</span></p>
+                    <span class="details-info">{{ task.created|date:"d-m-Y" }}</span></p>
                 </li>
             </ul>
         </div>
     </section>
 
-    TODO where is 'assigned to ?'
-
     <section class="data-section">
         <header>Files</header>
         <ul id="files-list" class="clearfix">
-            <li class="files-list-item" data-type="document">
-                <span class="glyphicon glyphicon-file"></span>
-                <b>A.docx</b>
+
+            {% for file in task.files %}
+            <li class="files-list-item" data-type="{{file.type|lower}}">
+                    <!--icon-->
+                    {% if file.type == "Document" %}
+                        <span class="glyphicon glyphicon-file"></span>
+                    {% else %}
+                        {% if file.type == "Image" %}
+                            <span class="glyphicon glyphicon-camera"></span>
+                        {% else %}
+                            {% if file.type == "Sound" %}
+                                <span class="glyphicon glyphicon-music"></span>
+                            {% else %}
+                                <span class="glyphicon glyphicon-paperclip"></span>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+
+                    <!--file name-->
+                    <b>_{{ file.name }}_</b>
             </li>
-            <li class="files-list-item" data-type="sound">
-                <span class="glyphicon glyphicon-music"></span>
-                <b>a.wav</b>
-            </li>
-            <li class="files-list-item" data-type="image">
-                <span class="glyphicon glyphicon-camera"></span>
-                <b>a.png</b>
-            </li>
-            <li class="files-list-item" data-type="other">
-                <span class="glyphicon glyphicon-paperclip"></span>
-                <b>a.zip</b>
-            </li>
+            {% endfor %}
         </ul>
     </section>
 
     <section class="comments-section">
         <header>Comments</header>
         <ul id="comments-list">
-            <li class="comments-list-item">
-                <span class="glyphicon glyphicon-ok"></span>
-                <b>Aaa Bbb</b>
-                <span class="comments-time">11 min ago</span>
-                <p>Aaa Bbb changed task's status to 'finished'</p>
-            </li>
-            <li class="comments-list-item">
-                <b>Ababab Bababa</b>
-                <span class="comments-time">24 min ago</span>
-                <p>Add 'abc' to adsad in adsdas</p>
-            </li>
+
+            {% for taskComment in task.comments %}
+                <li class="comments-list-item">
+                    <!--TODO comment icons f.e. 'ok' ?-->
+                    <!--<span class="glyphicon glyphicon-ok"></span>-->
+                    <b>
+                        {{ taskComment.createdBy.name }}&nbsp;{{ taskComment.createdBy.lastName }}
+                    </b>
+                    <span class="comments-time">{{ taskComment.created|date:"d-m-Y" }}</span>
+                    <p>{{ taskComment.text }}</p>
+                </li>
+            {% endfor %}
         </ul>
     </section>
+
+    <!--TODO : canAddComment-->
+
 {% endblock %}
