@@ -1,8 +1,26 @@
-from datetime import timezone
 from random import choice, randint
-import django.core.files
+
 from django.utils.datetime_safe import datetime
+
 from projects.models import Project, User, Task, TaskComment, File, PersonInProject
+
+
+def __createExampleProject():
+	# just for testing
+	project_creator = create_stub_user()
+	p = create_stub_project(project_creator)
+	p.tasks = [create_stub_task(p, project_creator, create_stub_user()) for _ in range(4)]
+	p.people = [create_stub_user() for _ in range(4)]
+	p.files = [create_stub_file(project_creator,projectId=p) for _ in range(4)]
+	return p
+
+def __createExampleTask():
+	# just for testing
+	project_creator = create_stub_user()
+	t = create_stub_task( __createExampleProject(), create_stub_user(),create_stub_user())
+	t.files = [create_stub_file(project_creator,taskId=t) for _ in range(4)]
+	t.comments = [ create_stub_task_comment(t,project_creator) for _ in range(4)]
+	return t
 
 def __generateRandomDate():
 	#return datetime.date()
