@@ -9,10 +9,12 @@
 {% endblock %}
 
 {% block title_right %}
+        <a href="{% url 'project_create' %}">
 	<div id="project-create">
         <span class="glyphicon glyphicon-plus"></span>
         add new project
     </div>
+            </a>
 {% endblock %}
 
 {% block content %}

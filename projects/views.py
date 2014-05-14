@@ -3,7 +3,9 @@ from django.http import HttpResponse
 
 # Create your views here.
 from django.template import loader, RequestContext
-from projects.stubs import create_stub_project, create_stub_user, create_stub_task, create_stub_file
+from projects.models import Task
+from projects.stubs import create_stub_project, create_stub_user, create_stub_task, create_stub_file, \
+	create_stub_task_comment
 
 # TODO add 'user_project_list' for all users in public profile
 
@@ -18,6 +20,15 @@ def __createExampleProject():
 	p.people = [create_stub_user() for _ in range(4)]
 	p.files = [create_stub_file(project_creator,projectId=p) for _ in range(4)]
 	return p
+
+def __createExampleTask():
+	# just for testing
+	project_creator = create_stub_user()
+	t = create_stub_task( __createExampleProject(), create_stub_user(),create_stub_user())
+	t.files = [create_stub_file(project_creator,taskId=t) for _ in range(4)]
+	t.comments = [ create_stub_task_comment(t,project_creator) for _ in range(4)]
+	return t
+
 
 def project(request, id):
 	# get data
@@ -73,27 +84,43 @@ def user_project_list(request, id):
 #
 # tasks
 #
+# TODO utilize task status
 
 def task(request, id):
 	template = loader.get_template('task_read.html')
+	task = __createExampleTask()
 	context = RequestContext(request, {
 		'taskId': id,
+		'task': task,
+		'canAddComment':False
 	})
 	return HttpResponse(template.render(context))
 
 def task_edit(request, id, back_url=""):
-	# back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
+	# TODO back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
 	template = loader.get_template('task_write.html')
+	task= __createExampleTask()
 	context = RequestContext(request, {
+		'taskId': id,
+		'task': task,
+		'taskTypes': Task.TASK_TYPES
 	})
 	return HttpResponse(template.render(context))
 
 def task_create(request):
-	return render(request, 'about.html') # !!! stub, cause emits error otherwise
+	template = loader.get_template('task_write.html')
+	context = RequestContext(request, {
+		'new_project': True,
+		'taskTypes': Task.TASK_TYPES
+	})
+	return HttpResponse(template.render(context))
 
 def user_tasks_list(request, id):
+	ts = [__createExampleTask() for _ in range(7)]
+
 	template = loader.get_template('task_list.html')
 	context = RequestContext(request, {
+		'tasks':ts
 	})
 	return HttpResponse(template.render(context))
 

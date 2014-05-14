@@ -1,35 +1,44 @@
 {% extends "base_app_template.html" %}
 
 {% block head %}
-	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}tasks.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}tasks.css"/>
 {% endblock %}
 
 {% block title %}
-	My tasks
+My tasks
 {% endblock %}
 
 {% block title_right %}
-	TODO add_new_tasks_button ?
+<a href="{% url 'task_create' %}">
+    <div id="task-create">
+        <span class="glyphicon glyphicon-plus"></span>
+        add new task
+    </div>
+</a>
 {% endblock %}
 
 {% block content %}
-    <section class="data-section">
-        <header>Tasks</header>
-        <table id="tasks-table">
-            <tr>
-                <th class="tasks-cell tasks-col1">Active</th>
-                <th class="tasks-cell tasks-col2">Title</th>
-                <th class="tasks-cell tasks-col4">Deadline</th>
-            </tr>
-            <tr>
-                <td class="tasks-cell tasks-col1"></td>
-                <td class="tasks-cell tasks-col2">
-                    <a href="{% url 'task' 123 %}">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                    </a>
-                </td>
-                <td class="tasks-cell tasks-col4">28-10-2152</td>
-            </tr>
-        </table>
-    </section>
+<table id="tasks-table">
+    <tr>
+        <th class="tasks-cell tasks-col1">Active</th>
+        <th class="tasks-cell tasks-col2">Title</th>
+        <th class="tasks-cell tasks-col3">Assigned to</th>
+        <th class="tasks-cell tasks-col4">Deadline</th>
+    </tr>
+
+    {% for task in tasks %}
+    <tr>
+        <td class="tasks-cell tasks-col1"></td>
+        <td class="tasks-cell tasks-col2">
+            <a href="{% url 'task' task.id %}"> {{ task.title }} </a>
+        </td>
+        <td class="tasks-cell tasks-col3">
+            <a href="{% url 'public_profile' task.personResponsible.id %}">
+                {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+            </a>
+        </td>
+        <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
