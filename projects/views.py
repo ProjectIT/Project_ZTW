@@ -31,9 +31,9 @@ def project(request, id):
 
 	template = loader.get_template('project_read.html')
 	context = RequestContext(request,  get_context({
-		'projectId': id,
 		'project': p,
-		'data_page_type':'projects'
+		'data_page_type':'projects',
+		'can_edit':True
 	}))
 	return HttpResponse(template.render(context))
 
@@ -42,7 +42,6 @@ def project_edit(request, id):
 
 	template = loader.get_template('project_write.html')
 	context = RequestContext(request,  get_context({
-		'projectId': id,
 		'project': p,
 		'data_page_type':'projects'
 	}))
@@ -81,11 +80,11 @@ def task(request, id):
 	task = __createExampleTask()
 
 	context = RequestContext(request,  get_context({
-		'taskId': id,
 		'task': task,
 		'canAddComment':False,
 		'data_page_type':'tasks',
 		'taskTypes': Task.TASK_TYPES,
+		'can_edit':True
 	}))
 	return HttpResponse(template.render(context))
 
@@ -95,7 +94,6 @@ def task_edit(request, id, back_url=""):
 	task = __createExampleTask()
 
 	context = RequestContext(request,  get_context({
-		'taskId': id,
 		'task': task,
 		'taskTypes': Task.TASK_TYPES,
 		'data_page_type':'tasks'

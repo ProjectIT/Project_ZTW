@@ -7,6 +7,11 @@
 
 {% block title %}
 	{{ task.title }}
+    {% if can_edit %}
+         <a href="{% url 'task_edit' task.id %}">
+             <span id="edit-button">edit</span>
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block title_right %}

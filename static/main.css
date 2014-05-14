@@ -190,9 +190,11 @@
 	margin-left: 12px;
 }
 
-
-
 #center-content {
 	padding: 0px 17px 70px !important;
 	position: relative;
+}
+
+#edit-button{
+	font-size: 15px;
 }
