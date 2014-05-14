@@ -9,6 +9,8 @@ from projects.stubs import create_stub_project, create_stub_user, create_stub_ta
 
 # TODO add 'user_project_list' for all users in public profile
 
+# NOTE: 'user' in templates is a reserved keyword
+
 # date format:
 #https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date
 
@@ -30,41 +32,44 @@ def __createExampleTask():
 	return t
 
 
+def get_context( tmplContext):
+	user=create_stub_user()
+	context = {
+		'currentUser':user,
+		'user_id':user.id,
+	}
+	# concat
+	return dict(list(context.items()) + list(tmplContext.items()))
+
+
+#
+# projects
+#
 def project(request, id):
-	# get data
-	active_user = create_stub_user()
 	p = __createExampleProject()
 
-	# render
 	template = loader.get_template('project_read.html')
-	context = RequestContext(request, {
+	context = RequestContext(request,  get_context({
 		'projectId': id,
 		'project': p,
-	})
+	}))
 	return HttpResponse(template.render(context))
 
 def project_edit(request, id):
-	# get data
-	active_user = create_stub_user()
 	p = __createExampleProject()
 
-	# render
 	template = loader.get_template('project_write.html')
-	context = RequestContext(request, {
+	context = RequestContext(request,  get_context({
 		'projectId': id,
 		'project': p,
-	})
+	}))
 	return HttpResponse(template.render(context))
 
 def project_create(request):
-	# get data
-	active_user = create_stub_user()
-
-	# render
 	template = loader.get_template('project_write.html')
-	context = RequestContext(request, {
+	context = RequestContext(request,  get_context({
 		'new_project': True,
-	})
+	}))
 	return HttpResponse(template.render(context))
 
 
@@ -72,9 +77,9 @@ def project_list(request):
 	ps = [__createExampleProject() for _ in range(7)]
 
 	template = loader.get_template('project_list.html')
-	context = RequestContext(request, {
-		'projects':ps
-	})
+	context = RequestContext(request, get_context({
+		'projects':ps,
+	}))
 	return HttpResponse(template.render(context))
 
 
@@ -89,38 +94,40 @@ def user_project_list(request, id):
 def task(request, id):
 	template = loader.get_template('task_read.html')
 	task = __createExampleTask()
-	context = RequestContext(request, {
+
+	context = RequestContext(request,  get_context({
 		'taskId': id,
 		'task': task,
 		'canAddComment':False
-	})
+	}))
 	return HttpResponse(template.render(context))
 
 def task_edit(request, id, back_url=""):
 	# TODO back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
 	template = loader.get_template('task_write.html')
-	task= __createExampleTask()
-	context = RequestContext(request, {
+	task = __createExampleTask()
+
+	context = RequestContext(request,  get_context({
 		'taskId': id,
 		'task': task,
 		'taskTypes': Task.TASK_TYPES
-	})
+	}))
 	return HttpResponse(template.render(context))
 
 def task_create(request):
 	template = loader.get_template('task_write.html')
-	context = RequestContext(request, {
+	context = RequestContext(request,  get_context({
 		'new_project': True,
 		'taskTypes': Task.TASK_TYPES
-	})
+	}))
 	return HttpResponse(template.render(context))
 
 def user_tasks_list(request, id):
 	ts = [__createExampleTask() for _ in range(7)]
 
 	template = loader.get_template('task_list.html')
-	context = RequestContext(request, {
+	context = RequestContext(request,  get_context({
 		'tasks':ts
-	})
+	}))
 	return HttpResponse(template.render(context))
 

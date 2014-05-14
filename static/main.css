@@ -79,15 +79,17 @@
 	text-align: center;
 	top: 0px !important;
 	cursor: pointer;
+	color:white !important;
 }
 #navigation-bar-logout {
 	background-color: hsl(0, 91%, 70%);
 }
 #navigation-bar-settings {
 	background-color: hsl(170, 52%, 54%);
+	height: 100%;
 }
 #navigation-avatar {
-	background: url('stub_imgs/avatar2.jpg');
+	/*background: url('stub_imgs/avatar2.jpg');*/
 	background-size: cover;
 }
 /*

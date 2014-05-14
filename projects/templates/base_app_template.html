@@ -22,9 +22,13 @@
 
 		<!-- top navbar -->
 		<div id="navigation-bar" class="ui-mid-gray">
+            <!--TODO logout button-->
 			<span id="navigation-bar-logout" class="glyphicon glyphicon-remove navigation-bar-icon hoverable"></span>
-			<span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
-			<div id="navigation-avatar" class="navigation-bar-icon"></div>
+             <a href="{% url 'settings' %}">
+                 <span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
+             </a>
+            <img src="{{ STATIC_URL }}{{ currentUser.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
+
             <!--TODO App tittle-->
 			<span id="brand" class="left-panel-size">App tittle</span>
 		</div>
