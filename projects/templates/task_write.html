@@ -5,56 +5,61 @@
 {% endblock %}
 
 {% block title %}
-	Task A
+	{{ task.title|default:"Create new task" }}
 {% endblock %}
 
 {% block title_right %}
-	<h2>Bug</h2>
+    {% if not new_project %}
+          <h2>{{ task.type.1 }}</h2>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
+
     <section class="clearfix">
         <div class="left-cell">
             <section class="data-section">
                 <header>Name</header>
-                <input id="task-name" type="text" name="task-name" placeholder="Name..">
+                <input id="task-name" type="text" name="task-name" placeholder="Name.." value="{{ task.title|default:"" }}">
             </section>
 
             <section class="data-section">
                 <header>Status</header>
                 <select id="task-status">
-                  <option value="fixed">Fixed</option>
-                  <option value="won't-fix">Won't fix</option>
-                  <option value="duplicate">Duplicate</option>
-                  <option value="not-a-bug">Not a bug</option>
+                    {% for tT_short, tT_name in taskTypes %}
+
+                        {% if task.type.0 == tT_short %}
+                        <option value="{{ tT_short }}" selected="selected">{{ tT_name }}</option>
+                        {% else %}
+                        <option value="{{ tT_short }}">{{ tT_name }}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
             </section>
+            <br />
+
+<!--{% for tT_short, tT_name in taskTypes %}-->
+    <!--{% if task.type.0 == tT_short %}T-->
+    <!--{% else %}F{% endif %}-->
+    <!--{{ tT_short }}-->
+    <!--=={{ task.type.0 }} vs {{ tT_short }}==-->
+    <!--<br />-->
+<!--{% endfor %}-->
 
             <section class="data-section">
                 <header>Deadline</header>
-                <input id="task-deadline" type="date" name="task-deadline">
+                <!--TODO datepicker-->
+                <input id="task-deadline" type="date" name="task-deadline" value="{{ task.title|default:"" }}">
             </section>
 
             <section class="data-section">
                 <header>Description</header>
-                <textarea id="project-note" rows="3" name="project-note" placeholder="Add description..">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum, libero id adipiscing auctor, dui odio egestas urna, vel volutpat mi ipsum fringilla risus. Nullam luctus velit nunc, et tincidunt eros pulvinar sed. Fusce vulputate ultrices elementum. Donec est ante, tristique eget tempor nec, tempor sed nisl. Phasellus vitae scelerisque nibh. Phasellus lacinia pharetra porta. Sed at urna at lectus congue faucibus. Maecenas suscipit bibendum urna, quis dignissim sapien molestie in. Vestibulum ante ante, mollis id diam sed, semper varius ipsum. Suspendisse potenti. Nulla facilisi. Nam eget massa sed augue aliquet consectetur.
-                </textarea>
+                <textarea id="project-note" rows="3" name="task-note" placeholder="Add description..">{{ task.description|default:"" }}</textarea>
             </section>
         </div>
         <div class="right-cell">
             <ul id="details-list">
-                <li class="details-list-item">
-                    <p><b>Assigned to</b>
-                    <br />
-                    <span class="details-info">Bbb Abbaab</span></p>
-                </li>
-                <li class="details-list-item">
-                    <p><b>Deadline</b>
-                    <br />
-                    <span class="details-info">10-05-2014</span></p>
-                </li>
-                <li class="details-list-item">
+               <li class="details-list-item">
                     <p><b>Created by</b>
                     <br />
                     <span class="details-info">Aaa Bbbb</span></p>
@@ -69,74 +74,62 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus condimentum, li
     </section>
 
     <section class="data-section">
+        <!--TODO when should show this person ? it is possible there is no person responsible-->
         <div id="view-header-right" class="clearfix">
             <div id="assign-person" class="task-button">
                 Change assignment
             </div>
         </div>
         <header class="clearfix">Assign</header>
-        <!--TODO show only admins and make the 'view all' button ?-->
-        <!--TODO for each person add connection type: { admin/progr./etc}-->
+        {% if task.personResponsible %}
         <div id="assign-img-div">
-            <img id="assign-img" src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-            Aaa bbb
+             <p class="person-remove">
+                    <!--TODO person remove from project-->
+					<span class="glyphicon glyphicon-remove"></span>
+				<p>
+            <img id="assign-img" src="{{ STATIC_URL }}{{ task.personResponsible.avatarPath }}">
+            {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
         </div>
+        {% endif %}
     </section>
+
+{% if not new_project %}
 
     <section class="data-section">
         <header>Files</header>
         <ul id="files-list" class="clearfix">
-            <li class="files-list-item" data-type="document">
-                <span class="glyphicon glyphicon-file"></span>
-                <b>A.docx</b>
+
+            {% for file in task.files %}
+            <li class="files-list-item" data-type="{{file.type|lower}}">
+                <!--TODO add some :hover, because there is a lot of confusion-->
+
+                <!--icon-->
+                {% if file.type == "Document" %}
+                    <span class="glyphicon glyphicon-file"></span>
+                {% else %}
+                    {% if file.type == "Image" %}
+                        <span class="glyphicon glyphicon-camera"></span>
+                    {% else %}
+                        {% if file.type == "Sound" %}
+                            <span class="glyphicon glyphicon-music"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-paperclip"></span>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+                 <!--file name-->
+                <b>_{{ file.name }}_</b>
                 <p class="person-remove">
-                    <span class="glyphicon glyphicon-remove"></span>
-                <p>
+					<span class="glyphicon glyphicon-remove"></span>
+				<p>
             </li>
-            <li class="files-list-item" data-type="sound">
-                <span class="glyphicon glyphicon-music"></span>
-                <b>a.wav</b>
-                <p class="person-remove">
-                    <span class="glyphicon glyphicon-remove"></span>
-                <p>
-            </li>
-            <li class="files-list-item" data-type="image">
-                <span class="glyphicon glyphicon-camera"></span>
-                <b>a.png</b>
-                <p class="person-remove">
-                    <span class="glyphicon glyphicon-remove"></span>
-                <p>
-            </li>
-            <li class="files-list-item" data-type="other">
-                <span class="glyphicon glyphicon-paperclip"></span>
-                <b>a.zip</b>
-                <p class="person-remove">
-                    <span class="glyphicon glyphicon-remove"></span>
-                <p>
-            </li>
+            {% endfor %}
+
         </ul>
     </section>
 
-    <section class="comments-section">
-        <header>Comments</header>
-        <ul id="comments-list">
-            <li class="comments-list-item">
-                <span class="glyphicon glyphicon-ok"></span>
-                <b>Aaa Bbb</b>
-                <span class="comments-time">11 min ago</span>
-                <p>Aaa Bbb changed task's status to 'finished'</p>
-            </li>
-            <li class="comments-list-item">
-                <b>Ababab Bababa</b>
-                <span class="comments-time">24 min ago</span>
-                <p>Add 'abc' to adsad in adsdas</p>
-            </li>
-        </ul>
-        <header>Add new comment</header>
-                <textarea id="new-comment-text" rows="3" name="new-comment-text" placeholder="Add comment..">
-
-                </textarea>
-    </section>
+{% endif %}
 
     <!--save and back buttons-->
     <div class="task-button pull-left">
