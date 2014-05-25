@@ -100,9 +100,14 @@
 	color: #909090;
 }
 
-.data-section header{
+.data-section header{ /* TODO remove - use label */
 	font-weight: 600;
 	font-size: 2em;
+}
+.data-section label{
+	font-weight: 600;
+	font-size: 2em;
+	display: block;
 }
 
 .data-section {
@@ -273,15 +278,16 @@ project write - slider
   border-radius: 50%;
 }
 /*_______________________________________*/
-#project-note {
+#id_description {
 	width: 100%;
 	max-width: 100%;
 	min-height: 200px;
 	padding: 5px;
 }
 
-#project-name {
+#id_name {
 	min-width: 300px;
+	max-width: 300px;
 	padding: 5px;
 }
 
@@ -291,11 +297,18 @@ project write - slider
 	text-decoration: underline;
 	cursor: pointer;
 	transition: background 0.5s;
-	
 }
 .tasks-edit:hover{
 	background:#ddd;
 }
+
+.task-remove{
+ 	color:black;
+}
+.task-remove:hover{
+	color:red;
+}
+
 #task-create {
 	font-size: 1em;
 	width: 170px;
@@ -320,13 +333,13 @@ project write - slider
 	background-color:hsl(31, 65%, 55%);
 }
 
-.person-remove {
+.remove-button {
 	position: absolute;
 	top: 2px; right: 2px;
 	font-size: 20px;
 	cursor: pointer;
 	color: #222 !important;
 }
-.person-remove:hover{
+.remove-button:hover{
 	color: red !important;
 }

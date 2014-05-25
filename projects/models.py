@@ -28,9 +28,9 @@ class User(models.Model):
 	# ?description
 
 class Project(models.Model):
-	name = models.CharField(max_length=50)
+	name = models.CharField(max_length=50,blank=False)
 	complete = models.PositiveSmallIntegerField() # percent complete - from 0 to 100
-	description = models.CharField(max_length=1024)
+	description = models.CharField(max_length=1024,blank=True)
 	created = models.DateTimeField(auto_now_add=True, editable=False)
 	createdBy = models.ForeignKey(User, editable=False)
 	modifiedDate = models.DateTimeField(auto_now=True, editable=False)
