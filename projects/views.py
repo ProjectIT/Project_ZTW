@@ -1,7 +1,7 @@
 import json
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader, RequestContext
-from projects.forms import ProjectForm
+from projects.forms import ProjectForm, TaskForm
 
 from projects.models import Task
 from projects.stubs import create_stub_user, __createExampleProject, __createExampleTask
@@ -135,14 +135,26 @@ def task_edit(request, id, back_url=""):
 	}))
 	return HttpResponse(template.render(context))
 
-def task_create(request):
-	template = loader.get_template('task_write.html')
-	context = RequestContext(request, get_context({
-		'new_project': True,
-		'taskTypes': Task.TASK_TYPES,
-		'data_page_type': 'tasks'
-	}))
-	return HttpResponse(template.render(context))
+def task_create(request, project_id):
+	if request.method == "POST" and request.is_ajax():
+		print(request.POST)
+		form = TaskForm(request.POST)
+		if form.is_valid():
+			return HttpResponse(json.dumps({"status":"OK","id":13}))
+		else:
+			errors_fields = dict()
+			if form.errors:
+				errors_fields["fields"] = list(form.errors.keys())
+			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+	else:
+		template = loader.get_template('task_write.html')
+		context = RequestContext(request, get_context({
+			'new_task': True,
+			'taskTypes': Task.TASK_TYPES,
+			'data_page_type': 'tasks',
+			'project_id': project_id
+		}))
+		return HttpResponse(template.render(context))
 
 def user_tasks_list(request, id):
 	ts = [__createExampleTask() for _ in range(7)]
@@ -155,18 +167,7 @@ def user_tasks_list(request, id):
 	return HttpResponse(template.render(context))
 
 
-"""
-print(request.POST)
-form = ProjectForm(request.POST)
-if form.is_valid():
-	# form.cleaned_data['name'],
-	return HttpResponse(json.dumps({"status":"OK","id":13}))
-else:
-	errors_fields = dict()
-	if form.errors:
-		errors_fields["fields"] = list(form.errors.keys())
-	return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
-"""
+
 def __project_edit(request, id):
 	# print(request.POST)
 	tasksToRemove = request.POST["tasksToRemove"]

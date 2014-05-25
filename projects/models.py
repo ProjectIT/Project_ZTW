@@ -40,7 +40,6 @@ class Task(models.Model):
 		('B','Bug'),
 		('I','Improvement'),
 		('F','New Feature'),
-		('T','Task'),
 		('O','Other')
 	)
 	# TASK_PRIORITY = (
@@ -61,14 +60,14 @@ class Task(models.Model):
 		('X','Cannot Reproduce'),
 	)
 
-	projectId = models.ForeignKey(Project)
-	personResponsible = models.ForeignKey(User, related_name='task_person_responsible', null = True)
-	title = models.CharField(max_length=50)
+	projectId = models.ForeignKey(Project, null = True, blank=True, default = None) # TODO !!! PROJECT_ID CAN BE NULL !!!
+	personResponsible = models.ForeignKey(User, related_name='task_person_responsible', null = True, blank=True, default = None)
+	title = models.CharField(max_length=50,blank=False)
 	type = models.CharField(max_length=1, choices=TASK_TYPES, default='T')
 	# priority =models.CharField(max_length=1, choices=TASK_PRIORITY, default='M')
-	status = models.CharField(max_length=1, choices=TASK_STATUS, default='O')
+	# status = models.CharField(max_length=1, choices=TASK_STATUS, default='O')
 	deadline = models.DateTimeField()
-	description = models.CharField(max_length=1024)
+	description = models.CharField(max_length=1024,blank=False)
 	created = models.DateTimeField(auto_now_add=True, editable=False)
 	createdBy = models.ForeignKey(User, editable=False, related_name='task_created_by')
 	modified = models.DateTimeField(auto_now=True, editable=False)

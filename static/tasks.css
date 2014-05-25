@@ -360,6 +360,7 @@ project write - slider
 }
 #task-name {
     min-width: 300px;
+    max-width: 300px;
 	padding: 5px;
 }
 

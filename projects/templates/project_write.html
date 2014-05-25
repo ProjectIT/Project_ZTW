@@ -16,25 +16,25 @@
 {% endblock %}
 
 {% block page_end %}
-        <script src="{{ STATIC_URL }}js/projects.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/projects.js" type="text/javascript"></script>
 
-        <script language="JavaScript">
-            $(document).ready(function() {
+    <script language="JavaScript">
+        $(document).ready(function() {
 
-        {% if new_project %}
-                $('#project-form').submit(function(event) {
-                    createProject("{% url 'project_create' %}");
-                    event.preventDefault();
-                });
-        {% else %}
-                $('#project-form').submit(function(event) {
-                    editProject("{% url 'project_edit' project.id %}","{% url 'project' project.id %}");
-                    event.preventDefault();
-                });
-        {% endif %}
-
+    {% if new_project %}
+            $('#project-form').submit(function(event) {
+                createProject("{% url 'project_create' %}");
+                event.preventDefault();
             });
-        </script>
+    {% else %}
+            $('#project-form').submit(function(event) {
+                editProject("{% url 'project_edit' project.id %}","{% url 'project' project.id %}");
+                event.preventDefault();
+            });
+    {% endif %}
+
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -156,7 +156,7 @@
 	</section>
 {% endif %}
 
-        <!--TODO project delete-->
+    <!--TODO project delete-->
 	<!--save and back buttons-->
 	<div class="project-button pull-left">
 		Back

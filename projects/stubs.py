@@ -69,7 +69,7 @@ def create_stub_task(projectId, createdBy, personResponsible):
 	t.personResponsible = personResponsible
 	t.title = "Task A"
 	t.type = choice(Task.TASK_TYPES)
-	t.status = choice(Task.TASK_STATUS)[1]  #"Open"
+	# t.status = choice(Task.TASK_STATUS)[1]  #"Open"
 	t.deadline = __generateRandomDate()
 	t.description = "Duis eget facilisis libero. Morbi eu gravida elit. Phasellus nec tempus nunc. Nullam vehicula dolor fringilla nulla pharetra scelerisque. Proin eu massa eu ligula fringilla congue eu nec odio. Aliquam dictum vestibulum urna, eu elementum massa convallis quis. Proin vehicula viverra elit, sed pretium diam porta ac. Vestibulum quis turpis sed magna luctus mattis. Aenean et placerat urna, ac convallis metus. Etiam lectus ante, venenatis et bibendum congue, convallis et velit. In nulla purus, ultricies ac tincidunt et, lacinia non risus."
 	t.created = __generateRandomDate()

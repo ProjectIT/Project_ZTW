@@ -9,23 +9,48 @@
 {% endblock %}
 
 {% block title_right %}
-    {% if not new_project %}
+    {% if not new_task %}
           <h2>{{ task.type.1 }}</h2>
     {% endif %}
 {% endblock %}
 
+{% block page_end %}
+    <script src="{{ STATIC_URL }}js/tasks.js" type="text/javascript"></script>
+
+    <script language="JavaScript">
+        $(document).ready(function() {
+
+            {% if task.personResponsible %}
+                $("#assign-img-div").css("display","block");
+            {% endif %}
+
+            {% if new_task %}
+                $('#task-form').submit(function(event) {
+                    createTask("{% url 'task_create' project_id %}");
+                    event.preventDefault();
+                });
+            {% else %}
+                $('#task-form').submit(function(event) {
+                });
+            {% endif %}
+
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
+<form id="task-form" action="" method="post">{% csrf_token %}
 
     <section class="clearfix">
         <div class="left-cell">
             <section class="data-section">
                 <header>Name</header>
-                <input id="task-name" type="text" name="task-name" placeholder="Name.." value="{{ task.title|default:"" }}">
+                <input class="form-control" id="task-name" type="text" name="title" placeholder="Name.." value="{{ task.title|default:"" }}">
             </section>
 
             <section class="data-section">
                 <header>Status</header>
-                <select id="task-status">
+                <select id="task-type" name="type">
                     {% for tT_short, tT_name in taskTypes %}
 
                         {% if task.type.0 == tT_short %}
@@ -38,41 +63,44 @@
             </section>
             <br />
 
-<!--{% for tT_short, tT_name in taskTypes %}-->
-    <!--{% if task.type.0 == tT_short %}T-->
-    <!--{% else %}F{% endif %}-->
-    <!--{{ tT_short }}-->
-    <!--=={{ task.type.0 }} vs {{ tT_short }}==-->
-    <!--<br />-->
-<!--{% endfor %}-->
-
             <section class="data-section">
                 <header>Deadline</header>
-                <!--TODO datepicker-->
-                <input id="task-deadline" type="date" name="task-deadline" value="{{ task.title|default:"" }}">
+                <!--TODO datepicker - set current value-->
+                <input class="form-control" id="task-deadline" type="date" name="deadline" value="{{ task.title|default:"" }}" style="max-width: 300px;">
             </section>
 
             <section class="data-section">
                 <header>Description</header>
-                <textarea id="project-note" rows="3" name="task-note" placeholder="Add description..">{{ task.description|default:"" }}</textarea>
+                <textarea class="form-control" id="project-note" rows="3" name="description" placeholder="Add description..">{{ task.description|default:"" }}</textarea>
             </section>
         </div>
+
+        <!---->
+        <!--Right panel-->
+        <!---->
+        {% if not new_task %}
         <div class="right-cell">
             <ul id="details-list">
                <li class="details-list-item">
                     <p><b>Created by</b>
                     <br />
+                    <!--TODO Created by -->
                     <span class="details-info">Aaa Bbbb</span></p>
                 </li>
                 <li class="details-list-item">
                     <p><b>Creation date</b>
                     <br />
+                    <!--TODO Creation date -->
                     <span class="details-info">05-05-2014</span></p>
                 </li>
             </ul>
         </div>
+        {% endif %}
     </section>
 
+    <!---->
+    <!--Person-->
+    <!---->
     <section class="data-section">
         <!--TODO when should show this person ? it is possible there is no person responsible-->
         <div id="view-header-right" class="clearfix">
@@ -81,19 +109,17 @@
             </div>
         </div>
         <header class="clearfix">Assign</header>
-        {% if task.personResponsible %}
-        <div id="assign-img-div">
+        <div id="assign-img-div" style="display:none">
              <p class="person-remove">
                     <!--TODO person remove from project-->
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
-            <img id="assign-img" src="{{ STATIC_URL }}{{ task.personResponsible.avatarPath }}">
+            <img id="assign-img" src="{{ STATIC_URL }}{{ task.personResponsible.avatarPath|default:"stub_imgs/avatar2.jpg" }}">
             {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
         </div>
-        {% endif %}
     </section>
 
-{% if not new_project %}
+{% if not new_task %}
 
     <section class="data-section">
         <header>Files</header>
@@ -131,11 +157,18 @@
 
 {% endif %}
 
+    <!--TODO task delete-->
     <!--save and back buttons-->
-    <div class="task-button pull-left">
-        Back
-    </div>
-    <div class="task-button pull-right">
-        Save
-    </div>
+    {% if not new_task %}
+    <a href="{% url 'task' task.id %}">
+    {% else %}
+    <a href="{% url 'project' project_id %}">
+    {% endif %}
+        <div class="task-button pull-left">
+            Back
+        </div>
+    </a>
+    <input type="submit" value="Save" class="task-button pull-right"/>
+
+</form>
 {% endblock %}

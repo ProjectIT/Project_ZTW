@@ -175,6 +175,8 @@
 	overflow: hidden;
 	background-color: #f2f2f0;
 	height: inherit;
+	border: 1px solid #aaa;
+	border-top-width:0px;
 }
 #view-header {
 	color: #6b6a66;
