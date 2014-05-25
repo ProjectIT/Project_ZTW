@@ -21,10 +21,17 @@
         <script language="JavaScript">
             $(document).ready(function() {
 
+        {% if new_project %}
                 $('#project-form').submit(function(event) {
                     createProject("{% url 'project_create' %}");
                     event.preventDefault();
                 });
+        {% else %}
+                $('#project-form').submit(function(event) {
+                    editProject("{% url 'project_edit' project.id %}","{% url 'project' project.id %}");
+                    event.preventDefault();
+                });
+        {% endif %}
 
             });
         </script>

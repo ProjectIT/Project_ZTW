@@ -50,14 +50,25 @@ def project(request, id):
 	return HttpResponse(template.render(context))
 
 def project_edit(request, id):
-	p = __createExampleProject()
+	if request.method == "POST" and request.is_ajax():
+		ok, opt = __project_edit(request,id)
+		if ok:
+			return HttpResponse(json.dumps(opt))
+		else:
+			errors_fields = dict()
+			if opt:
+				errors_fields["fields"] = list(opt.keys())
+			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+	else:
+		p = __createExampleProject()
 
-	template = loader.get_template('project_write.html')
-	context = RequestContext(request, get_context({
-		'project': p,
-		'data_page_type': 'projects'
-	}))
-	return HttpResponse(template.render(context))
+		template = loader.get_template('project_write.html')
+		context = RequestContext(request, get_context({
+			'project': p,
+			'data_page_type': 'projects'
+		}))
+		return HttpResponse(template.render(context))
+
 
 def project_create(request):
 	if request.method == "POST" and request.is_ajax():
@@ -143,3 +154,30 @@ def user_tasks_list(request, id):
 	}))
 	return HttpResponse(template.render(context))
 
+
+"""
+print(request.POST)
+form = ProjectForm(request.POST)
+if form.is_valid():
+	# form.cleaned_data['name'],
+	return HttpResponse(json.dumps({"status":"OK","id":13}))
+else:
+	errors_fields = dict()
+	if form.errors:
+		errors_fields["fields"] = list(form.errors.keys())
+	return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+"""
+def __project_edit(request, id):
+	# print(request.POST)
+	tasksToRemove = request.POST["tasksToRemove"]
+	peopleToRemove = request.POST["peopleToRemove"]
+	filesToRemove = request.POST["filesToRemove"]
+	form = ProjectForm(request.POST)
+	if form.is_valid():
+		# form.cleaned_data['name'],
+		return True, {"status":"OK"}
+	else:
+		errors_fields = dict()
+		if form.errors:
+			errors_fields["fields"] = list(form.errors.keys())
+		return False, errors_fields
