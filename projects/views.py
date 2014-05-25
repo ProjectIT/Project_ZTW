@@ -57,7 +57,7 @@ def project_edit(request, id):
 		else:
 			errors_fields = dict()
 			if opt:
-				errors_fields["fields"] = list(opt.keys())
+				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	else:
 		p = __createExampleProject()
@@ -124,16 +124,26 @@ def task(request, id):
 	return HttpResponse(template.render(context))
 
 def task_edit(request, id, back_url=""):
-	# TODO back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
-	template = loader.get_template('task_write.html')
-	task = __createExampleTask()
+	if request.method == "POST" and request.is_ajax():
+		ok, opt = __task_edit(request,id)
+		if ok:
+			return HttpResponse(json.dumps(opt))
+		else:
+			errors_fields = dict()
+			if opt:
+				errors_fields["fields"] = opt
+			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+	else:
+		# TODO back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
+		template = loader.get_template('task_write.html')
+		task = __createExampleTask()
 
-	context = RequestContext(request, get_context({
-		'task': task,
-		'taskTypes': Task.TASK_TYPES,
-		'data_page_type': 'tasks'
-	}))
-	return HttpResponse(template.render(context))
+		context = RequestContext(request, get_context({
+			'task': task,
+			'taskTypes': Task.TASK_TYPES,
+			'data_page_type': 'tasks'
+		}))
+		return HttpResponse(template.render(context))
 
 def task_create(request, project_id):
 	if request.method == "POST" and request.is_ajax():
@@ -178,7 +188,14 @@ def __project_edit(request, id):
 		# form.cleaned_data['name'],
 		return True, {"status":"OK"}
 	else:
-		errors_fields = dict()
-		if form.errors:
-			errors_fields["fields"] = list(form.errors.keys())
-		return False, errors_fields
+		return False, list(form.errors.keys()) if form.errors else None
+
+def __task_edit(request, id):
+	print(request.POST)
+	filesToRemove = request.POST["filesToRemove"]
+	personResponsibleID = request.POST["personResponsibleId"]
+	form = TaskForm(request.POST)
+	if form.is_valid():
+		return True, {"status":"OK"}
+	else:
+		return False, list(form.errors.keys()) if form.errors else None

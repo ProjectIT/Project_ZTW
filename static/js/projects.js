@@ -37,29 +37,24 @@ function createProject(url) {
 function editProject(url, readProject_url) {
     console.log("project edit");
     var d = $('#project-form').serialize(); // get the form data
-    // "csrfmiddlewaretoken=7agqY8aEZdUVrKmCwXLRjZdVwWPmQVIK&name=Project+A&__complete=&complete=40&description=Lorem+ipsum+dolor+sit+amet%2C+consectetur+adipiscing+elit.+Sed+condimentum+vel+neque+eget+iaculis.+Mauris+placerat+consectetur+leo+eget+tempus.+Nullam+porta+lacinia+metus%2C+in+laoreet+lectus+cursus+a.+Praesent+condimentum+ligula+vitae+tellus+vehicula%2C+non+sodales+lectus+ultricies.+Sed+nunc+nisi%2C+pulvinar+eget+pulvinar+nec%2C+posuere+sed+arcu.+Vivamus+et+lacus+ut+est+facilisis+faucibus+at+quis+ligula.+Aliquam+scelerisque+dolor+lorem%2C+ut+blandit+libero+dapibus+id.+Duis+risus+felis%2C+mattis+nec+consequat+non%2C+pellentesque+a+sem.+Maecenas+at+neque+ut+enim+fermentum+vulputate.+Vivamus+non+auctor+enim.+Fusce+sollicitudin+ullamcorper+massa%2C+at+posuere+libero+commodo+sed.+Nullam+pharetra%2C+diam+et+ultrices+fermentum%2C+tortor+felis+tincidunt+risus%2C+id+condimentum+nibh+leo+eu+nisl.+Cras+leo+ante%2C+blandit+ac+bibendum+eu%2C+volutpat+id+nulla."
     d += "&tasksToRemove=" + JSON.stringify(tasksToRemove)
     d += "&peopleToRemove=" + JSON.stringify(peopleToRemove)
     d += "&filesToRemove=" + JSON.stringify(filesToRemove)
     $.ajax(url, {
         data: d,
         type: 'POST',
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader('TASKS_TO_REMOVE', "[1,2,3,4]");
-        },
         success: function(response) {
             var json = $.parseJSON(response);
-            window.location = readProject_url; //json.id; // project read
+            window.location = readProject_url;
         },
         error: function(xhr, textStatus, errorThrown) {
-            //console.log(textStatus + "::" + errorThrown + "->" + xhr.responseText);
             try {
-                // var json = $.parseJSON(xhr.responseText);
-                // if ('fields' in json) {
-                // for (var f in json.fields) {
-                // $('input[name="' + json.fields[f] + '"]').parent().addClass("has-error");
-                // }
-                // }
+                var json = $.parseJSON(xhr.responseText);
+                if ('fields' in json) {
+                    for (var f in json.fields) {
+                        $('input[name="' + json.fields[f] + '"]').parent().addClass("has-error");
+                    }
+                }
             } catch (err) {
                 alert("Unrecognised error " + xhr.status + " " + errorThrown);
             }

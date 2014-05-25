@@ -31,6 +31,8 @@
                 });
             {% else %}
                 $('#task-form').submit(function(event) {
+                    editTask("{% url 'task_edit' task.id %}","{% url 'task' task.id %}");
+                    event.preventDefault();
                 });
             {% endif %}
 
@@ -109,7 +111,7 @@
             </div>
         </div>
         <header class="clearfix">Assign</header>
-        <div id="assign-img-div" style="display:none">
+        <div id="assign-img-div" style="display:none" data-person-id="{{ task.personResponsible.id|default:"-1" }}">
              <p class="person-remove">
                     <!--TODO person remove from project-->
 					<span class="glyphicon glyphicon-remove"></span>
@@ -126,7 +128,7 @@
         <ul id="files-list" class="clearfix">
 
             {% for file in task.files %}
-            <li class="files-list-item" data-type="{{file.type|lower}}">
+            <li class="files-list-item" data-type="{{file.type|lower}}" data-file-id="{{ file.id }}">
                 <!--TODO add some :hover, because there is a lot of confusion-->
 
                 <!--icon-->
@@ -146,7 +148,7 @@
 
                  <!--file name-->
                 <b>_{{ file.name }}_</b>
-                <p class="person-remove">
+                <p class="file-remove remove-button">
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
             </li>
