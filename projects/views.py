@@ -65,11 +65,11 @@ def project_create(request):
 		form = ProjectForm(request.POST)
 		if form.is_valid():
 			# form.cleaned_data['name'],
-			return HttpResponse("OK")
+			return HttpResponse(json.dumps({"status":"OK","id":13}))
 		else:
-			errors_fields = []
+			errors_fields = dict()
 			if form.errors:
-				errors_fields = form.errors
+				errors_fields["fields"] = list(form.errors.keys())
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	else:
 		template = loader.get_template('project_write.html')

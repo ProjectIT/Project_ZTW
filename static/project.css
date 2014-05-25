@@ -287,6 +287,7 @@ project write - slider
 
 #id_name {
 	min-width: 300px;
+	max-width: 300px;
 	padding: 5px;
 }
 
