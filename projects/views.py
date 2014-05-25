@@ -1,23 +1,35 @@
-from django.http import HttpResponse
+import json
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader, RequestContext
+from projects.forms import ProjectForm
 
 from projects.models import Task
 from projects.stubs import create_stub_user, __createExampleProject, __createExampleTask
 
 # TODO add 'user_project_list' for all users in public profile
+# TODO rss ?
 
 # NOTE: 'user' in templates is a reserved keyword
 
-# date format:
-#https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date
+"""
+date format:
+	https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date
+forms:
+	https://docs.djangoproject.com/en/dev/topics/forms/modelforms/
+	https://docs.djangoproject.com/en/dev/ref/forms/validation/
+ajax:
+	http://stackoverflow.com/questions/11647715/how-to-submit-form-without-refreshing-page-using-django-ajax-jquery
+	http://lethain.com/two-faced-django-part-5-jquery-ajax/
+	http://stackoverflow.com/questions/20306981/how-do-i-integrate-ajax-with-django-applications
+	http://racingtadpole.com/blog/django-ajax-and-jquery/
+"""
 
-
-def get_context( tmplContext):
-	user=create_stub_user()
+def get_context(tmplContext):
+	user = create_stub_user()
 	context = {
-		'currentUser':user,
-		'user_id':user.id,
-		'task_count':2,
+		'currentUser': user,
+		'user_id': user.id,
+		'task_count': 2,
 	}
 	# concat
 	return dict(list(context.items()) + list(tmplContext.items()))
@@ -30,10 +42,10 @@ def project(request, id):
 	p = __createExampleProject()
 
 	template = loader.get_template('project_read.html')
-	context = RequestContext(request,  get_context({
+	context = RequestContext(request, get_context({
 		'project': p,
-		'data_page_type':'projects',
-		'can_edit':True
+		'data_page_type': 'projects',
+		'can_edit': True
 	}))
 	return HttpResponse(template.render(context))
 
@@ -41,19 +53,31 @@ def project_edit(request, id):
 	p = __createExampleProject()
 
 	template = loader.get_template('project_write.html')
-	context = RequestContext(request,  get_context({
+	context = RequestContext(request, get_context({
 		'project': p,
-		'data_page_type':'projects'
+		'data_page_type': 'projects'
 	}))
 	return HttpResponse(template.render(context))
 
 def project_create(request):
-	template = loader.get_template('project_write.html')
-	context = RequestContext(request,  get_context({
-		'new_project': True,
-		'data_page_type':'projects'
-	}))
-	return HttpResponse(template.render(context))
+	if request.method == "POST" and request.is_ajax():
+		print(request.POST)
+		form = ProjectForm(request.POST)
+		if form.is_valid():
+			# form.cleaned_data['name'],
+			return HttpResponse("OK")
+		else:
+			errors_fields = []
+			if form.errors:
+				errors_fields = form.errors
+			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+	else:
+		template = loader.get_template('project_write.html')
+		context = RequestContext(request, get_context({
+			'new_project': True,
+			'data_page_type': 'projects'
+		}))
+		return HttpResponse(template.render(context))
 
 
 def project_list(request):
@@ -61,8 +85,8 @@ def project_list(request):
 
 	template = loader.get_template('project_list.html')
 	context = RequestContext(request, get_context({
-		'projects':ps,
-		'data_page_type':'projects'
+		'projects': ps,
+		'data_page_type': 'projects'
 	}))
 	return HttpResponse(template.render(context))
 
@@ -79,12 +103,12 @@ def task(request, id):
 	template = loader.get_template('task_read.html')
 	task = __createExampleTask()
 
-	context = RequestContext(request,  get_context({
+	context = RequestContext(request, get_context({
 		'task': task,
-		'canAddComment':False,
-		'data_page_type':'tasks',
+		'canAddComment': False,
+		'data_page_type': 'tasks',
 		'taskTypes': Task.TASK_TYPES,
-		'can_edit':True
+		'can_edit': True
 	}))
 	return HttpResponse(template.render(context))
 
@@ -93,19 +117,19 @@ def task_edit(request, id, back_url=""):
 	template = loader.get_template('task_write.html')
 	task = __createExampleTask()
 
-	context = RequestContext(request,  get_context({
+	context = RequestContext(request, get_context({
 		'task': task,
 		'taskTypes': Task.TASK_TYPES,
-		'data_page_type':'tasks'
+		'data_page_type': 'tasks'
 	}))
 	return HttpResponse(template.render(context))
 
 def task_create(request):
 	template = loader.get_template('task_write.html')
-	context = RequestContext(request,  get_context({
+	context = RequestContext(request, get_context({
 		'new_project': True,
 		'taskTypes': Task.TASK_TYPES,
-		'data_page_type':'tasks'
+		'data_page_type': 'tasks'
 	}))
 	return HttpResponse(template.render(context))
 
@@ -113,9 +137,9 @@ def user_tasks_list(request, id):
 	ts = [__createExampleTask() for _ in range(7)]
 
 	template = loader.get_template('task_list.html')
-	context = RequestContext(request,  get_context({
-		'tasks':ts,
-		'data_page_type':'tasks'
+	context = RequestContext(request, get_context({
+		'tasks': ts,
+		'data_page_type': 'tasks'
 	}))
 	return HttpResponse(template.render(context))
 

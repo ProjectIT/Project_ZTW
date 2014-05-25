@@ -100,9 +100,14 @@
 	color: #909090;
 }
 
-.data-section header{
+.data-section header{ /* TODO remove - use label */
 	font-weight: 600;
 	font-size: 2em;
+}
+.data-section label{
+	font-weight: 600;
+	font-size: 2em;
+	display: block;
 }
 
 .data-section {
@@ -273,14 +278,14 @@ project write - slider
   border-radius: 50%;
 }
 /*_______________________________________*/
-#project-note {
+#id_description {
 	width: 100%;
 	max-width: 100%;
 	min-height: 200px;
 	padding: 5px;
 }
 
-#project-name {
+#id_name {
 	min-width: 300px;
 	padding: 5px;
 }

@@ -17,33 +17,36 @@
 
 {% block page_end %}
 	<script>
-		$('#completion-slider').slider({
+		$('#__id_complete').slider({
 			tooltip: 'hide'			
 		});
-		$("#completion-slider").on('slide', function(slideEvt) {
+		$("#__id_complete").on('slide', function(slideEvt) {
 			$("#completion-slider-val").text(slideEvt.value+"% complete");
+			$("#id_abc").val(slideEvt.value);
 		});
-        $("#completion-slider").slider('setValue', {{ project.complete|default:0 }});
+        //$("#__id_complete").slider('setValue', $("#__id_complete").slider('getValue') );
 
 	</script>
 {% endblock %}
 
 {% block content %}
+<form id="project-form" action="" method="post">{% csrf_token %}
 	<section class="data-section">
-		<header>Name</header>
-        <input id="project-name" type="text" name="project-name" placeholder="Name.." value="{{ project.name|default:"" }}">
+		<label for="id_name">Name</label>
+        <input id="id_name" name="name" type="text" placeholder="Name.." value="{{ project.name|default:"" }}">
 	</section>
-	
+
 	<section class="data-section">
-		<header>Completion status</header>
-		<input id="completion-slider" data-slider-id='completionSlider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="5" data-slider-value="50"/>
-		<b id="completion-slider-val"></b>
+		<label for="__id_complete">Completion status</label>
+		<input id="__id_complete" name="__complete" data-slider-id='completionSlider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="5" data-slider-value="{{ project.complete|default:50 }}"/>
+		<b id="completion-slider-val">{{ project.complete|default:50 }}% complete</b>
+        <input id="id_abc" name="complete" type="text" placeholder="Name.." value="{{ project.complete|default:"50" }}" style="display:none"/>
 	</section>
-	
+
 	<section class="data-section">
-		<header>Description</header>
-		<textarea id="project-note" rows="3" name="project-note" placeholder="Add description..">{{ project.description|default:"" }}</textarea>
-	</section>
+		<label for="id_description">Description</label>
+		<textarea id="id_description" name="description" rows="3" placeholder="Add description..">{{ project.description|default:"" }}</textarea>
+    </section>
 
 {% if not new_project %}
 
@@ -83,7 +86,7 @@
 
 		</table>
 	</section>
-	
+
 	<section class="data-section">
 		<div id="view-header-right" class="clearfix">
 			<div id="task-create" class="project-button">
@@ -148,7 +151,29 @@
 	<div class="project-button pull-left">
 		Back
 	</div>
-	<div class="project-button pull-right">
-		Save
-	</div>
+    <input type="submit" value="Save" class="project-button pull-right"/>
+
+</form>
+
+
+
+
+   <script language="JavaScript">
+    var frm = $('#project-form');
+    $(document).ready(function() {
+        frm.submit(function(event) {
+            var d = frm.serialize(); // get the form data
+            $.ajax( "/project/create",{
+                data: d,
+                success: function(response) {
+                },
+                type:'POST',
+                error: function(e){
+                }
+            });
+            event.preventDefault();
+        });
+    });
+</script>
+
 {% endblock %}
