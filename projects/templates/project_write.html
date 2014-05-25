@@ -65,11 +65,10 @@
 				<th class="tasks-cell tasks-col2">Title</th>
 				<th class="tasks-cell tasks-col3">Assigned to</th>
 				<th class="tasks-cell tasks-col4">Deadline</th>
-				<th class="tasks-cell tasks-col4"></th>
 			</tr>
 
             {% for task in project.tasks %}
-            <tr>
+            <tr data-task-id="{{ task.id }}">
                 <td class="tasks-cell tasks-col1"></td>
                 <td class="tasks-cell tasks-col2">{{ task.title }}</td>
                 <td class="tasks-cell tasks-col3">
@@ -81,6 +80,9 @@
                     <a href="{% url 'task_edit' task.id %}">
                         Edit
                     </a>
+                </td>
+                 <td class="tasks-cell tasks-col4 tasks-edit task-remove">
+                   <span class="glyphicon glyphicon-remove"></span>
                 </td>
             </tr>
             {% endfor %}
@@ -100,8 +102,8 @@
 		<!--TODO for each person add connection type: { admin/progr./etc}-->
 		<ul id="people-list" class="clearfix">
              {% for person in project.people %}
-            <li class="people-list-item">
-                <p class="person-remove">
+            <li class="people-list-item" data-person-id="{{ person.id }}">
+                <p class="person-remove remove-button">
                     <!--TODO person remove from project-->
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
@@ -117,7 +119,7 @@
 		<header>Files</header>
 		<ul id="files-list" class="clearfix">
             {% for file in project.files %}
-            <li class="files-list-item" data-type="{{file.type|lower}}">
+            <li class="files-list-item" data-type="{{file.type|lower}}" data-file-id="{{ file.id }}">
                 <!--TODO add some :hover, because there is a lot of confusion-->
 
                 <!--icon-->
@@ -137,7 +139,7 @@
 
                  <!--file name-->
                 <b>_{{ file.name }}_</b>
-                <p class="person-remove">
+                <p class="file-remove remove-button">
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
             </li>

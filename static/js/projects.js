@@ -1,6 +1,13 @@
 // TODO add better error markers ?
+// TODO add confirmation dialogs
 
-$(document).ready(function() {});
+$(document).ready(function() {
+    checkIfTaskTableShouldBeHidden();
+});
+
+var tasksToRemove = [];
+var peopleToRemove = [];
+var filesToRemove = [];
 
 function createProject(url) {
     var d = $('#project-form').serialize(); // get the form data
@@ -26,6 +33,41 @@ function createProject(url) {
         }
     });
 }
+
+$(".task-remove").click(function() {
+    var row = $(this).parent();
+    var tid = row.data("task-id");
+    console.log("removing task: " + tid);
+    tasksToRemove.push(tid);
+    row.remove();
+
+    checkIfTaskTableShouldBeHidden();
+});
+
+function checkIfTaskTableShouldBeHidden() {
+    var rows = $("#tasks-table tr").length;
+    //console.log(rows);
+    if (rows == 1) { // account for headers row
+        $("#tasks-table").remove();
+    }
+}
+
+$("p.person-remove").click(function() {
+    var personView =  $(this).parent("li");
+    var id = personView.data("person-id");
+    console.log("removing person: " + id);
+    peopleToRemove.push(id);
+    personView.remove();
+});
+
+$(".file-remove").click(function() {
+    var view =  $(this).parent("li");
+    var id = view.data("file-id");
+    console.log("removing file: " + id);
+    filesToRemove.push(id);
+    view.remove();
+});
+
 
 $('#__id_complete').slider({
     tooltip: 'hide'
