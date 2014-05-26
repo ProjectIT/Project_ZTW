@@ -6,7 +6,7 @@ from django.template import loader, RequestContext
 import sys
 from projects.forms import ProjectForm, TaskForm
 
-from projects.models import Task, User, Project
+from projects.models import Task, User, Project, PersonInProject, File
 
 # TODO add 'user_project_list' for all users in public profile
 # TODO rss ?
@@ -51,6 +51,12 @@ def project(request, id):
 	except Project.DoesNotExist:
 		return HttpResponseNotFound('<h1>Project not found</h1>')
 
+	# TODO fetching all relations by hand ?
+	p.tasks = Task.objects.filter(projectId=id)
+	p.people__ = PersonInProject.objects.filter(projectId=id)
+	p.people = [User.objects.get(id=uid.userId) for uid in p.people__]
+	p.files = File.objects.filter(projectId=id)
+
 	template = loader.get_template('project_read.html')
 	context = RequestContext(request, get_context({
 		'project': p,
@@ -62,6 +68,11 @@ def project(request, id):
 def project_edit(request, id):
 	try:
 		p = Project.objects.get(id=id)
+		# TODO fetching all relations by hand ?
+		p.tasks = Task.objects.filter(projectId=id)
+		p.people__ = PersonInProject.objects.filter(projectId=id)
+		p.people = [User.objects.get(id=uid.userId) for uid in p.people__]
+		p.files = File.objects.filter(projectId=id)
 	except Project.DoesNotExist:
 		return HttpResponseNotFound('<h1>Project not found</h1>')
 
@@ -92,6 +103,7 @@ def project_create(request):
 						description=form.cleaned_data['description'],
 						createdBy=get_current_user())
 			p.save(True,False)
+			# TODO add creator as admin !
 			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
 		else:
 			errors_fields = dict()
