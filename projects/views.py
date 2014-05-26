@@ -1,10 +1,12 @@
 import json
-from django.http import HttpResponse, HttpResponseBadRequest
+from random import choice
+import traceback
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader, RequestContext
+import sys
 from projects.forms import ProjectForm, TaskForm
 
-from projects.models import Task
-from projects.stubs import create_stub_user, __createExampleProject, __createExampleTask
+from projects.models import Task, User, Project
 
 # TODO add 'user_project_list' for all users in public profile
 # TODO rss ?
@@ -22,14 +24,18 @@ ajax:
 	http://lethain.com/two-faced-django-part-5-jquery-ajax/
 	http://stackoverflow.com/questions/20306981/how-do-i-integrate-ajax-with-django-applications
 	http://racingtadpole.com/blog/django-ajax-and-jquery/
+
 """
 
+def get_current_user():
+	return choice(User.objects.all())
+
 def get_context(tmplContext):
-	user = create_stub_user()
+	user = get_current_user()
 	context = {
 		'currentUser': user,
 		'user_id': user.id,
-		'task_count': 2,
+		'task_count': len(Task.objects.all()),
 	}
 	# concat
 	return dict(list(context.items()) + list(tmplContext.items()))
@@ -38,8 +44,13 @@ def get_context(tmplContext):
 #
 # projects
 #
+
 def project(request, id):
-	p = __createExampleProject()
+	# TODO handle errors
+	try:
+		p = Project.objects.get(id=id)
+	except Project.DoesNotExist:
+		return HttpResponseNotFound('<h1>Project not found</h1>')
 
 	template = loader.get_template('project_read.html')
 	context = RequestContext(request, get_context({
@@ -50,18 +61,21 @@ def project(request, id):
 	return HttpResponse(template.render(context))
 
 def project_edit(request, id):
+	try:
+		p = Project.objects.get(id=id)
+	except Project.DoesNotExist:
+		return HttpResponseNotFound('<h1>Project not found</h1>')
+
 	if request.method == "POST" and request.is_ajax():
-		ok, opt = __project_edit(request,id)
+		ok, opt = __project_edit(p, request)
 		if ok:
-			return HttpResponse(json.dumps(opt))
+			return HttpResponse(json.dumps({"status":"OK"}))
 		else:
 			errors_fields = dict()
 			if opt:
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	else:
-		p = __createExampleProject()
-
 		template = loader.get_template('project_write.html')
 		context = RequestContext(request, get_context({
 			'project': p,
@@ -69,14 +83,17 @@ def project_edit(request, id):
 		}))
 		return HttpResponse(template.render(context))
 
-
 def project_create(request):
 	if request.method == "POST" and request.is_ajax():
 		print(request.POST)
 		form = ProjectForm(request.POST)
 		if form.is_valid():
-			# form.cleaned_data['name'],
-			return HttpResponse(json.dumps({"status":"OK","id":13}))
+			p = Project(name=form.cleaned_data['name'],
+						complete=form.cleaned_data['complete'],
+						description=form.cleaned_data['description'],
+						createdBy=get_current_user())
+			p.save(True,False)
+			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
 		else:
 			errors_fields = dict()
 			if form.errors:
@@ -90,20 +107,17 @@ def project_create(request):
 		}))
 		return HttpResponse(template.render(context))
 
-
 def project_list(request):
-	ps = [__createExampleProject() for _ in range(7)]
-
 	template = loader.get_template('project_list.html')
 	context = RequestContext(request, get_context({
-		'projects': ps,
+		'projects': Project.objects.all(),
 		'data_page_type': 'projects'
 	}))
 	return HttpResponse(template.render(context))
 
-
 def user_project_list(request, id):
 	return project_list(request)
+
 
 #
 # tasks
@@ -112,7 +126,10 @@ def user_project_list(request, id):
 
 def task(request, id):
 	template = loader.get_template('task_read.html')
-	task = __createExampleTask()
+	try:
+		task = Task.objects.get(id=id)
+	except Task.DoesNotExist:
+		return HttpResponseNotFound('<h1>Task not found</h1>')
 
 	context = RequestContext(request, get_context({
 		'task': task,
@@ -124,10 +141,15 @@ def task(request, id):
 	return HttpResponse(template.render(context))
 
 def task_edit(request, id, back_url=""):
+	try:
+		task = Task.objects.get(id=id)
+	except Task.DoesNotExist:
+		return HttpResponseNotFound('<h1>Task not found</h1>')
+
 	if request.method == "POST" and request.is_ajax():
-		ok, opt = __task_edit(request,id)
+		ok, opt = __task_edit( task, request)
 		if ok:
-			return HttpResponse(json.dumps(opt))
+			return HttpResponse(json.dumps({"status":"OK"}))
 		else:
 			errors_fields = dict()
 			if opt:
@@ -136,23 +158,34 @@ def task_edit(request, id, back_url=""):
 	else:
 		# TODO back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
 		template = loader.get_template('task_write.html')
-		task = __createExampleTask()
-		pplAssignable = [create_stub_user() for _ in range(7)]
 
 		context = RequestContext(request, get_context({
 			'task': task,
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
-			'people_to_assign': pplAssignable
+			'people_to_assign': User.objects.all()
 		}))
 		return HttpResponse(template.render(context))
 
 def task_create(request, project_id):
+	try:
+		project = Project.objects.get(id=project_id)
+	except Project.DoesNotExist:
+		return HttpResponseNotFound('<h1>Project not found</h1>')
+
 	if request.method == "POST" and request.is_ajax():
 		print(request.POST)
 		form = TaskForm(request.POST)
 		if form.is_valid():
-			return HttpResponse(json.dumps({"status":"OK","id":13}))
+			p = Task(projectId=project,
+				title=form.cleaned_data['title'],
+				type=form.cleaned_data['type'],
+				deadline=form.cleaned_data['deadline'],
+				description=form.cleaned_data['description'],
+				createdBy=get_current_user())
+			p.save(True,False)
+			__assign_person(p, request)
+			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
 		else:
 			errors_fields = dict()
 			if form.errors:
@@ -160,46 +193,77 @@ def task_create(request, project_id):
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	else:
 		template = loader.get_template('task_write.html')
-		pplAssignable = [create_stub_user() for _ in range(7)]
 		context = RequestContext(request, get_context({
 			'new_task': True,
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
 			'project_id': project_id,
-			'people_to_assign': pplAssignable
+			'people_to_assign': User.objects.all()
 		}))
 		return HttpResponse(template.render(context))
 
 def user_tasks_list(request, id):
-	ts = [__createExampleTask() for _ in range(7)]
-
 	template = loader.get_template('task_list.html')
 	context = RequestContext(request, get_context({
-		'tasks': ts,
+		'tasks': Task.objects.all(),
 		'data_page_type': 'tasks'
 	}))
 	return HttpResponse(template.render(context))
 
 
+#
+# __utils
+#
 
-def __project_edit(request, id):
+def __project_edit(project, request):
 	# print(request.POST)
 	tasksToRemove = request.POST["tasksToRemove"]
 	peopleToRemove = request.POST["peopleToRemove"]
 	filesToRemove = request.POST["filesToRemove"]
 	form = ProjectForm(request.POST)
 	if form.is_valid():
-		# form.cleaned_data['name'],
-		return True, {"status":"OK"}
+		project.name = form.cleaned_data['name']
+		project.complete = form.cleaned_data['complete']
+		project.description = form.cleaned_data['description']
+		project.createdBy = get_current_user()
+		project.save(False,True)
+		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None
 
-def __task_edit(request, id):
+def __task_edit( task, request):
 	print(request.POST)
-	filesToRemove = request.POST["filesToRemove"]
-	personResponsibleID = request.POST["personResponsibleId"]
+	# filesToRemove = request.POST["filesToRemove"]
+	# personResponsibleID = request.POST["personResponsibleId"]
 	form = TaskForm(request.POST)
 	if form.is_valid():
-		return True, {"status":"OK"}
+		task.title = form.cleaned_data['title']
+		task.type = form.cleaned_data['type']
+		task.deadline = form.cleaned_data['deadline']
+		task.description = form.cleaned_data['description']
+		task.createdBy = get_current_user()
+		task.save(False,True)
+		__assign_person(task,request)
+		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None
+
+def __assign_person( task, request):
+	key = "personResponsibleId"
+	if key in request.POST:
+		try:
+			personId = int(request.POST[key])
+			print(">>> assign person: "+str(personId))
+			if personId > 0:
+				user = User.objects.get(id=personId)
+				task.personResponsible = user
+			else:
+				task.personResponsible = None
+			task.save(False,True)
+			print(">>> OK")
+			return
+		except Exception as e:
+			# print(">>> Exception" + e.)
+			traceback.print_exc(file=sys.stdout)
+			pass
+	print(">>> NO person")
