@@ -1,10 +1,11 @@
 import json
+from random import choice
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader, RequestContext
 from projects.forms import ProjectForm, TaskForm
 
-from projects.models import Task
-from projects.stubs import create_stub_user, __createExampleProject, __createExampleTask
+from projects.models import Task, User, Project
+from projects.stubs import create_stub_user, __createExampleTask
 
 # TODO add 'user_project_list' for all users in public profile
 # TODO rss ?
@@ -22,10 +23,14 @@ ajax:
 	http://lethain.com/two-faced-django-part-5-jquery-ajax/
 	http://stackoverflow.com/questions/20306981/how-do-i-integrate-ajax-with-django-applications
 	http://racingtadpole.com/blog/django-ajax-and-jquery/
+
 """
 
+def get_current_user():
+	return choice(User.objects.all())
+
 def get_context(tmplContext):
-	user = create_stub_user()
+	user = get_current_user()
 	context = {
 		'currentUser': user,
 		'user_id': user.id,
@@ -38,9 +43,10 @@ def get_context(tmplContext):
 #
 # projects
 #
-def project(request, id):
-	p = __createExampleProject()
 
+def project(request, id):
+	# TODO handle errors
+	p = Project.objects.filter(id=id)[0]
 	template = loader.get_template('project_read.html')
 	context = RequestContext(request, get_context({
 		'project': p,
@@ -53,15 +59,14 @@ def project_edit(request, id):
 	if request.method == "POST" and request.is_ajax():
 		ok, opt = __project_edit(request,id)
 		if ok:
-			return HttpResponse(json.dumps(opt))
+			return HttpResponse(json.dumps({"status":"OK"}))
 		else:
 			errors_fields = dict()
 			if opt:
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	else:
-		p = __createExampleProject()
-
+		p = Project.objects.filter(id=id)[0]
 		template = loader.get_template('project_write.html')
 		context = RequestContext(request, get_context({
 			'project': p,
@@ -69,14 +74,17 @@ def project_edit(request, id):
 		}))
 		return HttpResponse(template.render(context))
 
-
 def project_create(request):
 	if request.method == "POST" and request.is_ajax():
 		print(request.POST)
 		form = ProjectForm(request.POST)
 		if form.is_valid():
-			# form.cleaned_data['name'],
-			return HttpResponse(json.dumps({"status":"OK","id":13}))
+			p = Project(name=form.cleaned_data['name'],
+						complete=form.cleaned_data['complete'],
+						description=form.cleaned_data['description'],
+						createdBy=get_current_user())
+			p.save(True,False)
+			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
 		else:
 			errors_fields = dict()
 			if form.errors:
@@ -90,20 +98,17 @@ def project_create(request):
 		}))
 		return HttpResponse(template.render(context))
 
-
 def project_list(request):
-	ps = [__createExampleProject() for _ in range(7)]
-
 	template = loader.get_template('project_list.html')
 	context = RequestContext(request, get_context({
-		'projects': ps,
+		'projects': Project.objects.all(),
 		'data_page_type': 'projects'
 	}))
 	return HttpResponse(template.render(context))
 
-
 def user_project_list(request, id):
 	return project_list(request)
+
 
 #
 # tasks
@@ -181,6 +186,9 @@ def user_tasks_list(request, id):
 	return HttpResponse(template.render(context))
 
 
+#
+# __utils
+#
 
 def __project_edit(request, id):
 	# print(request.POST)
@@ -189,8 +197,13 @@ def __project_edit(request, id):
 	filesToRemove = request.POST["filesToRemove"]
 	form = ProjectForm(request.POST)
 	if form.is_valid():
-		# form.cleaned_data['name'],
-		return True, {"status":"OK"}
+		p = Project.objects.filter(id=id)[0]
+		p.name = form.cleaned_data['name']
+		p.complete = form.cleaned_data['complete']
+		p.description = form.cleaned_data['description']
+		p.createdBy = get_current_user()
+		p.save(False,True)
+		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None
 
