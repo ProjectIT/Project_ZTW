@@ -60,11 +60,14 @@
 
 	<section class="data-section">
 		<div id="view-header-right">
+            <a href="{% url 'task_create' project.id %}">
 			<div id="task-create" class="project-button">
 				<span class="glyphicon glyphicon-plus"></span>
 				add new task
 			</div>
+            </a>
 		</div>
+
 		<header class="clearfix">Tasks</header>
 		<table id="tasks-table">
 			<tr>

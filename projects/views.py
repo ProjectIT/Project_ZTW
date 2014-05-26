@@ -24,7 +24,9 @@ ajax:
 	http://lethain.com/two-faced-django-part-5-jquery-ajax/
 	http://stackoverflow.com/questions/20306981/how-do-i-integrate-ajax-with-django-applications
 	http://racingtadpole.com/blog/django-ajax-and-jquery/
-
+models:
+	http://www.djangobook.com/en/2.0/chapter05.html
+	http://www.djangobook.com/en/2.0/chapter10.html
 """
 
 def get_current_user():
@@ -54,7 +56,7 @@ def project(request, id):
 	# TODO fetching all relations by hand ?
 	p.tasks = Task.objects.filter(projectId=id)
 	p.people__ = PersonInProject.objects.filter(projectId=id)
-	p.people = [User.objects.get(id=uid.userId) for uid in p.people__]
+	p.people = [uid.userId for uid in p.people__]
 	p.files = File.objects.filter(projectId=id)
 
 	template = loader.get_template('project_read.html')
@@ -67,11 +69,12 @@ def project(request, id):
 
 def project_edit(request, id):
 	try:
+		usr = get_current_user()
 		p = Project.objects.get(id=id)
 		# TODO fetching all relations by hand ?
 		p.tasks = Task.objects.filter(projectId=id)
 		p.people__ = PersonInProject.objects.filter(projectId=id)
-		p.people = [User.objects.get(id=uid.userId) for uid in p.people__]
+		p.people = [uid.userId for uid in p.people__ if uid.userId.id != usr.id] # TODO remove current user :)
 		p.files = File.objects.filter(projectId=id)
 	except Project.DoesNotExist:
 		return HttpResponseNotFound('<h1>Project not found</h1>')
@@ -98,12 +101,18 @@ def project_create(request):
 		print(request.POST)
 		form = ProjectForm(request.POST)
 		if form.is_valid():
+			usr = get_current_user()
 			p = Project(name=form.cleaned_data['name'],
 						complete=form.cleaned_data['complete'],
 						description=form.cleaned_data['description'],
-						createdBy=get_current_user())
+						createdBy=usr)
 			p.save(True,False)
 			# TODO add creator as admin !
+			pip = PersonInProject(projectId=p,
+					  	userId=usr,
+						role=PersonInProject.PERSON_ROLE[1][0],
+						createdBy=usr)
+			pip.save(True,False)
 			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
 		else:
 			errors_fields = dict()
