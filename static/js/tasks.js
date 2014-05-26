@@ -1,16 +1,7 @@
-// TODO add better error markers ?
-// TODO add confirmation dialogs
-
-$(document).ready(function() {
-    checkIfTaskTableShouldBeHidden();
-});
-
-var tasksToRemove = [];
-var peopleToRemove = [];
 var filesToRemove = [];
 
-function createProject(url) {
-    var d = $('#project-form').serialize(); // get the form data
+function createTask(url) {
+    var d = $('#task-form').serialize(); // get the form data
     $.ajax(url, {
         data: d,
         type: 'POST',
@@ -19,10 +10,10 @@ function createProject(url) {
             window.location = json.id; // ?!
         },
         error: function(xhr, textStatus, errorThrown) {
-            //console.log(textStatus + "::" + errorThrown + "->" + xhr.responseText);
             try {
                 var json = $.parseJSON(xhr.responseText);
                 if ('fields' in json) {
+                    console.log(json.fields);
                     for (var f in json.fields) {
                         $('input[name="' + json.fields[f] + '"]').parent().addClass("has-error");
                     }
@@ -34,18 +25,17 @@ function createProject(url) {
     });
 }
 
-function editProject(url, readProject_url) {
-    console.log("project edit");
-    var d = $('#project-form').serialize(); // get the form data
-    d += "&tasksToRemove=" + JSON.stringify(tasksToRemove)
-    d += "&peopleToRemove=" + JSON.stringify(peopleToRemove)
+function editTask(url, readTask_url) {
+    console.log("task edit");
+    var d = $('#task-form').serialize(); // get the form data
     d += "&filesToRemove=" + JSON.stringify(filesToRemove)
+    d += "&personResponsibleId=" + JSON.stringify($("#assign-img-div").data("person-id"))
     $.ajax(url, {
         data: d,
         type: 'POST',
         success: function(response) {
             var json = $.parseJSON(response);
-            window.location = readProject_url;
+            window.location = readTask_url;
         },
         error: function(xhr, textStatus, errorThrown) {
             try {
@@ -62,30 +52,32 @@ function editProject(url, readProject_url) {
     });
 }
 
-$(".task-remove").click(function() {
-    var row = $(this).parent();
-    var tid = row.data("task-id");
-    console.log("removing task: " + tid);
-    tasksToRemove.push(tid);
-    row.remove();
+$(".assignment-list-item").click(function() {
+    var id = $(this).data("person-id");
+    personResponsibleId = id;
+    console.log("settings asignee: " + personResponsibleId);
+    $("#assignment-dialog").hide();
 
-    checkIfTaskTableShouldBeHidden();
+    // show in form
+    $("#assign-img-div").css("display", "block");
+    var imgSrc = $(this).find("img").attr("src");
+    var name = $(this).find(".assignement-name").html();
+    $("#assign-img").attr("src", imgSrc);
+    $("#assign-name").html(name);
 });
 
-function checkIfTaskTableShouldBeHidden() {
-    var rows = $("#tasks-table tr").length;
-    //console.log(rows);
-    if (rows == 1) { // account for headers row
-        $("#tasks-table").remove();
-    }
-}
+$("#assign-person").click(function(){
+    $("#assignment-dialog").show();
+});
+
+$("#assignment-dialog-close").click(function(){
+     $("#assignment-dialog").hide();
+});
 
 $("p.person-remove").click(function() {
-    var personView = $(this).parent("li");
-    var id = personView.data("person-id");
-    console.log("removing person: " + id);
-    peopleToRemove.push(id);
-    personView.remove();
+    console.log("removing person: " + $("#assign-img-div").data("person-id"));
+    $("#assign-img-div").data("person-id", -1);
+    $("#assign-img-div").hide();
 });
 
 $(".file-remove").click(function() {
@@ -95,14 +87,3 @@ $(".file-remove").click(function() {
     filesToRemove.push(id);
     view.remove();
 });
-
-
-$('#__id_complete').slider({
-    tooltip: 'hide'
-});
-
-$("#__id_complete").on('slide', function(slideEvt) {
-    $("#completion-slider-val").text(slideEvt.value + "% complete");
-    $("#id_abc").val(slideEvt.value);
-});
-//$("#__id_complete").slider('setValue', $("#__id_complete").slider('getValue') );

@@ -175,6 +175,8 @@
 	overflow: hidden;
 	background-color: #f2f2f0;
 	height: inherit;
+	border: 1px solid #aaa;
+	border-top-width:0px;
 }
 #view-header {
 	color: #6b6a66;
@@ -197,4 +199,16 @@
 
 #edit-button{
 	font-size: 15px;
+}
+
+
+.remove-button {
+	position: absolute;
+	top: 2px; right: 2px;
+	font-size: 20px;
+	cursor: pointer;
+	color: #222 !important;
+}
+.remove-button:hover{
+	color: red !important;
 }
