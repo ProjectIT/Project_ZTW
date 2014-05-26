@@ -29,7 +29,7 @@ function editTask(url, readTask_url) {
     console.log("task edit");
     var d = $('#task-form').serialize(); // get the form data
     d += "&filesToRemove=" + JSON.stringify(filesToRemove)
-    d += "&personResponsibleId=" + JSON.stringify( $("#assign-img-div").data("person-id"))
+    d += "&personResponsibleId=" + JSON.stringify($("#assign-img-div").data("person-id"))
     $.ajax(url, {
         data: d,
         type: 'POST',
@@ -52,6 +52,27 @@ function editTask(url, readTask_url) {
     });
 }
 
+$(".assignment-list-item").click(function() {
+    var id = $(this).data("person-id");
+    personResponsibleId = id;
+    console.log("settings asignee: " + personResponsibleId);
+    $("#assignment-dialog").hide();
+
+    // show in form
+    $("#assign-img-div").css("display", "block");
+    var imgSrc = $(this).find("img").attr("src");
+    var name = $(this).find(".assignement-name").html();
+    $("#assign-img").attr("src", imgSrc);
+    $("#assign-name").html(name);
+});
+
+$("#assign-person").click(function(){
+    $("#assignment-dialog").show();
+});
+
+$("#assignment-dialog-close").click(function(){
+     $("#assignment-dialog").hide();
+});
 
 $("p.person-remove").click(function() {
     console.log("removing person: " + $("#assign-img-div").data("person-id"));

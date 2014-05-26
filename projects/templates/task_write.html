@@ -117,7 +117,9 @@
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
             <img id="assign-img" src="{{ STATIC_URL }}{{ task.personResponsible.avatarPath|default:"stub_imgs/avatar2.jpg" }}">
-            {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+            <p id="assign-name">
+        {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+            </p>
         </div>
     </section>
 
@@ -173,4 +175,23 @@
     <input type="submit" value="Save" class="task-button pull-right"/>
 
 </form>
+
+<!---->
+<!--dialog-->
+<!---->
+<div id="assignment-dialog">
+    <span id="assignment-dialog-close" class="glyphicon glyphicon-remove"></span>
+
+    <header id="assignment-dialog-title">
+    Assign to the task
+    </header>
+     <ul id="assignment-list" class="clearfix">
+        {% for person in people_to_assign %}
+        <li class="assignment-list-item" data-person-id="{{ person.id }}">
+            <img src="{{ STATIC_URL }}{{ person.avatarPath}}">
+            <span class="assignement-name">{{ person.name }}&nbsp;{{ person.lastName }}</span>
+        </li>
+        {% endfor %}
+     </ul>
+</div>
 {% endblock %}

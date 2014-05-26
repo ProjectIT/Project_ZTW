@@ -137,11 +137,13 @@ def task_edit(request, id, back_url=""):
 		# TODO back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
 		template = loader.get_template('task_write.html')
 		task = __createExampleTask()
+		pplAssignable = [create_stub_user() for _ in range(7)]
 
 		context = RequestContext(request, get_context({
 			'task': task,
 			'taskTypes': Task.TASK_TYPES,
-			'data_page_type': 'tasks'
+			'data_page_type': 'tasks',
+			'people_to_assign': pplAssignable
 		}))
 		return HttpResponse(template.render(context))
 
@@ -158,11 +160,13 @@ def task_create(request, project_id):
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	else:
 		template = loader.get_template('task_write.html')
+		pplAssignable = [create_stub_user() for _ in range(7)]
 		context = RequestContext(request, get_context({
 			'new_task': True,
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
-			'project_id': project_id
+			'project_id': project_id,
+			'people_to_assign': pplAssignable
 		}))
 		return HttpResponse(template.render(context))
 

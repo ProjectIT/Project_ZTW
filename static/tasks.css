@@ -392,3 +392,78 @@ project write - slider
 	min-height: 50px;
 	padding: 5px;
 }
+
+#assignment-dialog{
+	background: white;
+	font-family: corbertregular;
+	height: inherit;
+	margin-top: 10%; /*TODO better center vertically the login dialog*/
+	margin: auto;
+	padding: 15px 35px;
+	position:fixed;
+	max-width: 500px;
+	top: 80px;
+	display: none;
+	border: 1px solid #aaa;
+	/*
+	height: auto;
+	position: absolute;
+	bottom: 30px; left:0px;
+	z-index: 10;
+	*/
+}
+
+#assignment-dialog-close {
+	color:black;
+	position: absolute;
+	right: 15px;
+	top: 5px;
+	font-size: 22px;
+	transition: color 0.2s;
+	cursor: pointer;
+}
+#assignment-dialog-close:hover {
+	color: red;
+}
+
+#assignment-dialog-title {
+	font-weight: 600;
+	font-size: 1.2em;
+	margin-bottom: 15px;
+}
+
+#assignment-list{
+	list-style: none;
+	padding: 0px 0px;
+}
+
+.assignment-list-item{
+	cursor: pointer;
+	float: left;
+	width: 20%;
+	background: #000;
+	border-radius: 1px;
+	position: relative;
+}
+.assignment-list-item:hover{
+	background: #fff;
+}
+.assignment-list-item img{
+	width: 100%;
+	opacity: 0.95;
+	/* height: 118px; */
+}
+
+.assignement-name{
+	position: absolute;
+	background-color: #838383;
+	color: white;
+	bottom: 0px;
+	opacity: 0.8;
+	padding: 2px;
+	display: none;
+	font-size: 8px;
+}
+.assignment-list-item:hover .assignement-name{
+	display: block;
+}
