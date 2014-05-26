@@ -83,7 +83,6 @@
                 </td>
                 <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
                 <td class="tasks-cell tasks-col4 tasks-edit">
-                    <!--TODO fill url to go back to project edit-->
                     <a href="{% url 'task_edit' task.id %}">
                         Edit
                     </a>
@@ -105,13 +104,11 @@
 			</div>
 		</div>
 		<header class="clearfix">People</header>
-		<!--TODO show only admins and make the 'view all' button ?-->
 		<!--TODO for each person add connection type: { admin/progr./etc}-->
 		<ul id="people-list" class="clearfix">
              {% for person in project.people %}
             <li class="people-list-item" data-person-id="{{ person.id }}">
                 <p class="person-remove remove-button">
-                    <!--TODO person remove from project-->
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
 				<img src="{{ STATIC_URL }}{{ person.avatarPath}}">
@@ -158,9 +155,15 @@
 
     <!--TODO project delete-->
 	<!--save and back buttons-->
+    {% if not new_project %}
+    <a href="{% url 'project' project.id %}">
+    {% else %}
+    <a href="{% url 'project_list' %}">
+    {% endif %}
 	<div class="project-button pull-left">
 		Back
 	</div>
+    </a>
     <input type="submit" value="Save" class="project-button pull-right"/>
 
 </form>

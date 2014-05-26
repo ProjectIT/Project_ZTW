@@ -73,7 +73,6 @@
 		<!-- main content panel f.e. timeline, images, search etc. -->
 		<div id="main-panel" class="ui-content-min-h">
 			<header id="view-header">
-                <!-- TODO top strip color -->
 				<span class="glyphicon glyphicon-folder-open"></span>
 				<span id="view-title">{% block title %}{% endblock %}</span>
 
@@ -83,14 +82,6 @@
 			</header>
 
 			<div id="center-content">
-                <!-- TODO edit button position, add 'show_edit_button' variable -->
-                <!--{% if projectId %}-->
-                    <!--<a href="{% url 'project_edit' projectId %}">-->
-                        <!--<p class="tasks-cell tasks-col4 tasks-edit" style="position:absolute;right:0px;">Edit</p>-->
-                    <!--</a>-->
-                <!--{% endif %}-->
-
-
 			    {% block content %}{% endblock %}
 			</div>
 

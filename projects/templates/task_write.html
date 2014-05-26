@@ -86,14 +86,14 @@
                <li class="details-list-item">
                     <p><b>Created by</b>
                     <br />
-                    <!--TODO Created by -->
-                    <span class="details-info">Aaa Bbbb</span></p>
+                    <span class="details-info">
+                        {{ task.createdBy.name }}&nbsp;{{ task.createdBy.lastName }}
+                    </span></p>
                 </li>
                 <li class="details-list-item">
                     <p><b>Creation date</b>
                     <br />
-                    <!--TODO Creation date -->
-                    <span class="details-info">05-05-2014</span></p>
+                    <span class="details-info">{{ task.created|date:"d-m-Y" }}</span></p>
                 </li>
             </ul>
         </div>
@@ -104,7 +104,6 @@
     <!--Person-->
     <!---->
     <section class="data-section">
-        <!--TODO when should show this person ? it is possible there is no person responsible-->
         <div id="view-header-right" class="clearfix">
             <div id="assign-person" class="task-button">
                 Change assignment
@@ -113,7 +112,6 @@
         <header class="clearfix">Assign</header>
         <div id="assign-img-div" style="display:none" data-person-id="{{ task.personResponsible.id|default:"-1" }}">
              <p class="person-remove">
-                    <!--TODO person remove from project-->
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
             <img id="assign-img" src="{{ STATIC_URL }}{{ task.personResponsible.avatarPath|default:"stub_imgs/avatar2.jpg" }}">

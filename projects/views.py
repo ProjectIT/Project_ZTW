@@ -46,7 +46,6 @@ def get_context(tmplContext):
 #
 
 def project(request, id):
-	# TODO handle errors
 	try:
 		p = Project.objects.get(id=id)
 	except Project.DoesNotExist:
@@ -156,7 +155,6 @@ def task_edit(request, id, back_url=""):
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	else:
-		# TODO back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
 		template = loader.get_template('task_write.html')
 
 		context = RequestContext(request, get_context({
