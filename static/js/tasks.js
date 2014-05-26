@@ -7,7 +7,7 @@ function createTask(url) {
         type: 'POST',
         success: function(response) {
             var json = $.parseJSON(response);
-            window.location = json.id; // ?!
+            window.location = "/task/"+json.id; // TODO hardcoded url
         },
         error: function(xhr, textStatus, errorThrown) {
             try {
@@ -28,8 +28,8 @@ function createTask(url) {
 function editTask(url, readTask_url) {
     console.log("task edit");
     var d = $('#task-form').serialize(); // get the form data
-    d += "&filesToRemove=" + JSON.stringify(filesToRemove)
     d += "&personResponsibleId=" + JSON.stringify($("#assign-img-div").data("person-id"))
+    d += "&filesToRemove=" + JSON.stringify(filesToRemove)
     $.ajax(url, {
         data: d,
         type: 'POST',

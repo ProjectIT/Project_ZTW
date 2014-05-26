@@ -24,9 +24,11 @@ My tasks
             <a href="{% url 'task' task.id %}"> {{ task.title }} </a>
         </td>
         <td class="tasks-cell tasks-col3">
+            {% if task.personResponsible %}
             <a href="{% url 'public_profile' task.personResponsible.id %}">
                 {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
             </a>
+            {% endif %}
         </td>
         <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
     </tr>
