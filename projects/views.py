@@ -1,6 +1,6 @@
 import json
 from random import choice
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader, RequestContext
 from projects.forms import ProjectForm, TaskForm
 
@@ -46,7 +46,11 @@ def get_context(tmplContext):
 
 def project(request, id):
 	# TODO handle errors
-	p = Project.objects.filter(id=id)[0]
+	try:
+		p = Project.objects.get(id=id)
+	except Project.DoesNotExist:
+		return HttpResponseNotFound('<h1>Project not found</h1>')
+
 	template = loader.get_template('project_read.html')
 	context = RequestContext(request, get_context({
 		'project': p,
@@ -56,8 +60,13 @@ def project(request, id):
 	return HttpResponse(template.render(context))
 
 def project_edit(request, id):
+	try:
+		p = Project.objects.get(id=id)
+	except Project.DoesNotExist:
+		return HttpResponseNotFound('<h1>Project not found</h1>')
+
 	if request.method == "POST" and request.is_ajax():
-		ok, opt = __project_edit(request,id)
+		ok, opt = __project_edit(p, request)
 		if ok:
 			return HttpResponse(json.dumps({"status":"OK"}))
 		else:
@@ -66,7 +75,6 @@ def project_edit(request, id):
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	else:
-		p = Project.objects.filter(id=id)[0]
 		template = loader.get_template('project_write.html')
 		context = RequestContext(request, get_context({
 			'project': p,
@@ -190,19 +198,18 @@ def user_tasks_list(request, id):
 # __utils
 #
 
-def __project_edit(request, id):
+def __project_edit(project, request):
 	# print(request.POST)
 	tasksToRemove = request.POST["tasksToRemove"]
 	peopleToRemove = request.POST["peopleToRemove"]
 	filesToRemove = request.POST["filesToRemove"]
 	form = ProjectForm(request.POST)
 	if form.is_valid():
-		p = Project.objects.filter(id=id)[0]
-		p.name = form.cleaned_data['name']
-		p.complete = form.cleaned_data['complete']
-		p.description = form.cleaned_data['description']
-		p.createdBy = get_current_user()
-		p.save(False,True)
+		project.name = form.cleaned_data['name']
+		project.complete = form.cleaned_data['complete']
+		project.description = form.cleaned_data['description']
+		project.createdBy = get_current_user()
+		project.save(False,True)
 		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None
