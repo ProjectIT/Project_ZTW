@@ -24,7 +24,7 @@ class User(models.Model):
 	registerDate = models.DateTimeField(auto_now_add=True, editable=False)
 	modifiedDate = models.DateTimeField(auto_now=True, editable=False)
 	lastLoginDate = models.DateTimeField() # used for f.e. activity stream etc.
-	avatarPath = models.CharField(max_length=128, editable=False) # path to image file
+	avatarPath = models.CharField(max_length=128, editable=False,default="stub_imgs/avatar2.jpg") # path to image file
 	# ?description
 
 class Project(models.Model):
