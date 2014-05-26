@@ -1,7 +1,9 @@
 import json
 from random import choice
+import traceback
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader, RequestContext
+import sys
 from projects.forms import ProjectForm, TaskForm
 
 from projects.models import Task, User, Project
@@ -182,7 +184,7 @@ def task_create(request, project_id):
 				description=form.cleaned_data['description'],
 				createdBy=get_current_user())
 			p.save(True,False)
-			__assign_person(task,request)
+			__assign_person(p, request)
 			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
 		else:
 			errors_fields = dict()
@@ -247,13 +249,21 @@ def __task_edit( task, request):
 		return False, list(form.errors.keys()) if form.errors else None
 
 def __assign_person( task, request):
-	if "personResponsible" in request.POST:
-		personId = request.POST["personResponsible"]
-		print(">>> assing person: "+str(personId))
-	else:
-		print(">>> NO person")
-	# if(personId > 0):
-	# 	try:
-	# 		p.personResponsible = User.objects.get(id=personId)
-	# 	except Project.DoesNotExist:
-	# 		pass
+	key = "personResponsibleId"
+	if key in request.POST:
+		try:
+			personId = int(request.POST[key])
+			print(">>> assign person: "+str(personId))
+			if personId > 0:
+				user = User.objects.get(id=personId)
+				task.personResponsible = user
+			else:
+				task.personResponsible = None
+			task.save(False,True)
+			print(">>> OK")
+			return
+		except Exception as e:
+			# print(">>> Exception" + e.)
+			traceback.print_exc(file=sys.stdout)
+			pass
+	print(">>> NO person")

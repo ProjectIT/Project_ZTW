@@ -2,12 +2,14 @@ var filesToRemove = [];
 
 function createTask(url) {
     var d = $('#task-form').serialize(); // get the form data
+    var personResponsibleId = $("#assign-img-div").data("person-id");
+    d += "&personResponsibleId=" + JSON.stringify(personResponsibleId);
     $.ajax(url, {
         data: d,
         type: 'POST',
         success: function(response) {
             var json = $.parseJSON(response);
-            window.location = "/task/"+json.id; // TODO hardcoded url
+            window.location = "/task/" + json.id; // TODO hardcoded url
         },
         error: function(xhr, textStatus, errorThrown) {
             try {
@@ -27,9 +29,10 @@ function createTask(url) {
 
 function editTask(url, readTask_url) {
     console.log("task edit");
+    var personResponsibleId = $("#assign-img-div").data("person-id");
     var d = $('#task-form').serialize(); // get the form data
-    d += "&personResponsibleId=" + JSON.stringify($("#assign-img-div").data("person-id"))
-    d += "&filesToRemove=" + JSON.stringify(filesToRemove)
+    d += "&personResponsibleId=" + JSON.stringify(personResponsibleId);
+    d += "&filesToRemove=" + JSON.stringify(filesToRemove);
     $.ajax(url, {
         data: d,
         type: 'POST',
@@ -54,9 +57,9 @@ function editTask(url, readTask_url) {
 
 $(".assignment-list-item").click(function() {
     var id = $(this).data("person-id");
-    personResponsibleId = id;
-    console.log("settings asignee: " + personResponsibleId);
+    console.log("setting asignee: " + id);
     $("#assignment-dialog").hide();
+    $("#assign-img-div").data("person-id", id);
 
     // show in form
     $("#assign-img-div").css("display", "block");
@@ -66,12 +69,12 @@ $(".assignment-list-item").click(function() {
     $("#assign-name").html(name);
 });
 
-$("#assign-person").click(function(){
+$("#assign-person").click(function() {
     $("#assignment-dialog").show();
 });
 
-$("#assignment-dialog-close").click(function(){
-     $("#assignment-dialog").hide();
+$("#assignment-dialog-close").click(function() {
+    $("#assignment-dialog").hide();
 });
 
 $("p.person-remove").click(function() {
