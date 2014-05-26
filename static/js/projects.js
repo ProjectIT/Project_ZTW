@@ -7,6 +7,7 @@ $(document).ready(function() {
 
 var tasksToRemove = [];
 var peopleToRemove = [];
+var peopleToAdd = [];
 var filesToRemove = [];
 
 function createProject(url) {
@@ -39,6 +40,7 @@ function editProject(url, readProject_url) {
     var d = $('#project-form').serialize(); // get the form data
     d += "&tasksToRemove=" + JSON.stringify(tasksToRemove)
     d += "&peopleToRemove=" + JSON.stringify(peopleToRemove)
+    d += "&peopleToAdd=" + JSON.stringify(peopleToAdd);
     d += "&filesToRemove=" + JSON.stringify(filesToRemove)
     $.ajax(url, {
         data: d,
@@ -87,7 +89,6 @@ $("p.person-remove").click(function() {
     peopleToRemove.push(id);
     personView.remove();
 });
-
 $(".file-remove").click(function() {
     var view = $(this).parent("li");
     var id = view.data("file-id");
@@ -96,7 +97,41 @@ $(".file-remove").click(function() {
     view.remove();
 });
 
+/*
+ * add person to the project
+ */
+$("#person-add").click(function() {
+    $("#assignment-dialog").show();
+});
 
+$("#assignment-dialog-close").click(function() {
+    $("#assignment-dialog").hide();
+});
+
+$(".assignment-list-item").click(function() {
+    var id = $(this).data("person-id");
+    console.log("add person: " + id);
+    $("#assignment-dialog").hide();
+    peopleToAdd.push(id);
+
+    // show in form
+    var imgSrc = $(this).find("img").attr("src");
+    var name = $(this).find(".assignement-name").html();
+    // $("#assign-img").attr("src", imgSrc);
+    // $("#assign-name").html(name);
+    var s = '<li class="people-list-item" data-person-id="' + id + '">';
+    s += '<p class="just-added">';
+    s += '<span class="glyphicon glyphicon-bookmark"></span>';
+    s += '<p>';
+    s += '<img src="' + imgSrc + '">';
+    s += name + '</li>';
+    // $("#people-list").html($("#people-list").html() + s);
+    $("#people-list").append(s);
+});
+
+/*
+ * slider
+ */
 $('#__id_complete').slider({
     tooltip: 'hide'
 });

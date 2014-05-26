@@ -55,6 +55,9 @@ function editTask(url, readTask_url) {
     });
 }
 
+/*
+ * assing person
+ */
 $(".assignment-list-item").click(function() {
     var id = $(this).data("person-id");
     console.log("setting asignee: " + id);
@@ -83,6 +86,9 @@ $("p.person-remove").click(function() {
     $("#assign-img-div").hide();
 });
 
+/*
+ * other
+ */
 $(".file-remove").click(function() {
     var view = $(this).parent("li");
     var id = view.data("file-id");

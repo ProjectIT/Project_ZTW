@@ -101,7 +101,7 @@
 
 	<section class="data-section">
 		<div id="view-header-right" class="clearfix">
-			<div id="task-create" class="project-button">
+			<div id="person-add" class="project-button">
 				<span class="glyphicon glyphicon-plus"></span>
 				add new person
 			</div>
@@ -109,7 +109,7 @@
 		<header class="clearfix">People</header>
 		<!--TODO for each person add connection type: { admin/progr./etc}-->
 		<ul id="people-list" class="clearfix">
-             {% for person in project.people %}
+            {% for person in project.people %}
             <li class="people-list-item" data-person-id="{{ person.id }}">
                 <p class="person-remove remove-button">
 					<span class="glyphicon glyphicon-remove"></span>
@@ -171,4 +171,22 @@
 
 </form>
 
+<!---->
+<!--dialog-->
+<!---->
+<div id="assignment-dialog">
+    <span id="assignment-dialog-close" class="glyphicon glyphicon-remove"></span>
+
+    <header id="assignment-dialog-title">
+    Add to the project {TODO - search}
+    </header>
+     <ul id="assignment-list" class="clearfix">
+        {% for person in people_to_assign %}
+        <li class="assignment-list-item" data-person-id="{{ person.id }}">
+            <img src="{{ STATIC_URL }}{{ person.avatarPath}}">
+            <span class="assignement-name">{{ person.name }}&nbsp;{{ person.lastName }}</span>
+        </li>
+        {% endfor %}
+     </ul>
+</div>
 {% endblock %}

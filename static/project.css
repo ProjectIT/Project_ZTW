@@ -343,3 +343,9 @@ project write - slider
 .remove-button:hover{
 	color: red !important;
 }
+.just-added {
+	color: #3295BB !important;
+	position: absolute;
+	top: 2px; right: 2px;
+	font-size: 20px;
+}

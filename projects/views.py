@@ -92,7 +92,8 @@ def project_edit(request, id):
 		template = loader.get_template('project_write.html')
 		context = RequestContext(request, get_context({
 			'project': p,
-			'data_page_type': 'projects'
+			'data_page_type': 'projects',
+			'people_to_assign': User.objects.all()
 		}))
 		return HttpResponse(template.render(context))
 
