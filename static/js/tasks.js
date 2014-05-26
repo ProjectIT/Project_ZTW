@@ -96,3 +96,24 @@ $(".file-remove").click(function() {
     filesToRemove.push(id);
     view.remove();
 });
+
+// comment
+function addComment(url) {
+    console.log("task comment");
+    $.ajax(url, {
+        data: $('#comment-form').serialize(), // get the form data
+        type: 'POST',
+        success: function(response) {
+            var json = $.parseJSON(response);
+            var date = json.data.created[2] + "-" + json.data.created[1] + "-" + json.data.created[0];
+            s = '<li class="comments-list-item">';
+            s += '<b>' + json.data.createdBy.name + ' ' + json.data.createdBy.lastName + '</b>';
+            s += '<span class="comments-time">' + date + '</span>';
+            s += '<p>' + json.data.text + '</p></li>';
+            $("#comments-list").append(s);
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            console.log(textStatus + "::" + errorThrown);
+        }
+    });
+}

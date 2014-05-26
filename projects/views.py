@@ -6,7 +6,7 @@ from django.template import loader, RequestContext
 import sys
 from projects.forms import ProjectForm, TaskForm
 
-from projects.models import Task, User, Project, PersonInProject, File
+from projects.models import Task, User, Project, PersonInProject, File, TaskComment
 
 # TODO add 'user_project_list' for all users in public profile
 # TODO rss ?
@@ -149,12 +149,14 @@ def task(request, id):
 	template = loader.get_template('task_read.html')
 	try:
 		task = Task.objects.get(id=id)
+		task.files = File.objects.filter(projectId=id)
+		task.comments = TaskComment.objects.filter(taskId=id)
 	except Task.DoesNotExist:
 		return HttpResponseNotFound('<h1>Task not found</h1>')
 
 	context = RequestContext(request, get_context({
 		'task': task,
-		'canAddComment': False,
+		'canAddComment': True,
 		'data_page_type': 'tasks',
 		'taskTypes': Task.TASK_TYPES,
 		'can_edit': True
@@ -229,6 +231,34 @@ def user_tasks_list(request, id):
 		'data_page_type': 'tasks'
 	}))
 	return HttpResponse(template.render(context))
+
+def task_comment(request, task_id):
+	if request.method != "POST" or not request.is_ajax():
+		return HttpResponseNotFound('<h1>Page not found</h1>')
+	try:
+		task = Task.objects.get(id=task_id)
+		text = request.POST["new-comment-text"]
+		if len(text)>0:
+			tc = TaskComment(taskId=task,
+					text=text,
+					createdBy=get_current_user())
+			tc.save( True, False)
+			d = tc.created
+			tcJson = {
+				"id":tc.id,
+				"text":tc.text,
+				"created":[d.year,d.month,d.day],
+				"createdBy":{
+					"name":tc.createdBy.name,
+					"lastName":tc.createdBy.lastName
+				}
+			}
+			return HttpResponse(json.dumps({"status":"OK","data":tcJson}))
+	except Task.DoesNotExist:
+		return HttpResponseNotFound('<h1>Task not found</h1>')
+	hr = HttpResponse({"status":"error"})
+	hr.status_code = 412
+	return hr
 
 
 #
