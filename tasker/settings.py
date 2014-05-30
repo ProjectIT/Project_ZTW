@@ -112,3 +112,5 @@ STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, "tasker", "static"),
 	os.path.join(BASE_DIR, "projects","static"),
 )
+
+AUTH_PROFILE_MODULE = 'projects.UserProfile'

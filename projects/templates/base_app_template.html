@@ -27,7 +27,7 @@
              <a href="{% url 'settings' %}">
                  <span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
              </a>
-            <img src="{{ STATIC_URL }}{{ currentUser.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
+            <img src="{{ STATIC_URL }}{{ user.get_profile.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
 
             <!--TODO App tittle-->
 			<span id="brand" class="left-panel-size">App tittle</span>
@@ -42,7 +42,7 @@
 				<span class="glyphicon glyphicon-star navigation-panel-icon"></span>
 				<label>Dashboard</label>
 			</div>
-             <a href="{% url 'user_project_list' 123 %}">
+             <a href="{% url 'user_project_list' user.id %}">
                 <div data-page-type="projects" class="navigation-button">
                     <div id="color-strip-projects" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-folder-open navigation-panel-icon"></span>
@@ -50,7 +50,7 @@
                 </div>
             </a>
 
-             <a href="{% url 'user_tasks_list' 123 %}">
+             <a href="{% url 'user_tasks_list' user.id %}">
                 <div data-page-type="tasks" class="navigation-button">
                     <div id="color-strip-tasks" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-list navigation-panel-icon"></span>
@@ -61,7 +61,7 @@
                 </div>
              </a>
 
-            <a href="{% url 'friends_list' 123 %}">
+            <a href="{% url 'friends_list' user.id %}">
                 <div data-page-type="friends" class="navigation-button">
                     <div id="color-strip-friends" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-user navigation-panel-icon"></span>

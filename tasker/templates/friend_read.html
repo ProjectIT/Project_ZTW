@@ -2,11 +2,11 @@
 
 {% block head %}
     <!-- TODO clean up the 'friends.css' file - half the stuff is duplicated anyway.. -->
-	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}friends.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}friends.css" />
 {% endblock %}
 
 {% block title %}
-	Person name here!
+    {{ request.user.username }}
 {% endblock %}
 
 {% block content %}
@@ -15,8 +15,8 @@
             <!-- size of img should fit to size of div (with test)-->
             <div id="login-img-div">
                 <img id="login-img" src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-                <p>Aaa bbb <br />
-                aaaa@bbbb.com</p>
+                <p>{{ user }} <br />
+                {{user.email }}</p>
             </div>
             <h1>Projects</h1>
             <ul id="person-projects-list">
@@ -34,24 +34,33 @@
             <div class="right-cell">
                 <ul id="details-list">
                     <li class="details-list-item">
-                        <p><b>Assigned to</b>
+                        <p><b>Gender</b>
                         <br />
-                        <span class="details-info">Bbb Abbaab</span></p>
+                        {% if user.get_profile.gender == "F" %}
+                        <span class="details-info">Female</span></p>
+                        {% else %}
+                        <span class="details-info">Male</span></p>
+                        {% endif %}
                     </li>
                     <li class="details-list-item">
-                        <p><b>Deadline</b>
+                        <p><b>Birthdate</b>
                         <br />
-                        <span class="details-info">10-05-2014</span></p>
+                        <span class="details-info">{{ user.get_profile.birthdate }}</span></p>
                     </li>
                     <li class="details-list-item">
-                        <p><b>Created by</b>
+                        <p><b>Register date</b>
                         <br />
-                        <span class="details-info">Aaa Bbbb</span></p>
+                        <span class="details-info">{{ user.get_profile.registerDate }}</span></p>
                     </li>
                     <li class="details-list-item">
-                        <p><b>Creation date</b>
+                        <p><b>Modified</b>
                         <br />
-                        <span class="details-info">05-05-2014</span></p>
+                        <span class="details-info">{{ user.get_profile.modifiedDate }}</span></p>
+                    </li>
+                    <li class="details-list-item">
+                        <p><b>Last seen</b>
+                        <br />
+                        <span class="details-info">{{ user.get_profile.lastLoginDate }}</span></p>
                     </li>
                 </ul>
             </div>

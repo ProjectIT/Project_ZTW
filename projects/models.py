@@ -1,6 +1,7 @@
 import os
 from django.db import models
-
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 # ids:
 # id = models.AutoField(primary_key=True)
 # https://docs.djangoproject.com/en/dev/topics/db/models/#automatic-primary-key-fields
@@ -8,24 +9,32 @@ from django.db import models
 # foreign key docs:
 # https://docs.djangoproject.com/en/1.6/topics/db/queries/#backwards-related-objects
 
-class User(models.Model):
-	# TODO reuse the Django table ?
+class UserProfile(models.Model):
+	user = models.OneToOneField(User)
 	GENDERS = (
 		('F','Female'),
 		('M','Male')
 	)
-	name = models.CharField(max_length=50)
-	lastName = models.CharField(max_length=50)
-	email = models.EmailField()
-	login = models.CharField(max_length=50, unique=True)
-	password = models.CharField(max_length=50)
-	gender = models.CharField(max_length=1, choices=GENDERS, default='F')
-	birthdate = models.DateTimeField()
+	gender = models.CharField(max_length=1, choices=GENDERS, default='F', blank=True)
+	birthdate = models.DateTimeField(null=True, blank=True)
 	registerDate = models.DateTimeField(auto_now_add=True, editable=False)
 	modifiedDate = models.DateTimeField(auto_now=True, editable=False)
-	lastLoginDate = models.DateTimeField() # used for f.e. activity stream etc.
-	avatarPath = models.CharField(max_length=128, editable=False,default="stub_imgs/avatar2.jpg") # path to image file
+	lastLoginDate = models.DateTimeField(null=True, blank=True) # used for f.e. activity stream etc.
+	#avatar = models.ImageField(upload_to='profile_images', blank=True)
+	avatarPath = models.CharField(max_length=128, editable=False) # path to image file
 	# ?description
+
+	# Override the __unicode__() method to return out something meaningful!
+	def __unicode__(self):
+		return self.user.first_name + ' ' + self.user.last_name
+
+def user_post_save(sender, instance, created, **kwargs):
+	if created == True:
+		userProfile = UserProfile()
+		userProfile.user = instance
+		userProfile.save()
+
+post_save.connect(user_post_save, sender=User)
 
 class Project(models.Model):
 	name = models.CharField(max_length=50,blank=False)

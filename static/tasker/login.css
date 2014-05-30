@@ -65,7 +65,7 @@ input {
 	text-align: center;
 }
 
-input[type="text"].login_ctr {
+input[type].login_ctr {
 	background-color: #a4a4a4;
 	color:white;
 	padding: 5px;

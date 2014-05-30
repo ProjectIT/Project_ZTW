@@ -23,12 +23,15 @@
 			<span class="glyphicon glyphicon-tint"></span>
 		</header>
 		
-		<input id="username" type="text" class="login_ctr" name="username" placeholder="username">
-		<input id="password" type="text" class="login_ctr" name="password" placeholder="password">
-		<p id="password-forgot" class="clearfix">forgot your password ?</p>
-		<button id="login" class="login_ctr accept" name="login">
-			<span class="glyphicon glyphicon-ok"></span>
-		</button>
+		<form id="login_form" method="post" action="login">
+			{% csrf_token %}
+			<input id="username" type="text" class="login_ctr" name="username" placeholder="username" required>
+			<input id="password" type="password" class="login_ctr" name="password" placeholder="password" required>
+			<p id="password-forgot" class="clearfix">forgot your password ?</p>
+			<button id="login" type="submit" class="login_ctr accept" name="login-submit">
+				<span class="glyphicon glyphicon-ok"></span>
+			</button>
+		</form>
 		<p id="register-hint">Not a member ? <span id="sign-up">Sign up now</span></p>
 		
 			<div id="register-dialog" class="dialog">
@@ -37,11 +40,14 @@
 				<header id="register-title">
 				Create an account
 				</header>
-				<input id="register-username" type="text" class="login_ctr" name="register-username" placeholder="username">
-				<input id="register-email" type="text" class="login_ctr" name="register-email" placeholder="Your email address">
-				<input id="register-password" type="text" class="login_ctr" name="register-password" placeholder="password">
-				<input id="register-password2" type="text" class="login_ctr" name="register-password2" placeholder="re-enter password">
-				<button id="register" class="login_ctr accept" name="login">
+				<form id="register_form" method="post" action="login">
+					{% csrf_token %}
+					<input id="register-username" type="text" class="login_ctr" name="register-username" placeholder="username" required>
+					<input id="register-email" type="email" class="login_ctr" name="register-email" placeholder="Your email address" required>
+					<input id="register-password" type="password" class="login_ctr" name="register-password" placeholder="password" required>
+					<input id="register-password2" type="password" class="login_ctr" name="register-password2" placeholder="re-enter password" required>
+					<button id="register" type="submit" class="login_ctr accept" name="register-submit">
+				</form>
 					<span class="glyphicon glyphicon-ok"></span>
 				</button>
 			</div>
@@ -57,7 +63,7 @@ $('document').ready(function(){
 		$("#register-dialog").show();
 	});	
 	
-	$("#register-close").click(function( e){
+	$("#register-close").click(function(e){
 		$('#login-dialog').removeClass('login-overlay');
 		$("#register-dialog").hide();
 	});

@@ -27,11 +27,8 @@ ajax:
 
 """
 
-def get_current_user():
-	return choice(User.objects.all())
-
-def get_context(tmplContext):
-	user = get_current_user()
+def get_context(tmplContext, request):
+	user = request.user
 	context = {
 		'currentUser': user,
 		'user_id': user.id,
@@ -57,7 +54,7 @@ def project(request, id):
 		'project': p,
 		'data_page_type': 'projects',
 		'can_edit': True
-	}))
+	}, request))
 	return HttpResponse(template.render(context))
 
 def project_edit(request, id):
@@ -80,7 +77,7 @@ def project_edit(request, id):
 		context = RequestContext(request, get_context({
 			'project': p,
 			'data_page_type': 'projects'
-		}))
+		}, request))
 		return HttpResponse(template.render(context))
 
 def project_create(request):
@@ -104,7 +101,7 @@ def project_create(request):
 		context = RequestContext(request, get_context({
 			'new_project': True,
 			'data_page_type': 'projects'
-		}))
+		}, request))
 		return HttpResponse(template.render(context))
 
 def project_list(request):
@@ -112,7 +109,7 @@ def project_list(request):
 	context = RequestContext(request, get_context({
 		'projects': Project.objects.all(),
 		'data_page_type': 'projects'
-	}))
+	}, request))
 	return HttpResponse(template.render(context))
 
 def user_project_list(request, id):
@@ -137,7 +134,7 @@ def task(request, id):
 		'data_page_type': 'tasks',
 		'taskTypes': Task.TASK_TYPES,
 		'can_edit': True
-	}))
+	}, request))
 	return HttpResponse(template.render(context))
 
 def task_edit(request, id, back_url=""):
@@ -164,7 +161,7 @@ def task_edit(request, id, back_url=""):
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
 			'people_to_assign': User.objects.all()
-		}))
+		}, request))
 		return HttpResponse(template.render(context))
 
 def task_create(request, project_id):
@@ -199,7 +196,7 @@ def task_create(request, project_id):
 			'data_page_type': 'tasks',
 			'project_id': project_id,
 			'people_to_assign': User.objects.all()
-		}))
+		}, request))
 		return HttpResponse(template.render(context))
 
 def user_tasks_list(request, id):
@@ -207,7 +204,7 @@ def user_tasks_list(request, id):
 	context = RequestContext(request, get_context({
 		'tasks': Task.objects.all(),
 		'data_page_type': 'tasks'
-	}))
+	}, request))
 	return HttpResponse(template.render(context))
 
 
