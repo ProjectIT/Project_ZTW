@@ -349,3 +349,22 @@ project write - slider
 	top: 2px; right: 2px;
 	font-size: 20px;
 }
+
+#person-search-form{
+	/*margin-left: auto;
+	margin-right: auto;
+	width: 250px;*/
+	margin-bottom: 15px;
+}
+#person-search-submit{
+}
+
+#search-loading{
+	display:none;
+}
+
+#search-loading img{
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}

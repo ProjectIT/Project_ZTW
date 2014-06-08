@@ -3,6 +3,7 @@
 {% block head %}
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}project.css" />
 	<script src="{{ STATIC_URL }}bootstrap/js/bootstrap-slider.js" type="text/javascript"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.2/underscore-min.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block title %}
@@ -177,16 +178,43 @@
 <div id="assignment-dialog">
     <span id="assignment-dialog-close" class="glyphicon glyphicon-remove"></span>
 
-    <header id="assignment-dialog-title">
-    Add to the project {TODO - search}
-    </header>
-     <ul id="assignment-list" class="clearfix">
-        {% for person in people_to_assign %}
-        <li class="assignment-list-item" data-person-id="{{ person.id }}">
-            <img src="{{ STATIC_URL }}{{ person.avatarPath}}">
-            <span class="assignement-name">{{ person.name }}&nbsp;{{ person.lastName }}</span>
-        </li>
-        {% endfor %}
+    <form id="assignment-form" class="form-horizontal" role="form">
+        {% csrf_token %}
+
+        <legend>Add to the project</legend>
+        <div id="person-search-form" class="control-group">
+             <div class="form-group">
+                 <label class="control-label col-sm-2">Name</label>
+                <div class="col-sm-10">
+                    <input id="search-person-name" name="name" type="text" placeholder="" class="form-control search-person-ctr">
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="control-label col-sm-2">Last name</label>
+                <div class="col-sm-10">
+                    <input id="search-person-last-name" name="last-name" type="text" placeholder="" class="form-control search-person-ctr">
+                </div>
+            </div>
+             <div class="form-group">
+                <label class="control-label col-sm-2">User name</label>
+                <div class="col-sm-10">
+                    <input id="search-person-user-name" name="user-name" type="text" placeholder="" class="form-control search-person-ctr">
+                </div>
+            </div>
+        </div>
+    </form>
+    <div id="search-loading">
+        <img src="{{ STATIC_URL }}imgs/loaderb64.gif">
+    </div>
+    <span id="search-person-result"></span>
+
+    <ul id="assignment-list" class="clearfix">
      </ul>
 </div>
+
+<script type="text/template" id="search-result-template">
+    <li class="assignment-list-item" data-person-id="<%= id %>">
+    <img src="{{ STATIC_URL }}<%= avatar_path %>">
+    <span class="assignement-name"><%= name %>&nbsp;<%= last_name %></span>
+</li></script>
 {% endblock %}

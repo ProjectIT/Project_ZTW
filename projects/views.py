@@ -92,8 +92,7 @@ def project_edit(request, id):
 		template = loader.get_template('project_write.html')
 		context = RequestContext(request, get_context({
 			'project': p,
-			'data_page_type': 'projects',
-			'people_to_assign': User.objects.all()
+			'data_page_type': 'projects'
 		}))
 		return HttpResponse(template.render(context))
 
@@ -260,6 +259,45 @@ def task_comment(request, task_id):
 	hr.status_code = 412
 	return hr
 
+def users_for_project_search(request, project_id):
+	if request.method != "POST" or not request.is_ajax():
+		return HttpResponseNotFound('<h1>Page not found</h1>')
+	try:
+		p = Project.objects.get(id=project_id)
+		people__ = PersonInProject.objects.filter(projectId=project_id)
+		peopleAlreadyIn = [uid.userId.id for uid in people__]
+		print("exclude: "+str(peopleAlreadyIn))
+
+		name = request.POST["name"]
+		last_name = request.POST["last-name"]
+		user_name = request.POST["user-name"]
+		token = request.POST["search-token"]
+		print( name + "|" + last_name + "|" + user_name)
+
+		# query
+		result = User.objects\
+			.filter(name__contains=name)\
+			.filter(lastName__contains=last_name)\
+			.filter(login__contains=user_name)\
+			.exclude(id__in=peopleAlreadyIn)
+		print("found"+str(len(result)))
+		if len(result) < 20:
+			arr = []
+			for r in result:
+				arr.append({
+					"id":r.id,
+					"name":r.name,
+					"last_name":r.lastName,
+					"avatar_path":r.avatarPath
+				})
+			return HttpResponse(json.dumps({"search-token":token,"status":True,"data":arr }))
+		else:
+			return HttpResponse(json.dumps({"search-token":token,"status":False,"found-count":len(result)}))
+	except Project.DoesNotExist:
+		return HttpResponseNotFound('<h1>Project not found</h1>')
+	hr = HttpResponse({"status":"error"})
+	hr.status_code = 412
+	return hr
 
 #
 # __utils
@@ -267,7 +305,7 @@ def task_comment(request, task_id):
 
 def __project_edit(project, request):
 	# print(request.POST)
-	tasksToRemove = request.POST["tasksToRemove"]
+	tasksToRemove = request.POST["tasksToRemove"] # TODO
 	peopleToRemove = request.POST["peopleToRemove"]
 	filesToRemove = request.POST["filesToRemove"]
 	form = ProjectForm(request.POST)

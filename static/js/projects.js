@@ -1,9 +1,84 @@
 // TODO add better error markers ?
 // TODO add confirmation dialogs
 
+var searchQueryId = 0;
+
 $(document).ready(function() {
     checkIfTaskTableShouldBeHidden();
+
+    var searchDelay = 500;
+
+    var searchTimer = null;
+    $(".search-person-ctr").keyup(function() {
+        $("#assignment-list").hide();
+        $("#search-loading").show();
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            searchPerson();
+        }, searchDelay);
+    });
 });
+
+/*
+ * person assignment search
+ */
+function searchPerson() {
+    var d = $('#assignment-form').serialize(); // get the form data
+    ++searchQueryId;
+    d += "&search-token=" + searchQueryId;
+    console.log(d);
+
+    // var url = "project/user/search/2";
+    var url = "user/search";
+    $.ajax(url, {
+        data: d,
+        type: 'POST',
+        success: function(response) {
+            $("#search-loading").hide();
+            var json = $.parseJSON(response);
+            // $("#search-person-result").html(response);
+            if (json["search-token"] != searchQueryId) {
+                console.log("Got old search results");
+                return;
+            }
+
+            if (json.status && json.data.length > 0) {
+                // create person views
+                var tmplMarkup = $('#search-result-template').html();
+                for (i = 0; i < json.data.length; ++i) {
+                    var p = json.data[i];
+                    var compiledTmpl = _.template(tmplMarkup, p);
+                    $('#assignment-list').append(compiledTmpl);
+                }
+                
+                $('#assignment-list').show();
+
+                for (i = 0; i < json.data.length; ++i) {
+                    var p = json.data[i];
+                    $("[data-person-id='" + p.id + "']").click(assignmentListItemClick);
+                }
+
+
+            } else if (json.status && json.data.length === 0) {
+                var s = "Could not find user that matches the criteria";
+                $("#search-person-result").html(s);
+                // $("#search-person-result").html($("#search-person-result").html() + s);
+            } else {
+                var s = "Found " + json["found-count"] + " users that match the criteria, please limit the search";
+                $("#search-person-result").html(s);
+                // $("#search-person-result").html($("#search-person-result").html() + s);
+            }
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            $("#search-loading").hide();
+            //console.log(textStatus + "::" + errorThrown + "->" + xhr.responseText);
+            var json = $.parseJSON(xhr.responseText);
+            $("#search-person-result").html("Some error happened: '" + xhr.responseText + "'");
+        }
+    });
+}
+
+
 
 var tasksToRemove = [];
 var peopleToRemove = [];
@@ -108,7 +183,7 @@ $("#assignment-dialog-close").click(function() {
     $("#assignment-dialog").hide();
 });
 
-$(".assignment-list-item").click(function() {
+function assignmentListItemClick() {
     var id = $(this).data("person-id");
     console.log("add person: " + id);
     $("#assignment-dialog").hide();
@@ -127,7 +202,7 @@ $(".assignment-list-item").click(function() {
     s += name + '</li>';
     // $("#people-list").html($("#people-list").html() + s);
     $("#people-list").append(s);
-});
+};
 
 /*
  * slider
