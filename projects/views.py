@@ -88,8 +88,7 @@ def project_edit(request, id):
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	elif request.method == "DELETE" and request.is_ajax():
-		# print("delete")
-		p.delete()
+		p.delete() #TODO check permissions
 		return HttpResponse(json.dumps({"success":True}))
 	else:
 		template = loader.get_template('project_write.html')
@@ -180,6 +179,9 @@ def task_edit(request, id, back_url=""):
 			if opt:
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+	elif request.method == "DELETE" and request.is_ajax():
+		task.delete() #TODO check permissions
+		return HttpResponse(json.dumps({"success":True}))
 	else:
 		template = loader.get_template('task_write.html')
 
