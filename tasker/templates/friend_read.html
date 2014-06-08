@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block title %}
-    {{ request.user.username }}
+    {{ current_user.get_profile() }}
 {% endblock %}
 
 {% block content %}
@@ -15,20 +15,20 @@
             <!-- size of img should fit to size of div (with test)-->
             <div id="login-img-div">
                 <img id="login-img" src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-                <p>{{ user }} <br />
-                {{user.email }}</p>
+                <p>{{ current_user }} <br />
+                {{current_user.email }}</p>
             </div>
             <h1>Projects</h1>
             <ul id="person-projects-list">
-                <li class="person-projects-list-item">
-                    Project A
-                </li>
-                <li class="person-projects-list-item">
-                    Project B
-                </li>
-                <li class="person-projects-list-item">
-                    Project C
-                </li>
+                {% if project != "" %}
+                    {% for project in projects %}
+                    <li class="person-projects-list-item">
+                        {{ project.title }}
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <h1>No projects assigned</h1>
+                {% endif %}
             </ul>
         </div>
             <div class="right-cell">
@@ -36,7 +36,7 @@
                     <li class="details-list-item">
                         <p><b>Gender</b>
                         <br />
-                        {% if user.get_profile.gender == "F" %}
+                        {% if current_user.get_profile.gender == "F" %}
                         <span class="details-info">Female</span></p>
                         {% else %}
                         <span class="details-info">Male</span></p>
@@ -45,22 +45,22 @@
                     <li class="details-list-item">
                         <p><b>Birthdate</b>
                         <br />
-                        <span class="details-info">{{ user.get_profile.birthdate }}</span></p>
+                        <span class="details-info">{{ current_user.get_profile.birthdate }}</span></p>
                     </li>
                     <li class="details-list-item">
                         <p><b>Register date</b>
                         <br />
-                        <span class="details-info">{{ user.get_profile.registerDate }}</span></p>
+                        <span class="details-info">{{ current_user.date_joined }}</span></p>
                     </li>
                     <li class="details-list-item">
                         <p><b>Modified</b>
                         <br />
-                        <span class="details-info">{{ user.get_profile.modifiedDate }}</span></p>
+                        <span class="details-info">{{ current_user.get_profile.modifiedDate }}</span></p>
                     </li>
                     <li class="details-list-item">
                         <p><b>Last seen</b>
                         <br />
-                        <span class="details-info">{{ user.get_profile.lastLoginDate }}</span></p>
+                        <span class="details-info">{{ current_user.last_login }}</span></p>
                     </li>
                 </ul>
             </div>

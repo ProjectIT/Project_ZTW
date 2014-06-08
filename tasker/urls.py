@@ -20,6 +20,7 @@ urlpatterns = patterns('',
 	url(r'^settings$', views.settings, name="settings"),
 
 	# friends
+	url(r'^profile$', views.user_profile, name="user_profile"),
 	url(r'^profile/(?P<id>\d+)$', views.public_profile, name="public_profile"),
-	url(r'^friends/user/(?P<id>\d+)$', views.friends_list, name="friends_list"),
+	url(r'^friends/(?P<id>\d+)$', views.friends_list, name="friends_list"),
 )

@@ -25,7 +25,7 @@ class UserProfile(models.Model):
 	# ?description
 
 	# Override the __unicode__() method to return out something meaningful!
-	def __unicode__(self):
+	def __str__(self):
 		return self.user.first_name + ' ' + self.user.last_name
 
 def user_post_save(sender, instance, created, **kwargs):
@@ -81,6 +81,7 @@ class Task(models.Model):
 	createdBy = models.ForeignKey(User, editable=False, related_name='task_created_by')
 	modified = models.DateTimeField(auto_now=True, editable=False)
 
+
 class TaskComment(models.Model):
 	taskId = models.ForeignKey(Task, editable=False)
 	text = models.CharField(max_length=1024)
@@ -118,3 +119,7 @@ class PersonInProject(models.Model):
 	role = models.CharField(max_length=1, choices=PERSON_ROLE, default='U')
 	created = models.DateTimeField(auto_now_add=True, editable=False)
 	createdBy = models.ForeignKey(User, editable=False, related_name='person_in_project_created_by')
+
+class Friends(models.Model):
+	user1Id = models.ForeignKey(User, related_name='friends_user1')
+	user2Id = models.ForeignKey(User, related_name='friends_user2')
