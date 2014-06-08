@@ -291,3 +291,8 @@
 	display: block;
 }
 
+.files-list-item:hover{
+	background-color: #aaa;
+	border-radius: 5px;
+	transition: background-color 1s;
+}

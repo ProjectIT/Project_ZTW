@@ -9,7 +9,6 @@ from projects.forms import ProjectForm, TaskForm
 from projects.models import Task, User, Project, PersonInProject, File, TaskComment
 
 # TODO add 'user_project_list' for all users in public profile
-# TODO rss ?
 
 # NOTE: 'user' in templates is a reserved keyword
 
@@ -74,7 +73,7 @@ def project_edit(request, id):
 		# TODO fetching all relations by hand ?
 		p.tasks = Task.objects.filter(projectId=id)
 		p.people__ = PersonInProject.objects.filter(projectId=id)
-		p.people = [uid.userId for uid in p.people__ if uid.userId.id != usr.id] # TODO remove current user :)
+		p.people = [uid.userId for uid in p.people__ if uid.userId.id != usr.id] # remove current user
 		p.files = File.objects.filter(projectId=id)
 	except Project.DoesNotExist:
 		return HttpResponseNotFound('<h1>Project not found</h1>')
@@ -88,6 +87,10 @@ def project_edit(request, id):
 			if opt:
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+	elif request.method == "DELETE" and request.is_ajax():
+		# print("delete")
+		p.delete()
+		return HttpResponse(json.dumps({"success":True}))
 	else:
 		template = loader.get_template('project_write.html')
 		context = RequestContext(request, get_context({
@@ -107,7 +110,7 @@ def project_create(request):
 						description=form.cleaned_data['description'],
 						createdBy=usr)
 			p.save(True,False)
-			# TODO add creator as admin !
+			# add creator as admin !
 			pip = PersonInProject(projectId=p,
 					  	userId=usr,
 						role=PersonInProject.PERSON_ROLE[1][0],

@@ -129,7 +129,6 @@
 
             {% for file in task.files %}
             <li class="files-list-item" data-type="{{file.type|lower}}" data-file-id="{{ file.id }}">
-                <!--TODO add some :hover, because there is a lot of confusion-->
 
                 <!--icon-->
                 {% if file.type == "Document" %}
@@ -161,10 +160,8 @@
 
     <!--TODO task delete-->
     <!--save and back buttons-->
-    {% if not new_task %}
-    <a href="{% url 'task' task.id %}">
-    {% else %}
-    <a href="{% url 'project' project_id %}">
+    {% if not new_task %} <a href="{% url 'task' task.id %}">
+    {% else %} <a href="{% url 'project' project_id %}">
     {% endif %}
         <div class="task-button pull-left">
             Back
