@@ -1,6 +1,7 @@
 import json
 from random import choice
 import traceback
+from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader, RequestContext
 import sys
@@ -310,9 +311,11 @@ def users_for_project_search(request, project_id):
 
 def __project_edit(project, request):
 	# print(request.POST)
-	tasksToRemove = request.POST["tasksToRemove"] # TODO
+	tasksToRemove = request.POST["tasksToRemove"]
 	peopleToRemove = request.POST["peopleToRemove"]
 	filesToRemove = request.POST["filesToRemove"]
+	peopleToAdd = request.POST["peopleToAdd"]
+
 	form = ProjectForm(request.POST)
 	if form.is_valid():
 		project.name = form.cleaned_data['name']
@@ -320,13 +323,26 @@ def __project_edit(project, request):
 		project.description = form.cleaned_data['description']
 		project.createdBy = get_current_user()
 		project.save(False,True)
+		# remove composites
+		try:
+			# TODO not tested
+			with transaction.atomic():
+				Task.objects.filter(projectId=project).filter(id__in=tasksToRemove).delete()
+				PersonInProject.objects.filter(projectId=project).filter(userId__in=peopleToRemove).delete()
+				File.objects.filter(projectId=project).filter(id__in=filesToRemove).delete()
+				for userId in peopleToAdd:
+					u = User.objects.get(id=userId)
+					if u:
+						PersonInProject(projectId=project,userId=u).save()
+		except User.DoesNotExist:
+			print("Error modifying project's companion objects")
 		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None
 
 def __task_edit( task, request):
 	print(request.POST)
-	# filesToRemove = request.POST["filesToRemove"]
+	filesToRemove = request.POST["filesToRemove"]
 	# personResponsibleID = request.POST["personResponsibleId"]
 	form = TaskForm(request.POST)
 	if form.is_valid():
@@ -337,6 +353,8 @@ def __task_edit( task, request):
 		task.createdBy = get_current_user()
 		task.save(False,True)
 		__assign_person(task,request)
+		# remove composites TODO not tested
+		File.objects.filter(taskId=task).filter(id__in=filesToRemove).delete()
 		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None
