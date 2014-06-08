@@ -71,8 +71,7 @@
 
             <section class="data-section">
                 <header>Deadline</header>
-                <!--TODO datepicker - set current value-->
-                <input class="form-control" id="task-deadline" type="date" name="deadline" value="{{ task.title|default:"" }}" style="max-width: 300px;">
+                <input class="form-control" id="task-deadline" type="date" name="deadline" value="{{ task.deadline|date:"Y-m-d"|default:"" }}" style="max-width: 300px;">
             </section>
 
             <section class="data-section">
