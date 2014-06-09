@@ -33,7 +33,7 @@
                 $('#task-form').submit(function(event) {
                     event.preventDefault();
                     if (submitName === "Delete"){
-                        deleteTask( "{% url 'user_tasks_list' 123 %}");
+                        deleteTask( "{% url 'user_tasks_list' task.id %}");
                     }else{
                         editTask("{% url 'task_edit' task.id %}","{% url 'task' task.id %}");
                     }

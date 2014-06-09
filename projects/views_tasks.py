@@ -12,9 +12,9 @@ from projects.views import get_context, getTasksAssignedToCurrentUser, getUserPr
 
 # TODO utilize task status
 
-def getAssignablePeople( request, task):
+def getAssignablePeople( request, projectId):
 	usr = request.user
-	people__ = PersonInProject.objects.filter(projectId=task.projectId)
+	people__ = PersonInProject.objects.filter(projectId=projectId)
 	users = [pip.userId for pip in people__]
 	return getUserProfilesForUsers(users).exclude(user__in=[usr])
 
@@ -57,12 +57,11 @@ def task_edit(request, id, back_url=""):
 	else:
 		template = loader.get_template('task_write.html')
 
-		# assginablePeople = UserProfile.objects.all() # TODO ( and check other 'alls')
 		context = RequestContext(request, get_context({
 			'task': task,
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
-			'people_to_assign': getAssignablePeople(request,task),
+			'people_to_assign': getAssignablePeople(request,task.projectId),
 		}, request))
 		return HttpResponse(template.render(context))
 
@@ -97,7 +96,7 @@ def task_create(request, project_id):
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
 			'project_id': project_id,
-			'people_to_assign': getAssignablePeople(request,task)
+			'people_to_assign': getAssignablePeople(request,project.id)
 		}, request))
 		return HttpResponse(template.render(context))
 

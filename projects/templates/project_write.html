@@ -88,7 +88,13 @@
                 <td class="tasks-cell tasks-col1"></td>
                 <td class="tasks-cell tasks-col2">{{ task.title }}</td>
                 <td class="tasks-cell tasks-col3">
-                    {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
+                    {% if task.personResponsible %}
+                            <a href="{% url 'public_profile' task.personResponsible.id %}">
+                            {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
+                        </a>
+                    {% else %}
+                        Not assigned yet
+                    {% endif %}
                 </td>
                 <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
                 <td class="tasks-cell tasks-col4 tasks-edit">

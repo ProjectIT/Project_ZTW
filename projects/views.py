@@ -210,14 +210,14 @@ def __project_edit(project, request):
 		project.save(False,True)
 		# remove composites
 		try:
-			# TODO not tested
-			# print(">"+str(peopleToAdd))
+			# TODO
+			tasksToRemove = json.loads(tasksToRemove)
+			peopleToRemove = json.loads(peopleToRemove)
 			peopleToAdd = json.loads(peopleToAdd)
-			# print(">"+str(type(peopleToAdd)))
 			with transaction.atomic():
-			# 	Task.objects.filter(projectId=project).filter(id__in=tasksToRemove).delete()
-			# 	PersonInProject.objects.filter(projectId=project).filter(userId__in=peopleToRemove).delete()
-			# 	File.objects.filter(projectId=project).filter(id__in=filesToRemove).delete()
+				Task.objects.filter(projectId=project).filter(id__in=tasksToRemove).delete()
+				PersonInProject.objects.filter(projectId=project).filter(userId__in=peopleToRemove).delete()
+				# 	File.objects.filter(projectId=project).filter(id__in=filesToRemove).delete()
 				for userId in peopleToAdd:
 					print(">>"+str(userId))
 					u = User.objects.get(id=userId)
