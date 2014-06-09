@@ -1,15 +1,15 @@
 import json
 from random import choice
 import traceback
+from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader, RequestContext
 import sys
 from projects.forms import ProjectForm, TaskForm
 
-from projects.models import Task, User, Project
+from projects.models import Task, User, Project, PersonInProject, File, TaskComment
 
 # TODO add 'user_project_list' for all users in public profile
-# TODO rss ?
 
 # NOTE: 'user' in templates is a reserved keyword
 
@@ -24,7 +24,9 @@ ajax:
 	http://lethain.com/two-faced-django-part-5-jquery-ajax/
 	http://stackoverflow.com/questions/20306981/how-do-i-integrate-ajax-with-django-applications
 	http://racingtadpole.com/blog/django-ajax-and-jquery/
-
+models:
+	http://www.djangobook.com/en/2.0/chapter05.html
+	http://www.djangobook.com/en/2.0/chapter10.html
 """
 
 def get_context(tmplContext, request):
@@ -32,22 +34,26 @@ def get_context(tmplContext, request):
 	context = {
 		'currentUser': user,
 		'user_id': user.id,
-		'task_count': len(Task.objects.all()),
+		'task_count': len(Task.objects.all()), # TODO
 	}
 	# concat
 	return dict(list(context.items()) + list(tmplContext.items()))
-
 
 #
 # projects
 #
 
 def project(request, id):
-	# TODO handle errors
 	try:
 		p = Project.objects.get(id=id)
 	except Project.DoesNotExist:
 		return HttpResponseNotFound('<h1>Project not found</h1>')
+
+	# TODO fetching all relations by hand ?
+	p.tasks = Task.objects.filter(projectId=id)
+	p.people__ = PersonInProject.objects.filter(projectId=id)
+	p.people = [uid.userId for uid in p.people__]
+	p.files = File.objects.filter(projectId=id)
 
 	template = loader.get_template('project_read.html')
 	context = RequestContext(request, get_context({
@@ -59,7 +65,13 @@ def project(request, id):
 
 def project_edit(request, id):
 	try:
+		usr = request.user
 		p = Project.objects.get(id=id)
+		# TODO fetching all relations by hand ?
+		p.tasks = Task.objects.filter(projectId=id)
+		p.people__ = PersonInProject.objects.filter(projectId=id)
+		p.people = [uid.userId for uid in p.people__ if uid.userId.id != usr.id] # remove current user
+		p.files = File.objects.filter(projectId=id)
 	except Project.DoesNotExist:
 		return HttpResponseNotFound('<h1>Project not found</h1>')
 
@@ -72,6 +84,9 @@ def project_edit(request, id):
 			if opt:
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+	elif request.method == "DELETE" and request.is_ajax():
+		p.delete() #TODO check permissions
+		return HttpResponse(json.dumps({"success":True}))
 	else:
 		template = loader.get_template('project_write.html')
 		context = RequestContext(request, get_context({
@@ -85,11 +100,18 @@ def project_create(request):
 		print(request.POST)
 		form = ProjectForm(request.POST)
 		if form.is_valid():
+			usr = request.user
 			p = Project(name=form.cleaned_data['name'],
 						complete=form.cleaned_data['complete'],
 						description=form.cleaned_data['description'],
-						createdBy=get_current_user())
+						createdBy=usr)
 			p.save(True,False)
+			# add creator as admin !
+			pip = PersonInProject(projectId=p,
+					  	userId=usr,
+						role=PersonInProject.PERSON_ROLE[1][0],
+						createdBy=usr)
+			pip.save(True,False)
 			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
 		else:
 			errors_fields = dict()
@@ -107,7 +129,7 @@ def project_create(request):
 def project_list(request):
 	template = loader.get_template('project_list.html')
 	context = RequestContext(request, get_context({
-		'projects': Project.objects.all(),
+		'projects': Project.objects.all(), # TODO !!!
 		'data_page_type': 'projects'
 	}, request))
 	return HttpResponse(template.render(context))
@@ -125,12 +147,14 @@ def task(request, id):
 	template = loader.get_template('task_read.html')
 	try:
 		task = Task.objects.get(id=id)
+		task.files = File.objects.filter(projectId=id)
+		task.comments = TaskComment.objects.filter(taskId=id)
 	except Task.DoesNotExist:
 		return HttpResponseNotFound('<h1>Task not found</h1>')
 
 	context = RequestContext(request, get_context({
 		'task': task,
-		'canAddComment': False,
+		'canAddComment': True,
 		'data_page_type': 'tasks',
 		'taskTypes': Task.TASK_TYPES,
 		'can_edit': True
@@ -152,8 +176,10 @@ def task_edit(request, id, back_url=""):
 			if opt:
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+	elif request.method == "DELETE" and request.is_ajax():
+		task.delete() #TODO check permissions
+		return HttpResponse(json.dumps({"success":True}))
 	else:
-		# TODO back_url - we need to acknowledge that sometimes we want to go back to the projectWrite, not to taskRead
 		template = loader.get_template('task_write.html')
 
 		context = RequestContext(request, get_context({
@@ -179,7 +205,7 @@ def task_create(request, project_id):
 				type=form.cleaned_data['type'],
 				deadline=form.cleaned_data['deadline'],
 				description=form.cleaned_data['description'],
-				createdBy=get_current_user())
+				createdBy = request.user)
 			p.save(True,False)
 			__assign_person(p, request)
 			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
@@ -202,11 +228,78 @@ def task_create(request, project_id):
 def user_tasks_list(request, id):
 	template = loader.get_template('task_list.html')
 	context = RequestContext(request, get_context({
-		'tasks': Task.objects.all(),
+		'tasks': Task.objects.all(), # TODO !!!
 		'data_page_type': 'tasks'
 	}, request))
 	return HttpResponse(template.render(context))
 
+def task_comment(request, task_id):
+	if request.method != "POST" or not request.is_ajax():
+		return HttpResponseNotFound('<h1>Page not found</h1>')
+	try:
+		task = Task.objects.get(id=task_id)
+		text = request.POST["new-comment-text"]
+		if len(text)>0:
+			tc = TaskComment(taskId=task,
+					text=text,
+					createdBy=request.user)
+			tc.save( True, False)
+			d = tc.created
+			tcJson = {
+				"id":tc.id,
+				"text":tc.text,
+				"created":[d.year,d.month,d.day],
+				"createdBy":{
+					"name":tc.createdBy.name,
+					"lastName":tc.createdBy.lastName
+				}
+			}
+			return HttpResponse(json.dumps({"status":"OK","data":tcJson}))
+	except Task.DoesNotExist:
+		return HttpResponseNotFound('<h1>Task not found</h1>')
+	hr = HttpResponse({"status":"error"})
+	hr.status_code = 412
+	return hr
+
+def users_for_project_search(request, project_id):
+	if request.method != "POST" or not request.is_ajax():
+		return HttpResponseNotFound('<h1>Page not found</h1>')
+	try:
+		p = Project.objects.get(id=project_id)
+		people__ = PersonInProject.objects.filter(projectId=project_id)
+		peopleAlreadyIn = [uid.userId.id for uid in people__]
+		print("exclude: "+str(peopleAlreadyIn))
+
+		name = request.POST["name"]
+		last_name = request.POST["last-name"]
+		user_name = request.POST["user-name"]
+		token = request.POST["search-token"]
+		print( name + "|" + last_name + "|" + user_name)
+
+		# query
+		result = User.objects\
+			.filter(name__contains=name)\
+			.filter(lastName__contains=last_name)\
+			.filter(login__contains=user_name)\
+			.exclude(id__in=peopleAlreadyIn)
+		print("found"+str(len(result)))
+		if len(result) < 20:
+			arr = []
+			for r in result:
+				arr.append({
+					"id":r.id,
+					"name":r.name,
+					"last_name":r.lastName,
+					"avatar_path":r.avatarPath
+				})
+			return HttpResponse(json.dumps({"search-token":token,"status":True,"data":arr }))
+		else:
+			return HttpResponse(json.dumps({"search-token":token,"status":False,"found-count":len(result)}))
+	except Project.DoesNotExist:
+		return HttpResponseNotFound('<h1>Project not found</h1>')
+	hr = HttpResponse({"status":"error"})
+	hr.status_code = 412
+	return hr
 
 #
 # __utils
@@ -217,20 +310,35 @@ def __project_edit(project, request):
 	tasksToRemove = request.POST["tasksToRemove"]
 	peopleToRemove = request.POST["peopleToRemove"]
 	filesToRemove = request.POST["filesToRemove"]
+	peopleToAdd = request.POST["peopleToAdd"]
+
 	form = ProjectForm(request.POST)
 	if form.is_valid():
 		project.name = form.cleaned_data['name']
 		project.complete = form.cleaned_data['complete']
 		project.description = form.cleaned_data['description']
-		project.createdBy = get_current_user()
+		project.createdBy =request.user
 		project.save(False,True)
+		# remove composites
+		# try:
+			# TODO not tested
+			# with transaction.atomic():
+			# 	Task.objects.filter(projectId=project).filter(id__in=tasksToRemove).delete()
+			# 	PersonInProject.objects.filter(projectId=project).filter(userId__in=peopleToRemove).delete()
+			# 	File.objects.filter(projectId=project).filter(id__in=filesToRemove).delete()
+			# 	for userId in peopleToAdd:
+			# 		u = User.objects.get(id=userId)
+			# 		if u:
+			# 			PersonInProject(projectId=project,userId=u).save()
+		# except User.DoesNotExist:
+		# 	print("Error modifying project's companion objects")
 		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None
 
 def __task_edit( task, request):
 	print(request.POST)
-	# filesToRemove = request.POST["filesToRemove"]
+	filesToRemove = request.POST["filesToRemove"]
 	# personResponsibleID = request.POST["personResponsibleId"]
 	form = TaskForm(request.POST)
 	if form.is_valid():
@@ -238,9 +346,11 @@ def __task_edit( task, request):
 		task.type = form.cleaned_data['type']
 		task.deadline = form.cleaned_data['deadline']
 		task.description = form.cleaned_data['description']
-		task.createdBy = get_current_user()
+		task.createdBy = request.user
 		task.save(False,True)
 		__assign_person(task,request)
+		# remove composites TODO not tested
+		# File.objects.filter(taskId=task).filter(id__in=filesToRemove).delete()
 		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None

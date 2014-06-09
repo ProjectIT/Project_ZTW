@@ -10,6 +10,7 @@ urlpatterns = [
 	# all projects
 	url(r'^list$', views.project_list, name='project_list'),
 	# projects for user
-	url(r'^user/(?P<id>\d+)$', views.user_project_list, name='user_project_list')
+	url(r'^user/(?P<id>\d+)$', views.user_project_list, name='user_project_list'),
+	url(r'^(?P<project_id>\d+)/user/search$', views.users_for_project_search, name='users_for_project_search')
 
 ]

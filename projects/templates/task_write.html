@@ -31,8 +31,12 @@
                 });
             {% else %}
                 $('#task-form').submit(function(event) {
-                    editTask("{% url 'task_edit' task.id %}","{% url 'task' task.id %}");
                     event.preventDefault();
+                    if (submitName === "Delete"){
+                        deleteTask( "{% url 'user_tasks_list' 123 %}");
+                    }else{
+                        editTask("{% url 'task_edit' task.id %}","{% url 'task' task.id %}");
+                    }
                 });
             {% endif %}
 
@@ -67,8 +71,7 @@
 
             <section class="data-section">
                 <header>Deadline</header>
-                <!--TODO datepicker - set current value-->
-                <input class="form-control" id="task-deadline" type="date" name="deadline" value="{{ task.title|default:"" }}" style="max-width: 300px;">
+                <input class="form-control" id="task-deadline" type="date" name="deadline" value="{{ task.deadline|date:"Y-m-d"|default:"" }}" style="max-width: 300px;">
             </section>
 
             <section class="data-section">
@@ -86,14 +89,14 @@
                <li class="details-list-item">
                     <p><b>Created by</b>
                     <br />
-                    <!--TODO Created by -->
-                    <span class="details-info">Aaa Bbbb</span></p>
+                    <span class="details-info">
+                        {{ task.createdBy.name }}&nbsp;{{ task.createdBy.lastName }}
+                    </span></p>
                 </li>
                 <li class="details-list-item">
                     <p><b>Creation date</b>
                     <br />
-                    <!--TODO Creation date -->
-                    <span class="details-info">05-05-2014</span></p>
+                    <span class="details-info">{{ task.created|date:"d-m-Y" }}</span></p>
                 </li>
             </ul>
         </div>
@@ -104,7 +107,6 @@
     <!--Person-->
     <!---->
     <section class="data-section">
-        <!--TODO when should show this person ? it is possible there is no person responsible-->
         <div id="view-header-right" class="clearfix">
             <div id="assign-person" class="task-button">
                 Change assignment
@@ -113,7 +115,6 @@
         <header class="clearfix">Assign</header>
         <div id="assign-img-div" style="display:none" data-person-id="{{ task.personResponsible.id|default:"-1" }}">
              <p class="person-remove">
-                    <!--TODO person remove from project-->
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
             <img id="assign-img" src="{{ STATIC_URL }}{{ task.personResponsible.avatarPath|default:"stub_imgs/avatar2.jpg" }}">
@@ -131,7 +132,6 @@
 
             {% for file in task.files %}
             <li class="files-list-item" data-type="{{file.type|lower}}" data-file-id="{{ file.id }}">
-                <!--TODO add some :hover, because there is a lot of confusion-->
 
                 <!--icon-->
                 {% if file.type == "Document" %}
@@ -161,18 +161,18 @@
 
 {% endif %}
 
-    <!--TODO task delete-->
     <!--save and back buttons-->
-    {% if not new_task %}
-    <a href="{% url 'task' task.id %}">
-    {% else %}
-    <a href="{% url 'project' project_id %}">
+    {% if not new_task %} <a href="{% url 'task' task.id %}">
+    {% else %} <a href="{% url 'project' project_id %}">
     {% endif %}
         <div class="task-button pull-left">
             Back
         </div>
     </a>
-    <input type="submit" value="Save" class="task-button pull-right"/>
+    <input type="submit" value="Save" class="task-button pull-right" onclick="setSubmit(this)"/>
+    {% if not new_task %}
+        <input type="submit" value="Delete" class="task-button pull-right" onclick="setSubmit(this)"/>
+    {% endif %}
 
 </form>
 
