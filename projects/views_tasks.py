@@ -7,7 +7,7 @@ from django.template import loader, RequestContext
 
 from projects.forms import TaskForm
 from projects.models import Task, User, Project, File, TaskComment, UserProfile, PersonInProject
-from projects.views import get_context, getTasksAssignedToCurrentUser, getUserProfilesForUsers
+from projects.views import get_context, getTasksAssignedToCurrentUser, getUserProfilesForUsers, canViewProject
 
 
 # TODO utilize task status
@@ -26,6 +26,10 @@ def task(request, id):
 		task.comments = TaskComment.objects.filter(taskId=id)
 	except Task.DoesNotExist:
 		return HttpResponseNotFound('<h1>Task not found</h1>')
+	if not canViewProject(request,task.projectId):
+		hr = HttpResponse("<h1>You are not a part of this project</h1>")
+		hr.status_code = 412
+		return hr
 
 	context = RequestContext(request, get_context({
 		'task': task,
@@ -41,6 +45,10 @@ def task_edit(request, id, back_url=""):
 		task = Task.objects.get(id=id)
 	except Task.DoesNotExist:
 		return HttpResponseNotFound('<h1>Task not found</h1>')
+	if not canViewProject(request,task.projectId):
+		hr = HttpResponse("<h1>You are not a part of this project</h1>")
+		hr.status_code = 412
+		return hr
 
 	if request.method == "POST" and request.is_ajax():
 		ok, opt = __task_edit( task, request)
@@ -52,7 +60,7 @@ def task_edit(request, id, back_url=""):
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 	elif request.method == "DELETE" and request.is_ajax():
-		task.delete() #TODO check permissions
+		task.delete()
 		return HttpResponse(json.dumps({"success":True}))
 	else:
 		template = loader.get_template('task_write.html')
@@ -114,6 +122,10 @@ def task_comment(request, task_id):
 		return HttpResponseNotFound('<h1>Page not found</h1>')
 	try:
 		task = Task.objects.get(id=task_id)
+		if not canViewProject(request,task.projectId):
+			hr = HttpResponse("<h1>You are not a part of this project</h1>")
+			hr.status_code = 412
+			return hr
 		text = request.POST["new-comment-text"]
 		if len(text)>0:
 			tc = TaskComment(taskId=task,

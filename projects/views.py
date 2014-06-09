@@ -45,6 +45,16 @@ def get_context(tmplContext, request):
 def getUserProfilesForUsers( users):
 	return UserProfile.objects.filter(user__in=users)
 
+def canViewProject( request, project):
+	usr = request.user
+	try:
+		a=PersonInProject.objects.get(projectId=project, userId=usr)
+		print(a)
+	except PersonInProject.DoesNotExist:
+		return False
+	return True
+
+
 #
 # projects
 #
@@ -54,6 +64,10 @@ def project(request, id):
 		p = Project.objects.get(id=id)
 	except Project.DoesNotExist:
 		return HttpResponseNotFound('<h1>Project not found</h1>')
+	if not canViewProject(request,p):
+		hr = HttpResponse("<h1>You are not a part of this project</h1>")
+		hr.status_code = 412
+		return hr
 
 	# TODO fetching all relations by hand ?
 	p.tasks = Task.objects.filter(projectId=id)
@@ -81,6 +95,11 @@ def project_edit(request, id):
 	except Project.DoesNotExist:
 		return HttpResponseNotFound('<h1>Project not found</h1>')
 
+	if not canViewProject(request,p):
+		hr = HttpResponse("<h1>You are not a part of this project</h1>")
+		hr.status_code = 412
+		return hr
+
 	if request.method == "POST" and request.is_ajax():
 		ok, opt = __project_edit(p, request)
 		if ok:
@@ -92,7 +111,7 @@ def project_edit(request, id):
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
 
 	elif request.method == "DELETE" and request.is_ajax():
-		p.delete() #TODO check permissions
+		p.delete()
 		return HttpResponse(json.dumps({"success":True}))
 
 	else:
@@ -153,6 +172,11 @@ def users_for_project_search(request, project_id):
 		return HttpResponseNotFound('<h1>Page not found</h1>')
 	try:
 		p = Project.objects.get(id=project_id)
+		if not canViewProject(request,p):
+			hr = HttpResponse("<h1>You are not a part of this project</h1>")
+			hr.status_code = 412
+			return hr
+
 		people__ = PersonInProject.objects.filter(projectId=project_id)
 		peopleAlreadyIn = [uid.userId.id for uid in people__]
 		print("exclude: "+str(peopleAlreadyIn))
