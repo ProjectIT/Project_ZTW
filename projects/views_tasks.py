@@ -7,16 +7,16 @@ from django.template import loader, RequestContext
 
 from projects.forms import TaskForm
 from projects.models import Task, User, Project, File, TaskComment, UserProfile, PersonInProject
+from projects.views import get_context, getTasksAssignedToCurrentUser, getUserProfilesForUsers
 
 
 # TODO utilize task status
-from projects.views import get_context, getTasksAssignedToCurrentUser
 
 def getAssignablePeople( request, task):
 	usr = request.user
 	people__ = PersonInProject.objects.filter(projectId=task.projectId)
-	users = [pip.userId for pip in people__]# if pip.userId.user.id != usr.id] # remove current user
-	return UserProfile.objects.filter(user__in=users).exclude(user__in=[usr])
+	users = [pip.userId for pip in people__]
+	return getUserProfilesForUsers(users).exclude(user__in=[usr])
 
 def task(request, id):
 	template = loader.get_template('task_read.html')
@@ -127,8 +127,8 @@ def task_comment(request, task_id):
 				"text":tc.text,
 				"created":[d.year,d.month,d.day],
 				"createdBy":{
-					"name":tc.createdBy.name,
-					"lastName":tc.createdBy.lastName
+					"name":tc.createdBy.first_name,
+					"lastName":tc.createdBy.last_name
 				}
 			}
 			return HttpResponse(json.dumps({"status":"OK","data":tcJson}))

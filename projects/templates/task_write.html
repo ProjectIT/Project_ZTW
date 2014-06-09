@@ -90,7 +90,7 @@
                     <p><b>Created by</b>
                     <br />
                     <span class="details-info">
-                        {{ task.createdBy.name }}&nbsp;{{ task.createdBy.lastName }}
+                        {{ task.createdBy.first_name|default:task.createdBy.username }}&nbsp;{{ task.createdBy.last_name }}
                     </span></p>
                 </li>
                 <li class="details-list-item">
@@ -119,7 +119,9 @@
 				<p>
             <img id="assign-img" src="{{ STATIC_URL }}{{ task.personResponsible.avatarPath|default:"stub_imgs/avatar2.jpg" }}">
             <p id="assign-name">
-        {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                {% if task.personResponsible %}
+                {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
+                {% endif %}
             </p>
         </div>
     </section>

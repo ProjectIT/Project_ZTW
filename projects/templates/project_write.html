@@ -88,7 +88,7 @@
                 <td class="tasks-cell tasks-col1"></td>
                 <td class="tasks-cell tasks-col2">{{ task.title }}</td>
                 <td class="tasks-cell tasks-col3">
-                        {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                    {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
                 </td>
                 <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
                 <td class="tasks-cell tasks-col4 tasks-edit">
@@ -121,7 +121,7 @@
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
 				<img src="{{ STATIC_URL }}{{ person.avatarPath}}">
-				{{ person.name }}&nbsp;{{ person.lastName }}
+				{{ person.first_name|default:person.username }}&nbsp;{{ person.last_name }}
 			</li>
             {% endfor %}
 

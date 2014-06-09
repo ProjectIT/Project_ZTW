@@ -44,7 +44,13 @@
                         <b>Assigned to</b>
                         <br />
                         <span class="details-info">
-                            {{ task.personResponsible.name|default:"Not assigned" }}&nbsp;{{ task.personResponsible.lastName }}
+                            {% if task.personResponsible %}
+                            <a href="{% url 'public_profile' task.personResponsible.id %}">
+                            {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
+                            </a>
+                            {% else %}
+                            Not assigned yet
+                            {% endif %}
                         </span>
                     </p>
                 </li>
@@ -55,10 +61,13 @@
                 </li>
                 <li class="details-list-item">
                     <p><b>Created by</b>
-                    <br />
-                    <span class="details-info">
-                        {{ task.createdBy.name }}&nbsp;{{ task.createdBy.lastName }}
-                    </span></p>
+                        <br />
+                        <a href="{% url 'public_profile' task.createdBy.id %}">
+                        <span class="details-info" style="color: #428bca !important;">
+                            {{ task.createdBy.first_name|default:task.createdBy.username }}&nbsp;{{ task.createdBy.last_name }}
+                        </span>
+                        </a>
+                    </p>
                 </li>
                 <li class="details-list-item">
                     <p><b>Creation date</b>
@@ -104,7 +113,8 @@
             {% for taskComment in task.comments %}
                 <li class="comments-list-item">
                     <b>
-                        {{ taskComment.createdBy.name }}&nbsp;{{ taskComment.createdBy.lastName }}
+                        {{ taskComment.createdBy.first_name|default:taskComment.createdBy.username }}&nbsp;{{ taskComment.createdBy.last_name }}
+
                     </b>
                     <span class="comments-time">{{ taskComment.created|date:"d-m-Y" }}</span>
                     <p>{{ taskComment.text }}</p>
