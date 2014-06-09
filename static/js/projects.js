@@ -49,6 +49,7 @@ function searchPerson() {
             }
 
             if (json.status && json.data.length > 0) {
+                $('#assignment-list').empty();
                 // create person views
                 var tmplMarkup = $('#search-result-template').html();
                 for (i = 0; i < json.data.length; ++i) {

@@ -16,7 +16,7 @@ def getAssignablePeople( request, projectId):
 	usr = request.user
 	people__ = PersonInProject.objects.filter(projectId=projectId)
 	users = [pip.userId for pip in people__]
-	return getUserProfilesForUsers(users).exclude(user__in=[usr])
+	return getUserProfilesForUsers(users)
 
 def task(request, id):
 	template = loader.get_template('task_read.html')

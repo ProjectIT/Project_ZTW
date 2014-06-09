@@ -15,7 +15,11 @@
 {% endblock %}
 
 {% block title_right %}
-	<h2>{{ task.type.1 }}</h2>
+     {% for tT_short, tT_name in taskTypes %}
+        {% if task.type == tT_short %}
+            <h2>{{ tT_name }}</h2>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
 
 {% block page_end %}
