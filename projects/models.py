@@ -21,7 +21,7 @@ class UserProfile(models.Model):
 	modifiedDate = models.DateTimeField(auto_now=True, editable=False)
 	lastLoginDate = models.DateTimeField(null=True, blank=True) # used for f.e. activity stream etc.
 	#avatar = models.ImageField(upload_to='profile_images', blank=True)
-	avatarPath = models.CharField(max_length=128, editable=False) # path to image file
+	avatarPath = models.CharField(max_length=128, editable=True, default='stub_imgs/avatar2.jpg') # path to image file
 	# ?description
 
 	# Override the __unicode__() method to return out something meaningful!
