@@ -188,8 +188,10 @@
      <ul id="assignment-list" class="clearfix">
         {% for person in people_to_assign %}
         <li class="assignment-list-item" data-person-id="{{ person.id }}">
-            <img src="{{ STATIC_URL }}{{ person.avatarPath}}">
-            <span class="assignement-name">{{ person.name }}&nbsp;{{ person.lastName }}</span>
+            <img src="{{ STATIC_URL }}{{ person.avatarPath }}">
+            <span class="assignement-name">
+                {{ person.user.first_name|default:person.user.username }}&nbsp;{{ person.user.last_name }}
+            </span>
         </li>
         {% endfor %}
      </ul>

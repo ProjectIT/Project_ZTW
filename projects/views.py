@@ -7,7 +7,7 @@ from django.template import loader, RequestContext
 import sys
 from projects.forms import ProjectForm, TaskForm
 
-from projects.models import Task, User, Project, PersonInProject, File, TaskComment
+from projects.models import Task, User, Project, PersonInProject, File, TaskComment, UserProfile
 
 # TODO add 'user_project_list' for all users in public profile
 
@@ -29,12 +29,16 @@ models:
 	http://www.djangobook.com/en/2.0/chapter10.html
 """
 
+def getTasksAssignedToCurrentUser(request):
+	usr = request.user
+	return Task.objects.filter(personResponsible=usr)
+
 def get_context(tmplContext, request):
 	user = request.user
 	context = {
 		'currentUser': user,
 		'user_id': user.id,
-		'task_count': len(Task.objects.all()), # TODO
+		'task_count': len(getTasksAssignedToCurrentUser(request)),
 	}
 	# concat
 	return dict(list(context.items()) + list(tmplContext.items()))
@@ -84,9 +88,11 @@ def project_edit(request, id):
 			if opt:
 				errors_fields["fields"] = opt
 			return HttpResponseBadRequest(json.dumps(errors_fields), content_type="application/json")
+
 	elif request.method == "DELETE" and request.is_ajax():
 		p.delete() #TODO check permissions
 		return HttpResponse(json.dumps({"success":True}))
+
 	else:
 		template = loader.get_template('project_write.html')
 		context = RequestContext(request, get_context({
@@ -96,11 +102,11 @@ def project_edit(request, id):
 		return HttpResponse(template.render(context))
 
 def project_create(request):
+	usr = request.user
 	if request.method == "POST" and request.is_ajax():
 		print(request.POST)
 		form = ProjectForm(request.POST)
 		if form.is_valid():
-			usr = request.user
 			p = Project(name=form.cleaned_data['name'],
 						complete=form.cleaned_data['complete'],
 						description=form.cleaned_data['description'],
@@ -127,9 +133,12 @@ def project_create(request):
 		return HttpResponse(template.render(context))
 
 def project_list(request):
+	usr = request.user
 	template = loader.get_template('project_list.html')
+	myProjects = PersonInProject.objects.filter(userId=usr)
+	myProjects = [pip.projectId for pip in myProjects]
 	context = RequestContext(request, get_context({
-		'projects': Project.objects.all(), # TODO !!!
+		'projects': myProjects,
 		'data_page_type': 'projects'
 	}, request))
 	return HttpResponse(template.render(context))
@@ -182,11 +191,12 @@ def task_edit(request, id, back_url=""):
 	else:
 		template = loader.get_template('task_write.html')
 
+		assginablePeople = UserProfile.objects.all() # TODO ( and check other 'alls')
 		context = RequestContext(request, get_context({
 			'task': task,
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
-			'people_to_assign': User.objects.all()
+			'people_to_assign': assginablePeople
 		}, request))
 		return HttpResponse(template.render(context))
 
@@ -227,8 +237,9 @@ def task_create(request, project_id):
 
 def user_tasks_list(request, id):
 	template = loader.get_template('task_list.html')
+	myTasks = getTasksAssignedToCurrentUser(request)
 	context = RequestContext(request, get_context({
-		'tasks': Task.objects.all(), # TODO !!!
+		'tasks': myTasks,
 		'data_page_type': 'tasks'
 	}, request))
 	return HttpResponse(template.render(context))
