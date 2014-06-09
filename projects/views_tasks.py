@@ -6,11 +6,17 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFou
 from django.template import loader, RequestContext
 
 from projects.forms import TaskForm
-from projects.models import Task, User, Project, File, TaskComment, UserProfile
+from projects.models import Task, User, Project, File, TaskComment, UserProfile, PersonInProject
 
 
 # TODO utilize task status
 from projects.views import get_context, getTasksAssignedToCurrentUser
+
+def getAssignablePeople( request, task):
+	usr = request.user
+	people__ = PersonInProject.objects.filter(projectId=task.projectId)
+	users = [pip.userId for pip in people__]# if pip.userId.user.id != usr.id] # remove current user
+	return UserProfile.objects.filter(user__in=users).exclude(user__in=[usr])
 
 def task(request, id):
 	template = loader.get_template('task_read.html')
@@ -51,12 +57,12 @@ def task_edit(request, id, back_url=""):
 	else:
 		template = loader.get_template('task_write.html')
 
-		assginablePeople = UserProfile.objects.all() # TODO ( and check other 'alls')
+		# assginablePeople = UserProfile.objects.all() # TODO ( and check other 'alls')
 		context = RequestContext(request, get_context({
 			'task': task,
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
-			'people_to_assign': assginablePeople
+			'people_to_assign': getAssignablePeople(request,task),
 		}, request))
 		return HttpResponse(template.render(context))
 
@@ -91,7 +97,7 @@ def task_create(request, project_id):
 			'taskTypes': Task.TASK_TYPES,
 			'data_page_type': 'tasks',
 			'project_id': project_id,
-			'people_to_assign': User.objects.all()
+			'people_to_assign': getAssignablePeople(request,task)
 		}, request))
 		return HttpResponse(template.render(context))
 

@@ -1,10 +1,11 @@
 import json
+from django.db import transaction
 
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.template import loader, RequestContext
 
 from projects.forms import ProjectForm
-from projects.models import Task, User, Project, PersonInProject, File
+from projects.models import Task, User, Project, PersonInProject, File, UserProfile
 
 
 # TODO add 'user_project_list' for all users in public profile
@@ -40,6 +41,9 @@ def get_context(tmplContext, request):
 	}
 	# concat
 	return dict(list(context.items()) + list(tmplContext.items()))
+
+def getUserProfilesForUsers( users):
+	return UserProfile.objects.filter(user__in=users)
 
 #
 # projects
@@ -161,18 +165,19 @@ def users_for_project_search(request, project_id):
 
 		# query
 		result = User.objects\
-			.filter(name__contains=name)\
-			.filter(lastName__contains=last_name)\
-			.filter(login__contains=user_name)\
+			.filter(first_name__contains=name)\
+			.filter(last_name__contains=last_name)\
+			.filter(username__contains=user_name)\
 			.exclude(id__in=peopleAlreadyIn)
+		result = getUserProfilesForUsers(result)
 		print("found"+str(len(result)))
 		if len(result) < 20:
 			arr = []
 			for r in result:
 				arr.append({
-					"id":r.id,
-					"name":r.name,
-					"last_name":r.lastName,
+					"id":r.user.id,
+					"name":r.user.username,
+					"last_name":r.user.last_name,
 					"avatar_path":r.avatarPath
 				})
 			return HttpResponse(json.dumps({"search-token":token,"status":True,"data":arr }))
@@ -189,6 +194,7 @@ def users_for_project_search(request, project_id):
 #
 
 def __project_edit(project, request):
+	usr = request.user
 	# print(request.POST)
 	tasksToRemove = request.POST["tasksToRemove"]
 	peopleToRemove = request.POST["peopleToRemove"]
@@ -203,18 +209,22 @@ def __project_edit(project, request):
 		project.createdBy =request.user
 		project.save(False,True)
 		# remove composites
-		# try:
+		try:
 			# TODO not tested
-			# with transaction.atomic():
+			# print(">"+str(peopleToAdd))
+			peopleToAdd = json.loads(peopleToAdd)
+			# print(">"+str(type(peopleToAdd)))
+			with transaction.atomic():
 			# 	Task.objects.filter(projectId=project).filter(id__in=tasksToRemove).delete()
 			# 	PersonInProject.objects.filter(projectId=project).filter(userId__in=peopleToRemove).delete()
 			# 	File.objects.filter(projectId=project).filter(id__in=filesToRemove).delete()
-			# 	for userId in peopleToAdd:
-			# 		u = User.objects.get(id=userId)
-			# 		if u:
-			# 			PersonInProject(projectId=project,userId=u).save()
-		# except User.DoesNotExist:
-		# 	print("Error modifying project's companion objects")
+				for userId in peopleToAdd:
+					print(">>"+str(userId))
+					u = User.objects.get(id=userId)
+					if u:
+						PersonInProject(projectId=project, userId=u, createdBy=usr).save()
+		except (User.DoesNotExist,Exception) as e:
+			print("Error modifying project's companion objects: "+ str(e))
 		return True, {}
 	else:
 		return False, list(form.errors.keys()) if form.errors else None
