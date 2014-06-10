@@ -13,7 +13,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" >
 	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}" />
 	<script src="{{ STATIC_URL }}js/jquery.min.js" type="text/javascript"></script>
-	
+    <script src="{{ STATIC_URL }}js/main.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}language/en.json" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}language/pl.json" type="text/javascript"></script>
+
 	{% block head %}{% endblock %}
 </head>
 
@@ -29,6 +32,10 @@
              </a>
             <img src="{{ STATIC_URL }}{{ user.get_profile.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
 
+            <img src="{{ STATIC_URL }}imgs/lang/gb.png" id="lang-en" class="navigation-bar-icon lang-icon">
+            <img src="{{ STATIC_URL }}imgs/lang/pl.png" id="lang-pl" class="navigation-bar-icon lang-icon">
+
+
             <!--TODO App tittle-->
 			<span id="brand" class="left-panel-size">App tittle</span>
 		</div>
@@ -40,7 +47,7 @@
 			<div data-page-type="dashboard" class="navigation-button">
 				<div id="color-strip-dashboard" class="navigation-button-color"></div>
 				<span class="glyphicon glyphicon-star navigation-panel-icon"></span>
-				<label>Dashboard</label>
+				<label data-translate="quit">Dashboard</label>
 			</div>
              <a href="{% url 'user_project_list' user.id %}">
                 <div data-page-type="projects" class="navigation-button">
