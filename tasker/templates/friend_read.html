@@ -7,9 +7,18 @@
 
 {% block title %}
     {{ current_profile }}
+{% endblock %}
+
+{% block title_right %}
     {% if can_edit %}
         <a href="{% url 'profile_edit'%}">
                 <span id="edit-button">edit</span>
+        </a>
+    {% else %}
+        <a href="{% url 'friend_add' current_user.id %}">
+            <div id="project-create">
+                <span class="glyphicon glyphicon-plus">add to a friend</span>
+            </div>
         </a>
     {% endif %} 
 {% endblock %}

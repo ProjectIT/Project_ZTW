@@ -25,4 +25,5 @@ urlpatterns = patterns('',
 	url(r'^profile/edit$', views.profile_edit, name='profile_edit'),
 	url(r'^profile/(?P<id>\d+)$', views.public_profile, name="public_profile"),
 	url(r'^friends$', views.friends_list, name="friends_list"),
+	url(r'^friends/add/(?P<id>\d+)$', views.friend_add, name="friend_add"),
 )

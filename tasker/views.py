@@ -162,11 +162,28 @@ def __profile_edit(profile, request):
 
 def friends_list(request):
 	userId = request.user.id
-	peopleIds = Friends.objects.filter(user1Id=userId)
+	peopleIds = Friends.objects.filter(user1Id=userId).values('user2Id').distinct()
 	print(peopleIds)
-	people = User.objects.all()
+	people = User.objects.filter(id__in=peopleIds)
 	template = loader.get_template('friend_list.html')
 	context = RequestContext(request, {
-		'people': people
+		'people': people,
+		'redirect': 'public_profile'
 		})
 	return HttpResponse(template.render(context))
+
+def friend_edit(request):
+	peopleIds = Friends.objects.exclude(user1Id=userId).values('user2Id').distinct()
+	people = User.objects.filter(id__in=peopleIds)
+	template = loader.get_template('friend_list.html')
+	context = RequestContext(request, {
+		'people': people,
+		})
+	return HttpResponse(template.render(context))
+
+def friend_add(request, id):
+	context = RequestContext(request)
+	new_friend = User.objects.filter(id=id)[0]
+	friendship = Friends(user1Id=request.user, user2Id=new_friend)
+	friendship.save()
+	return HttpResponseRedirect('friend_list')
