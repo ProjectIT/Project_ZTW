@@ -212,7 +212,6 @@ def users_for_project_search(request, project_id):
 	hr = HttpResponse({"status":"error"})
 	hr.status_code = 412
 	return hr
-
 #
 # __utils
 #

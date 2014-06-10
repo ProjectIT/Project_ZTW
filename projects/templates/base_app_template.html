@@ -25,16 +25,17 @@
 
 		<!-- top navbar -->
 		<div id="navigation-bar" class="ui-mid-gray">
-            <!--TODO logout button-->
-			<span id="navigation-bar-logout" class="glyphicon glyphicon-remove navigation-bar-icon hoverable"></span>
-             <a href="{% url 'settings' %}">
-                 <span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
-             </a>
-            <img src="{{ STATIC_URL }}{{ user.get_profile.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
-
+            <a href="{% url 'logout_view' %}" class="navigation-bar-icon">
+                <span id="navigation-bar-logout" class="glyphicon glyphicon-remove navigation-bar-icon hoverable"></span>
+            </a>
+            <a href="{% url 'settings' %}">
+                <span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
+            </a>
+            <a href="{% url 'user_profile' %}" class="navigation-bar-icon">
+                <img src="{{ STATIC_URL }}{{ user.get_profile.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
+            </a>
             <img src="{{ STATIC_URL }}imgs/lang/gb.png" id="lang-en" class="navigation-bar-icon lang-icon">
             <img src="{{ STATIC_URL }}imgs/lang/pl.png" id="lang-pl" class="navigation-bar-icon lang-icon">
-
 
             <!--TODO App tittle-->
 			<span id="brand" class="left-panel-size">App tittle</span>
@@ -49,15 +50,15 @@
 				<span class="glyphicon glyphicon-star navigation-panel-icon"></span>
 				<label data-translate="dashboard">Dashboard</label>
 			</div>
-             <a href="{% url 'user_project_list' user.id %}">
+             <!--TODO <a href="{ % url 'user_project_list' request.user.id %}"> -->
                 <div data-page-type="projects" class="navigation-button">
                     <div id="color-strip-projects" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-folder-open navigation-panel-icon"></span>
                     <label data-translate="my_projects">My projects</label>
                 </div>
-            </a>
+            <!-- </a> -->
 
-             <a href="{% url 'user_tasks_list' user.id %}">
+             <!-- <a href="{ % url 'user_tasks_list' user.id %}"> -->
                 <div data-page-type="tasks" class="navigation-button">
                     <div id="color-strip-tasks" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-list navigation-panel-icon"></span>
@@ -66,9 +67,9 @@
                     <p class="black-overlay">{{ task_count }}</p>
                     {% endif %}
                 </div>
-             </a>
+             <!-- </a> -->
 
-            <a href="{% url 'friends_list' user.id %}">
+            <a href="{% url 'friends_list' %}">
                 <div data-page-type="friends" class="navigation-button">
                     <div id="color-strip-friends" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-user navigation-panel-icon"></span>

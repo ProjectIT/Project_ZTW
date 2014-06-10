@@ -1,0 +1,64 @@
+{% extends "base_app_template.html" %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}friends.css" />
+	<script src="{{ STATIC_URL }}bootstrap/js/bootstrap-slider.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block title %}
+	{{ profile }}
+{% endblock %}
+
+{% block page_end %}
+    <script src="{{ STATIC_URL }}js/profile.js" type="text/javascript"></script>
+
+    <script language="JavaScript">
+        $(document).ready(function() {
+
+            $('#profile-form').submit(function(event) {
+                editProfile("{% url 'profile_edit' %}","{% url 'user_profile' %}");
+                event.preventDefault();
+            });
+
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<form id="profile-form" action="" method="post">{% csrf_token %}
+	<section class="data-section">
+                <header>Status</header>
+                <select id="gender" name="gender">
+                    {% for tT_short, tT_name in genders %}
+
+                        {% if profile.gender.0 == tT_short %}
+                        <option value="{{ tT_short }}" selected="selected">{{ tT_name }}</option>
+                        {% else %}
+                        <option value="{{ tT_short }}">{{ tT_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+    </section>
+    <br />
+
+	<section class="data-section">
+		<label for="__id_complete">Birthdate</label>
+		<input class="form-control" id="task-deadline" type="date" name="birthdate" value="{{ profile.birthdate|default:""|date:"Y-m-d" }}" style="max-width: 300px;">
+	</section>
+    
+    <section class="data-section">
+		<label for="__id_complete">Avatar</label>
+		    <input id="profile-avatar" type="file" accept="image/*" class="" name="image">
+
+	</section>
+    <br />
+    <!--TODO project delete-->
+	<!--save and back buttons-->
+	<div class="profile-button pull-left">
+		Back
+	</div>
+    <input type="submit" value="Save" class="profile-button pull-right"/>
+
+</form>
+
+{% endblock %}

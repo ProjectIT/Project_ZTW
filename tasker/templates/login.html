@@ -56,7 +56,7 @@
 	</div>
 	
 <script>
-	
+
 $('document').ready(function(){
 	$("#sign-up").click(function(e){
 		$('#login-dialog').addClass('login-overlay');
@@ -67,6 +67,23 @@ $('document').ready(function(){
 		$('#login-dialog').removeClass('login-overlay');
 		$("#register-dialog").hide();
 	});
+
+	var pass1 = $('#register-password'),
+	pass2 = $('#register-password2'),
+	button = $('#register'),
+	check = function(){
+		if (pass1.val() !== pass2.val() || pass1.val().length === 0) {
+			pass1.addClass('invalid');
+			pass2.addClass('invalid');
+			button.attr('disabled', 'disabled');
+		} else {
+			pass1.removeClass('invalid');
+			pass2.removeClass('invalid');
+			button.removeAttr('disabled');
+		}
+	};
+pass1.on('blur', check);
+pass2.on('blur', check);
 });
 	
 </script>

@@ -1,0 +1,69 @@
+{% extends "base_app_template.html" %}
+
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}friends.css" />
+	<script src="{{ STATIC_URL }}bootstrap/js/bootstrap-slider.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block title %}
+	Settings
+{% endblock %}
+
+{% block page_end %}
+    <script src="{{ STATIC_URL }}js/friends.js" type="text/javascript"></script>
+
+    <script language="JavaScript">
+        $(document).ready(function() {
+
+            $('#settings-form').submit(function(event) {
+                editSettings("{% url 'settings' %}","{% url 'user_profile' %}");
+                event.preventDefault();
+            });
+
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<form id="settings-form" action="" method="post">{% csrf_token %}
+	<section class="data-section">
+		<label for="id_username">Username</label>
+        <input class="form-control profile-field" id="id_username" name="username" type="text" placeholder="Username.." value="{{ user.username|default:"" }}">
+	</section>
+
+	<section class="data-section">
+		<label for="id_password">Password</label>
+        <input class="form-control profile-field" id="id_password" name="password" type="password" placeholder="Password.." value="">
+	</section>
+    
+    <section class="data-section">
+		<label for="id_password2">Repeat password</label>
+        <input class="form-control profile-field" id="id_password2" name="password2" type="password" placeholder="Repeat password.." value="">
+	</section>
+    
+    <section class="data-section">
+		<label for="id_email">E-mail</label>
+        <input class="form-control profile-field" id="id_email" name="email" type="email" placeholder="Email.." value="{{ user.email }}">
+	</section>
+    
+    <section class="data-section">
+		<label for="id_first_name">First name</label>
+        <input class="form-control profile-field" id="id_first_name" name="first_name" type="text" placeholder="First name.." value="{{ user.first_name }}">
+	</section>
+    <br />
+    
+    <section class="data-section">
+		<label for="id_last_name">Last name</label>
+        <input class="form-control profile-field" id="id_last_name" name="last_name" type="text" placeholder="Last name.." value="{{ user.last_name }}">
+	</section>
+    <br />
+    
+	<!--save and back buttons-->
+	<div class="profile-button pull-left">
+		Back
+	</div>
+    <input type="submit" value="Save" class="profile-button pull-right"/>
+
+</form>
+
+{% endblock %}

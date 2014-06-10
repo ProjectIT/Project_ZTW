@@ -120,6 +120,12 @@
 /*	position: relative;*/
 }
 
+.data-section label{
+	font-weight: 600;
+	font-size: 2em;
+	display: block;
+}
+
 .last-activities-section {
     margin-top: 15px;
     width: 100%;
@@ -397,6 +403,45 @@ project write - slider
 	border-radius: 1px;
 	border: 1px solid #eee;
 	position: relative;
+}
+
+#profile-create {
+/*	background-color:hsl(31, 75%, 65%);*/
+/*	color: white;*/
+	font-size: .5em;
+	position: absolute;
+	top: -9px;
+	right: -24px;
+	width: 170px;
+	height: 100%;
+/*	text-align: center;*/
+	border-top: 1px solid #fff;
+/*	cursor: pointer;*/
+/*	border-radius: 9px;*/
+/*	border:1px solid red;*/
+}
+
+.profile-field {
+min-width: 300px;
+max-width: 300px;
+padding: 5px;
+}
+
+.profile-button{
+	font-size: 1em;
+	width: 170px;
+	height: 40px;
+	line-height: 40px;
+	
+	background-color:hsl(45, 87%, 57%);
+	color: white;
+	border-radius: 9px;
+	text-align: center;
+	cursor: pointer;
+	transition: background 0.5s;
+}
+.profile-button:hover{
+	background-color:hsl(45, 77%, 47%);
 }
 
 
