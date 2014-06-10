@@ -6,7 +6,6 @@ languages["pl"] = {
 	"noResults": "No results found for your query.",
 	"search": "Search",
 
-
 	// main
 	"dashboard": "Dashboard",
 	"my_projects": "Moje projekty",

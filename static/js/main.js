@@ -17,16 +17,24 @@ $(document).ready(function() {
     $("#lang-en").click(function() {
         $(this).addClass("lang-icon-active");
         $("#lang-pl").removeClass("lang-icon-active");
-        translate(languages["en"]);
+        translate("en");
     });
     $("#lang-pl").click(function() {
         $(this).addClass("lang-icon-active");
         $("#lang-en").removeClass("lang-icon-active");
-        translate(languages["pl"]);
+        translate("pl");
     });
+
+    if (Get_Cookie('i18n')) {
+        // alert(Get_Cookie('i18n'));
+        var lang_id = Get_Cookie('i18n');
+        translate(lang_id);
+        $("#lang-" + lang_id).addClass("lang-icon-active");
+    }
 });
 
-function translate(lang_obj) {
+function translate(lang_id) {
+    lang_obj = languages[lang_id];
     $('[data-translate]').each(function() {
         var $el = $(this);
         var key = $el.data('translate');
@@ -39,16 +47,18 @@ function translate(lang_obj) {
             // console.log(val+":"+key);
             $el.attr('value', val);
             // $el.attr('value', "a");
-        }else if ($el.is('input')) {
+        } else if ($el.is('input')) {
             $el.attr('placeholder', val);
         } else {
             $el.text(val);
         }
     });
+    Set_Cookie('i18n', lang_id, '', '/', '', '');
 }
 
 /*
  * utils
+ * http://techpatterns.com/downloads/javascript_cookies.php
  */
 function Get_Cookie(check_name) {
     // first we'll split this cookie up into name/value pairs
@@ -84,4 +94,27 @@ function Get_Cookie(check_name) {
     if (!b_cookie_found) {
         return null;
     }
+}
+
+function Set_Cookie(name, value, expires, path, domain, secure) {
+    // set time, it's in milliseconds
+    var today = new Date();
+    today.setTime(today.getTime());
+
+    /*
+if the expires variable is set, make the correct
+expires time, the current script below will set
+it for x number of days, to make it for hours,
+delete * 24, for minutes, delete * 60 * 24
+*/
+    if (expires) {
+        expires = expires * 1000 * 60 * 60 * 24;
+    }
+    var expires_date = new Date(today.getTime() + (expires));
+
+    document.cookie = name + "=" + escape(value) +
+        ((expires) ? ";expires=" + expires_date.toGMTString() : "") +
+        ((path) ? ";path=" + path : "") +
+        ((domain) ? ";domain=" + domain : "") +
+        ((secure) ? ";secure" : "");
 }
