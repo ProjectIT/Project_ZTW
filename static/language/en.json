@@ -1,0 +1,54 @@
+languages["en"] = {
+	"quit": "Quit",
+	"cancel": "Cancel",
+	// "beforeQuit": "Are you sure you want to quit?",
+	"loading": "Please wait...",
+	"noResults": "No results found for your query.",
+	"search": "Search",
+
+	// main
+	"dashboard": "Dashboard",
+	"my_projects": "My projects",
+	"my_tasks": "My tasks",
+	"friends": "Friends",
+
+	// projects
+	"project_add": "add new project",
+	"complete": "complete",
+	"description": "Description",
+	"tasks": "Tasks",
+	"active": "Active",
+	"title": "Title",
+	"assigned_to": "Assigned to",
+	"deadline": "Deadline",
+	"not_assigned": "Not assigned yet",
+	"project_people": "People",
+	"files": "Files",
+	"new_project": "Create new project",
+	"name": "Name",
+	"complete_status": "Completion status",
+	"add_project_person": "add new person",
+	"person_name": "Name",
+	"person_last_name": "Last name",
+	"person_username": "Username",
+	"add_to_the_project": "Add to the project",
+
+	"created_by": "Created by",
+	"created_date": "Creation date",
+	"comments": "Comments",
+	"new_task": "Create new task",
+
+	"task_name": "Name",
+	"task_status": "Status",
+	"task_assignment_change": "Change assignment",
+	"task_assign": "Assign",
+	"assign_to_the_task": "Assign to the task",
+
+	"task_comment_default": "Comment text..",
+	"task_add": "add new task",
+	"back": "Back",
+	"save": "Save",
+	"delete": "Delete",	
+}
+// data-translate="my_projects"
+// <span data-translate="complete">complete</span>

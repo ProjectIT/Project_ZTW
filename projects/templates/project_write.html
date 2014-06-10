@@ -3,16 +3,20 @@
 {% block head %}
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}project.css" />
 	<script src="{{ STATIC_URL }}bootstrap/js/bootstrap-slider.js" type="text/javascript"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.2/underscore-min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/underscore-min.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block title %}
-	{{ project.name|default:"Create new project" }}
+        {% if new_project %}
+        <span data-translate="new_project">Create new project</span>
+        {% else %}
+        {{ project.name|default:"Create new project" }}
+        {% endif %}
 {% endblock %}
 
 {% block title_right %}
         {% if not new_project %}
-            <h2>{{ project.complete }}% complete</h2>
+            <h2>{{ project.complete }}% <span data-translate="complete">complete</span></h2>
         {% endif %}
 {% endblock %}
 
@@ -46,19 +50,19 @@
 {% block content %}
 <form id="project-form" action="" method="post">{% csrf_token %}
 	<section class="data-section">
-		<label for="id_name">Name</label>
+		<label for="id_name" data-translate="name">Name</label>
         <input class="form-control" id="id_name" name="name" type="text" placeholder="Name.." value="{{ project.name|default:"" }}">
 	</section>
 
 	<section class="data-section">
-		<label for="__id_complete">Completion status</label>
+		<label for="__id_complete" data-translate="complete_status">Completion status</label>
 		<input id="__id_complete" name="__complete" data-slider-id='completionSlider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="5" data-slider-value="{{ project.complete|default:50 }}"/>
 		<b id="completion-slider-val">{{ project.complete|default:50 }}% complete</b>
         <input id="id_abc" name="complete" type="text" placeholder="Name.." value="{{ project.complete|default:"50" }}" style="display:none"/>
 	</section>
 
 	<section class="data-section">
-		<label for="id_description">Description</label>
+		<label for="id_description" data-translate="description">Description</label>
 		<textarea class="form-control" id="id_description" name="description" rows="3" placeholder="Add description..">{{ project.description|default:"" }}</textarea>
     </section>
 
@@ -69,18 +73,18 @@
             <a href="{% url 'task_create' project.id %}">
 			<div id="task-create" class="project-button">
 				<span class="glyphicon glyphicon-plus"></span>
-				add new task
+                <span data-translate="task_add">add new task</span>
 			</div>
             </a>
 		</div>
 
-		<header class="clearfix">Tasks</header>
+		<header class="clearfix" data-translate="my_tasks">Tasks</header>
 		<table id="tasks-table">
 			<tr>
-				<th class="tasks-cell tasks-col1">Active</th>
-				<th class="tasks-cell tasks-col2">Title</th>
-				<th class="tasks-cell tasks-col3">Assigned to</th>
-				<th class="tasks-cell tasks-col4">Deadline</th>
+				<th class="tasks-cell tasks-col1" data-translate="active">">Active</th>
+				<th class="tasks-cell tasks-col2" data-translate="title">Title</th>
+				<th class="tasks-cell tasks-col3" data-translate="assigned_to">Assigned to</th>
+				<th class="tasks-cell tasks-col4" data-translate="deadline">Deadline</th>
 			</tr>
 
             {% for task in project.tasks %}
@@ -88,7 +92,13 @@
                 <td class="tasks-cell tasks-col1"></td>
                 <td class="tasks-cell tasks-col2">{{ task.title }}</td>
                 <td class="tasks-cell tasks-col3">
-                        {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                    {% if task.personResponsible %}
+                            <a href="{% url 'public_profile' task.personResponsible.id %}">
+                            {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
+                        </a>
+                    {% else %}
+                        <span data-translate="not_assigned">Not assigned yet</span>
+                    {% endif %}
                 </td>
                 <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
                 <td class="tasks-cell tasks-col4 tasks-edit">
@@ -108,11 +118,11 @@
 	<section class="data-section">
 		<div id="view-header-right" class="clearfix">
 			<div id="person-add" class="project-button">
-				<span class="glyphicon glyphicon-plus"></span>
-				add new person
+				<span class="glyphicon glyphicon-plus" ></span>
+                <span data-translate="add_project_person">add new person</span>
 			</div>
 		</div>
-		<header class="clearfix">People</header>
+		<header class="clearfix" data-translate="project_people">People</header>
 		<!--TODO for each person add connection type: { admin/progr./etc}-->
 		<ul id="people-list" class="clearfix">
             {% for person in project.people %}
@@ -121,7 +131,7 @@
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
 				<img src="{{ STATIC_URL }}{{ person.avatarPath}}">
-				{{ person.name }}&nbsp;{{ person.lastName }}
+				{{ person.first_name|default:person.username }}&nbsp;{{ person.last_name }}
 			</li>
             {% endfor %}
 
@@ -129,7 +139,7 @@
 	</section>
 
 	<section class="data-section">
-		<header>Files</header>
+		<header data-translate="files">Files</header>
 		<ul id="files-list" class="clearfix">
             {% for file in project.files %}
             <li class="files-list-item" data-type="{{file.type|lower}}" data-file-id="{{ file.id }}">
@@ -166,13 +176,13 @@
     {% else %} <a href="{% url 'project_list' %}">
     {% endif %}
         <div class="project-button pull-left">
-            Back
+            <span data-translate="back">Back</span>
         </div>
     </a>
 
-    <input type="submit" value="Save" class="project-button pull-right" onclick="setSubmit(this)"/>
+    <input type="submit" value="Save" class="project-button pull-right" onclick="setSubmit(this)" data-translate="save"/>
     {% if not new_project %}
-        <input type="submit" value="Delete" class="project-button pull-right" onclick="setSubmit(this)"/>
+        <input type="submit" value="Delete" class="project-button pull-right" onclick="setSubmit(this)" data-translate="delete"/>
     {% endif %}
 
 </form>
@@ -186,22 +196,22 @@
     <form id="assignment-form" class="form-horizontal" role="form">
         {% csrf_token %}
 
-        <legend>Add to the project</legend>
+        <legend data-translate="add_to_the_project">Add to the project</legend>
         <div id="person-search-form" class="control-group">
              <div class="form-group">
-                 <label class="control-label col-sm-2">Name</label>
+                 <label class="control-label col-sm-2" data-translate="person_name">Name</label>
                 <div class="col-sm-10">
                     <input id="search-person-name" name="name" type="text" placeholder="" class="form-control search-person-ctr">
                 </div>
             </div>
              <div class="form-group">
-                <label class="control-label col-sm-2">Last name</label>
+                <label class="control-label col-sm-2" data-translate="person_last_name">Last name</label>
                 <div class="col-sm-10">
                     <input id="search-person-last-name" name="last-name" type="text" placeholder="" class="form-control search-person-ctr">
                 </div>
             </div>
              <div class="form-group">
-                <label class="control-label col-sm-2">User name</label>
+                <label class="control-label col-sm-2" data-translate="person_username">Username</label>
                 <div class="col-sm-10">
                     <input id="search-person-user-name" name="user-name" type="text" placeholder="" class="form-control search-person-ctr">
                 </div>

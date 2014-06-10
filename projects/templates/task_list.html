@@ -5,16 +5,16 @@
 {% endblock %}
 
 {% block title %}
-My tasks
+<span data-translate="my_tasks">My tasks</span>
 {% endblock %}
 
 {% block content %}
 <table id="tasks-table">
     <tr>
-        <th class="tasks-cell tasks-col1">Active</th>
-        <th class="tasks-cell tasks-col2">Title</th>
-        <th class="tasks-cell tasks-col3">Assigned to</th>
-        <th class="tasks-cell tasks-col4">Deadline</th>
+        <th class="tasks-cell tasks-col1" data-translate="active">Active</th>
+        <th class="tasks-cell tasks-col2" data-translate="title">Title</th>
+        <th class="tasks-cell tasks-col3" data-translate="assigned_to">Assigned to</th>
+        <th class="tasks-cell tasks-col4" data-translate="deadline">Deadline</th>
     </tr>
 
     {% for task in tasks %}
@@ -26,8 +26,10 @@ My tasks
         <td class="tasks-cell tasks-col3">
             {% if task.personResponsible %}
             <a href="{% url 'public_profile' task.personResponsible.id %}">
-                {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
             </a>
+            {% else %}
+            <span data-translate="not_assigned">Not assigned yet</span>
             {% endif %}
         </td>
         <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
