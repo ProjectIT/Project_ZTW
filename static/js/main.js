@@ -19,7 +19,7 @@ $(document).ready(function() {
         $("#lang-pl").removeClass("lang-icon-active");
         translate(languages["en"]);
     });
-     $("#lang-pl").click(function() {
+    $("#lang-pl").click(function() {
         $(this).addClass("lang-icon-active");
         $("#lang-en").removeClass("lang-icon-active");
         translate(languages["pl"]);
@@ -30,7 +30,9 @@ function translate(lang_obj) {
     $('[data-translate]').each(function() {
         var $el = $(this);
         var key = $el.data('translate');
-        var val = lang_obj[key];
+        var val = "###";
+        if (! ('key' in lang_obj))
+            val = lang_obj[key];
 
         if ($el.is('input')) {
             $el.attr('placeholder', val);

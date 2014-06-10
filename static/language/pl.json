@@ -7,5 +7,30 @@ languages["pl"] = {
 	"search": "Search",
 
 
-	"search": "Search",
+	// main
+	"dashboard": "Dashboard",
+	"my_projects": "Moje projekty",
+	"my_tasks": "Moje zadania",
+	"friends": "Znajomi",
+
+	// projects
+	"project_add": "dodaj nowy projekt",
+	"complete": "skończone",
+	"description": "Opis",
+	"tasks": "Zadania",
+	"active": "Status",
+	"title": "Tytuł",
+	"assigned_to": "Osoba przydzielona",
+	"deadline": "Deadline",
+	"not_assigned": "Not assigned yet",
+	"project_people": "Członkowie projektu",
+	"files": "Pliki",
+	"new_project": "Utworz nowy projekt",
+	"name": "Nazwa",
+	"complete_status": "Ukończono",
+	"add_project_person": "dodaj nową osobę",
+	"person_name": "Imie",
+	"person_last_name": "Nazwisko",
+	"person_username": "Login",
+	"add_to_the_project": "Dodaj do projektu",
 }

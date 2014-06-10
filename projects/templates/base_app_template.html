@@ -47,13 +47,13 @@
 			<div data-page-type="dashboard" class="navigation-button">
 				<div id="color-strip-dashboard" class="navigation-button-color"></div>
 				<span class="glyphicon glyphicon-star navigation-panel-icon"></span>
-				<label data-translate="quit">Dashboard</label>
+				<label data-translate="dashboard">Dashboard</label>
 			</div>
              <a href="{% url 'user_project_list' user.id %}">
                 <div data-page-type="projects" class="navigation-button">
                     <div id="color-strip-projects" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-folder-open navigation-panel-icon"></span>
-                    <label>My projects</label>
+                    <label data-translate="my_projects">My projects</label>
                 </div>
             </a>
 
@@ -61,7 +61,7 @@
                 <div data-page-type="tasks" class="navigation-button">
                     <div id="color-strip-tasks" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-list navigation-panel-icon"></span>
-                    <label>My tasks</label>
+                    <label data-translate="my_tasks">My tasks</label>
                     {% if 0 < task_count %}
                     <p class="black-overlay">{{ task_count }}</p>
                     {% endif %}
@@ -72,7 +72,7 @@
                 <div data-page-type="friends" class="navigation-button">
                     <div id="color-strip-friends" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-user navigation-panel-icon"></span>
-                    <label>Friends</label>
+                    <label data-translate="friends">Friends</label>
                 </div>
             </a>
 		</div>
