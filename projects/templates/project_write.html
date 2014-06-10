@@ -73,12 +73,12 @@
             <a href="{% url 'task_create' project.id %}">
 			<div id="task-create" class="project-button">
 				<span class="glyphicon glyphicon-plus"></span>
-				add new task
+                <span data-translate="task_add">add new task</span>
 			</div>
             </a>
 		</div>
 
-		<header class="clearfix" data-translate="my_projects">Tasks</header>
+		<header class="clearfix" data-translate="my_tasks">Tasks</header>
 		<table id="tasks-table">
 			<tr>
 				<th class="tasks-cell tasks-col1" data-translate="active">">Active</th>
@@ -176,13 +176,13 @@
     {% else %} <a href="{% url 'project_list' %}">
     {% endif %}
         <div class="project-button pull-left">
-            Back
+            <span data-translate="back">Back</span>
         </div>
     </a>
 
-    <input type="submit" value="Save" class="project-button pull-right" onclick="setSubmit(this)"/>
+    <input type="submit" value="Save" class="project-button pull-right" onclick="setSubmit(this)" data-translate="save"/>
     {% if not new_project %}
-        <input type="submit" value="Delete" class="project-button pull-right" onclick="setSubmit(this)"/>
+        <input type="submit" value="Delete" class="project-button pull-right" onclick="setSubmit(this)" data-translate="delete"/>
     {% endif %}
 
 </form>

@@ -46,4 +46,8 @@ languages["pl"] = {
 	"assign_to_the_task": "Przydziel osobę",
 
 	"task_comment_default": "Nowy komentarz..",
+	"task_add": "dodaj zadanie",
+	"back": "Powrot",
+	"save": "Zapisz",
+	"delete": "Usuń",
 }

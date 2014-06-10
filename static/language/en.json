@@ -48,8 +48,11 @@ languages["en"] = {
 	"assign_to_the_task": "Assign to the task",
 
 	"task_comment_default": "Comment text..",
-	"stub": "stub",
-	"stub": "stub",
+	"task_add": "add new task",
+	"back": "Back",
+	"save": "Save",
+	"delete": "Delete",
+	
 	"stub": "stub",
 	"stub": "stub",
 	"stub": "stub",

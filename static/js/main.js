@@ -8,7 +8,7 @@
 // });
 // i18n.setLocale(pureLanguage);
 
-var languages = {};
+languages = {};
 
 $(document).ready(function() {
     // <img src="{{ STATIC_URL }}imgs/lang/gb.png" id="lang-en" class="navigation-bar-icon lang-icon">
@@ -31,10 +31,15 @@ function translate(lang_obj) {
         var $el = $(this);
         var key = $el.data('translate');
         var val = "###";
-        if (! ('key' in lang_obj))
+        if (key in lang_obj)
             val = lang_obj[key];
 
-        if ($el.is('input')) {
+        if ($el.is('input[type="submit"]')) {
+            // console.log($el);
+            // console.log(val+":"+key);
+            $el.attr('value', val);
+            // $el.attr('value', "a");
+        }else if ($el.is('input')) {
             $el.attr('placeholder', val);
         } else {
             $el.text(val);

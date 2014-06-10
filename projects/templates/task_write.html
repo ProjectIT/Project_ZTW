@@ -174,12 +174,12 @@
     {% else %} <a href="{% url 'project' project_id %}">
     {% endif %}
         <div class="task-button pull-left">
-            Back
+           <span data-translate="back">Back</span>
         </div>
     </a>
-    <input type="submit" value="Save" class="task-button pull-right" onclick="setSubmit(this)"/>
+    <input type="submit" value="Save" class="task-button pull-right" onclick="setSubmit(this)" data-translate="save"/>
     {% if not new_task %}
-        <input type="submit" value="Delete" class="task-button pull-right" onclick="setSubmit(this)"/>
+        <input type="submit" value="Delete" class="task-button pull-right" onclick="setSubmit(this)" data-translate="delete"/>
     {% endif %}
 
 </form>
