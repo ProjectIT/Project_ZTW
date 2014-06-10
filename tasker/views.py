@@ -114,7 +114,8 @@ def public_profile(request, id):
 		'project': project,
 		'task': task,
 		'data_page_type': 'friends',
-		'can_edit': can_edit
+		'can_edit': can_edit,
+		'add': False
 	})
 	return HttpResponse(template.render(context))
 
@@ -172,16 +173,19 @@ def friends_list(request):
 		})
 	return HttpResponse(template.render(context))
 
-def friend_edit(request):
+def friends_edit(request):
+	userId = request.user.id
 	peopleIds = Friends.objects.exclude(user1Id=userId).values('user2Id').distinct()
 	people = User.objects.filter(id__in=peopleIds)
+	people = User.objects.all()
 	template = loader.get_template('friend_list.html')
 	context = RequestContext(request, {
 		'people': people,
+		'add': True
 		})
 	return HttpResponse(template.render(context))
 
-def friend_add(request, id):
+def friends_add(request, id):
 	context = RequestContext(request)
 	new_friend = User.objects.filter(id=id)[0]
 	friendship = Friends(user1Id=request.user, user2Id=new_friend)

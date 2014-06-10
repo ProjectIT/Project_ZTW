@@ -7,6 +7,9 @@
 
 {% block title %}
 	Friends
+    <a href="{% url 'friends_edit' %}">
+             <span id="edit-button">edit</span>
+    </a>
 {% endblock %}
 
 {% block content %}

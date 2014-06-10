@@ -50,15 +50,15 @@
 				<span class="glyphicon glyphicon-star navigation-panel-icon"></span>
 				<label data-translate="dashboard">Dashboard</label>
 			</div>
-             <!--TODO <a href="{ % url 'user_project_list' request.user.id %}"> -->
+             <a href="{% url 'project_list' %}"> 
                 <div data-page-type="projects" class="navigation-button">
                     <div id="color-strip-projects" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-folder-open navigation-panel-icon"></span>
                     <label data-translate="my_projects">My projects</label>
                 </div>
-            <!-- </a> -->
+            </a>
 
-             <!-- <a href="{ % url 'user_tasks_list' user.id %}"> -->
+             <a href="{% url 'user_tasks_list' user.id %}">
                 <div data-page-type="tasks" class="navigation-button">
                     <div id="color-strip-tasks" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-list navigation-panel-icon"></span>
@@ -67,7 +67,7 @@
                     <p class="black-overlay">{{ task_count }}</p>
                     {% endif %}
                 </div>
-             <!-- </a> -->
+            </a>
 
             <a href="{% url 'friends_list' %}">
                 <div data-page-type="friends" class="navigation-button">

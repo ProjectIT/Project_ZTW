@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block title %}
-    {{ current_profile }}
+    {{ current_user }}
 {% endblock %}
 
 {% block title_right %}
@@ -14,8 +14,9 @@
         <a href="{% url 'profile_edit'%}">
                 <span id="edit-button">edit</span>
         </a>
-    {% else %}
-        <a href="{% url 'friend_add' current_user.id %}">
+    {% endif %}
+    {% if add %}
+        <a href="{% url 'friends_add' current_user.id %}">
             <div id="project-create">
                 <span class="glyphicon glyphicon-plus">add to a friend</span>
             </div>
