@@ -14,11 +14,11 @@
 {% endblock %}
 
 {% block title_right %}
-	<h2>{{ project.complete }}% complete</h2>
+	<h2>{{ project.complete }}% <span data-translate="complete">complete</span></h2>
 {% endblock %}
 
 {% block content %}
-	<section class="clearfix">
+	<section class="clearfix" style="display:none">
 		<div class="read-cell">
 			<!--TODO chart-->
 			<h1>chart</h1>
@@ -51,7 +51,7 @@
 	</section>
 
 	<section class="data-section">
-		<header>Description</header>
+		<header data-translate="description">Description</header>
 		<p>{{ project.description }}</p>
 	</section>
 
@@ -62,14 +62,14 @@
             add new task
         </a>
         </div>
-		<header class="clearfix">Tasks</header>
+		<header class="clearfix" data-translate="tasks">Tasks</header>
 
 		<table id="tasks-table">
 			<tr>
-				<th class="tasks-cell tasks-col1">Active</th>
-				<th class="tasks-cell tasks-col2">Title</th>
-				<th class="tasks-cell tasks-col3">Assigned to</th>
-				<th class="tasks-cell tasks-col4">Deadline</th>
+				<th class="tasks-cell tasks-col1" data-translate="active">Active</th>
+				<th class="tasks-cell tasks-col2" data-translate="title">Title</th>
+				<th class="tasks-cell tasks-col3" data-translate="assigned_to">Assigned to</th>
+				<th class="tasks-cell tasks-col4" data-translate="deadline">Deadline</th>
 			</tr>
 
             {% for task in project.tasks %}
@@ -79,9 +79,13 @@
                     <a href="{% url 'task' task.id %}"> {{ task.title }} </a>
                 </td>
                 <td class="tasks-cell tasks-col3">
+                    {% if task.personResponsible %}
                      <a href="{% url 'public_profile' task.personResponsible.id %}">
-                        {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                        {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name|default:"" }}
                     </a>
+                      {% else %}
+                        <span data-translate="not_assigned">Not assigned yet</span>
+                      {% endif %}
                 </td>
                 <td class="tasks-cell tasks-col4">{{ task.deadline|date:"d-m-Y" }}</td>
             </tr>
@@ -90,21 +94,20 @@
 	</section>
 
 	<section class="data-section">
-		<header>People</header>
-		<!--TODO show only admins and make the 'view all' button ?-->
+		<header data-translate="project_people">People</header>
 		<ul id="people-list" class="clearfix">
             {% for person in project.people %}
             <li class="people-list-item">
                 <a href="{% url 'public_profile' person.id %}">
                     <img src="{{ STATIC_URL }}{{ person.avatarPath}}">
-                    {{ person.name }}&nbsp;{{ person.lastName }}
+                    {{ person.first_name|default:person.username }}&nbsp;{{ person.last_name }}
                 </a>
 			</li>
             {% endfor %}
 		</ul>
 	</section>
 	<section class="data-section">
-		<header>Files</header>
+		<header data-translate="files">Files</header>
 		<ul id="files-list" class="clearfix">
 
             {% for file in project.files %}

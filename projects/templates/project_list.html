@@ -5,14 +5,15 @@
 {% endblock %}
 
 {% block title %}
-	My projects
+	<!--My projects-->
+   <span data-translate="my_projects">My projects</span>
 {% endblock %}
 
 {% block title_right %}
         <a href="{% url 'project_create' %}">
 	<div id="project-create">
         <span class="glyphicon glyphicon-plus"></span>
-        add new project
+        <span data-translate="project_add">add new project</span>
     </div>
             </a>
 {% endblock %}

@@ -5,13 +5,19 @@
 {% endblock %}
 
 {% block title %}
-	{{ task.title|default:"Create new task" }}
+        {% if new_task %}
+        <span data-translate="new_task">Create new task</span>
+        {% else %}
+        {{ task.title|default:"Create new task" }}
+        {% endif %}
 {% endblock %}
 
 {% block title_right %}
-    {% if not new_task %}
-          <h2>{{ task.type.1 }}</h2>
-    {% endif %}
+   {% for tT_short, tT_name in taskTypes %}
+        {% if task.type == tT_short %}
+            <h2>{{ tT_name }}</h2>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
 
 {% block page_end %}
@@ -31,8 +37,12 @@
                 });
             {% else %}
                 $('#task-form').submit(function(event) {
-                    editTask("{% url 'task_edit' task.id %}","{% url 'task' task.id %}");
                     event.preventDefault();
+                    if (submitName === "Delete"){
+                        deleteTask( "{% url 'user_tasks_list' task.id %}");
+                    }else{
+                        editTask("{% url 'task_edit' task.id %}","{% url 'task' task.id %}");
+                    }
                 });
             {% endif %}
 
@@ -46,12 +56,12 @@
     <section class="clearfix">
         <div class="left-cell">
             <section class="data-section">
-                <header>Name</header>
+                <header data-translate="task_name">Name</header>
                 <input class="form-control" id="task-name" type="text" name="title" placeholder="Name.." value="{{ task.title|default:"" }}">
             </section>
 
             <section class="data-section">
-                <header>Status</header>
+                <header data-translate="task_status">Status</header>
                 <select id="task-type" name="type">
                     {% for tT_short, tT_name in taskTypes %}
 
@@ -66,13 +76,12 @@
             <br />
 
             <section class="data-section">
-                <header>Deadline</header>
-                <!--TODO datepicker - set current value-->
-                <input class="form-control" id="task-deadline" type="date" name="deadline" value="{{ task.title|default:"" }}" style="max-width: 300px;">
+                <header data-translate="deadline">Deadline</header>
+                <input class="form-control" id="task-deadline" type="date" name="deadline" value="{{ task.deadline|date:"Y-m-d"|default:"" }}" style="max-width: 300px;">
             </section>
 
             <section class="data-section">
-                <header>Description</header>
+                <header data-translate="description">Description</header>
                 <textarea class="form-control" id="project-note" rows="3" name="description" placeholder="Add description..">{{ task.description|default:"" }}</textarea>
             </section>
         </div>
@@ -84,16 +93,16 @@
         <div class="right-cell">
             <ul id="details-list">
                <li class="details-list-item">
-                    <p><b>Created by</b>
+                    <p><b data-translate="created_by">Created by</b>
                     <br />
-                    <!--TODO Created by -->
-                    <span class="details-info">Aaa Bbbb</span></p>
+                    <span class="details-info">
+                        {{ task.createdBy.first_name|default:task.createdBy.username }}&nbsp;{{ task.createdBy.last_name }}
+                    </span></p>
                 </li>
                 <li class="details-list-item">
-                    <p><b>Creation date</b>
+                    <p><b data-translate="created_date">Creation date</b>
                     <br />
-                    <!--TODO Creation date -->
-                    <span class="details-info">05-05-2014</span></p>
+                    <span class="details-info">{{ task.created|date:"d-m-Y" }}</span></p>
                 </li>
             </ul>
         </div>
@@ -104,21 +113,21 @@
     <!--Person-->
     <!---->
     <section class="data-section">
-        <!--TODO when should show this person ? it is possible there is no person responsible-->
         <div id="view-header-right" class="clearfix">
             <div id="assign-person" class="task-button">
-                Change assignment
+                <span data-translate="task_assignment_change">Change assignment</span>
             </div>
         </div>
-        <header class="clearfix">Assign</header>
+        <header class="clearfix" data-translate="task_assign">Assign</header>
         <div id="assign-img-div" style="display:none" data-person-id="{{ task.personResponsible.id|default:"-1" }}">
              <p class="person-remove">
-                    <!--TODO person remove from project-->
 					<span class="glyphicon glyphicon-remove"></span>
 				<p>
             <img id="assign-img" src="{{ STATIC_URL }}{{ task.personResponsible.avatarPath|default:"stub_imgs/avatar2.jpg" }}">
             <p id="assign-name">
-        {{ task.personResponsible.name }}&nbsp;{{ task.personResponsible.lastName }}
+                {% if task.personResponsible %}
+                {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
+                {% endif %}
             </p>
         </div>
     </section>
@@ -126,12 +135,11 @@
 {% if not new_task %}
 
     <section class="data-section">
-        <header>Files</header>
+        <header data-translate="files">Files</header>
         <ul id="files-list" class="clearfix">
 
             {% for file in task.files %}
             <li class="files-list-item" data-type="{{file.type|lower}}" data-file-id="{{ file.id }}">
-                <!--TODO add some :hover, because there is a lot of confusion-->
 
                 <!--icon-->
                 {% if file.type == "Document" %}
@@ -161,18 +169,18 @@
 
 {% endif %}
 
-    <!--TODO task delete-->
     <!--save and back buttons-->
-    {% if not new_task %}
-    <a href="{% url 'task' task.id %}">
-    {% else %}
-    <a href="{% url 'project' project_id %}">
+    {% if not new_task %} <a href="{% url 'task' task.id %}">
+    {% else %} <a href="{% url 'project' project_id %}">
     {% endif %}
         <div class="task-button pull-left">
-            Back
+           <span data-translate="back">Back</span>
         </div>
     </a>
-    <input type="submit" value="Save" class="task-button pull-right"/>
+    <input type="submit" value="Save" class="task-button pull-right" onclick="setSubmit(this)" data-translate="save"/>
+    {% if not new_task %}
+        <input type="submit" value="Delete" class="task-button pull-right" onclick="setSubmit(this)" data-translate="delete"/>
+    {% endif %}
 
 </form>
 
@@ -183,13 +191,15 @@
     <span id="assignment-dialog-close" class="glyphicon glyphicon-remove"></span>
 
     <header id="assignment-dialog-title">
-    Assign to the task
+        <span data-translate="assign_to_the_task">Assign to the task</span>
     </header>
      <ul id="assignment-list" class="clearfix">
         {% for person in people_to_assign %}
         <li class="assignment-list-item" data-person-id="{{ person.id }}">
-            <img src="{{ STATIC_URL }}{{ person.avatarPath}}">
-            <span class="assignement-name">{{ person.name }}&nbsp;{{ person.lastName }}</span>
+            <img src="{{ STATIC_URL }}{{ person.avatarPath }}">
+            <span class="assignement-name">
+                {{ person.user.first_name|default:person.user.username }}&nbsp;{{ person.user.last_name }}
+            </span>
         </li>
         {% endfor %}
      </ul>

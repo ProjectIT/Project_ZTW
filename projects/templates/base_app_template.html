@@ -12,8 +12,11 @@
 	{% load staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" >
 	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}" />
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
-	
+	<script src="{{ STATIC_URL }}js/jquery.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/main.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}language/en.json" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}language/pl.json" type="text/javascript"></script>
+
 	{% block head %}{% endblock %}
 </head>
 
@@ -29,6 +32,10 @@
              </a>
             <img src="{{ STATIC_URL }}{{ user.get_profile.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
 
+            <img src="{{ STATIC_URL }}imgs/lang/gb.png" id="lang-en" class="navigation-bar-icon lang-icon">
+            <img src="{{ STATIC_URL }}imgs/lang/pl.png" id="lang-pl" class="navigation-bar-icon lang-icon">
+
+
             <!--TODO App tittle-->
 			<span id="brand" class="left-panel-size">App tittle</span>
 		</div>
@@ -40,13 +47,13 @@
 			<div data-page-type="dashboard" class="navigation-button">
 				<div id="color-strip-dashboard" class="navigation-button-color"></div>
 				<span class="glyphicon glyphicon-star navigation-panel-icon"></span>
-				<label>Dashboard</label>
+				<label data-translate="dashboard">Dashboard</label>
 			</div>
              <a href="{% url 'user_project_list' user.id %}">
                 <div data-page-type="projects" class="navigation-button">
                     <div id="color-strip-projects" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-folder-open navigation-panel-icon"></span>
-                    <label>My projects</label>
+                    <label data-translate="my_projects">My projects</label>
                 </div>
             </a>
 
@@ -54,7 +61,7 @@
                 <div data-page-type="tasks" class="navigation-button">
                     <div id="color-strip-tasks" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-list navigation-panel-icon"></span>
-                    <label>My tasks</label>
+                    <label data-translate="my_tasks">My tasks</label>
                     {% if 0 < task_count %}
                     <p class="black-overlay">{{ task_count }}</p>
                     {% endif %}
@@ -65,7 +72,7 @@
                 <div data-page-type="friends" class="navigation-button">
                     <div id="color-strip-friends" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-user navigation-panel-icon"></span>
-                    <label>Friends</label>
+                    <label data-translate="friends">Friends</label>
                 </div>
             </a>
 		</div>
@@ -73,7 +80,6 @@
 		<!-- main content panel f.e. timeline, images, search etc. -->
 		<div id="main-panel" class="ui-content-min-h">
 			<header id="view-header">
-                <!-- TODO top strip color -->
 				<span class="glyphicon glyphicon-folder-open"></span>
 				<span id="view-title">{% block title %}{% endblock %}</span>
 
@@ -83,14 +89,6 @@
 			</header>
 
 			<div id="center-content">
-                <!-- TODO edit button position, add 'show_edit_button' variable -->
-                <!--{% if projectId %}-->
-                    <!--<a href="{% url 'project_edit' projectId %}">-->
-                        <!--<p class="tasks-cell tasks-col4 tasks-edit" style="position:absolute;right:0px;">Edit</p>-->
-                    <!--</a>-->
-                <!--{% endif %}-->
-
-
 			    {% block content %}{% endblock %}
 			</div>
 
