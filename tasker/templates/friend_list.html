@@ -6,21 +6,21 @@
 {% endblock %}
 
 {% block title %}
-	something here!
+	Friends
 {% endblock %}
 
 {% block content %}
    <section class="data-section">
         <!--TODO show only admins and make the 'view all' button ?-->
         <ul id="people-list" class="clearfix">
-
-            <a href="{% url 'public_profile' 123 %}">
+           {% for person in people %}
+            <a href="{% url 'public_profile' person.id %}">
                 <li class="people-list-item">
-                    <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
-                    Aaa bbb
+                    <img src="{{ STATIC_URL }}{{ person.get_profile.avatarPath }}">
+                    {{ person }}
                 </li>
             </a>
-
+            {% endfor %}
               <a href="{% url 'public_profile' 123 %}">
                 <li class="people-list-item">
                     <img src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">

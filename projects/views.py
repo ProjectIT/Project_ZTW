@@ -88,7 +88,7 @@ def project_create(request):
 			p = Project(name=form.cleaned_data['name'],
 						complete=form.cleaned_data['complete'],
 						description=form.cleaned_data['description'],
-						createdBy=get_current_user())
+						createdBy=request.user)
 			p.save(True,False)
 			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
 		else:
@@ -179,7 +179,7 @@ def task_create(request, project_id):
 				type=form.cleaned_data['type'],
 				deadline=form.cleaned_data['deadline'],
 				description=form.cleaned_data['description'],
-				createdBy=get_current_user())
+				createdBy=request.user)
 			p.save(True,False)
 			__assign_person(p, request)
 			return HttpResponse(json.dumps({"status":"OK","id":p.id}))
@@ -222,7 +222,7 @@ def __project_edit(project, request):
 		project.name = form.cleaned_data['name']
 		project.complete = form.cleaned_data['complete']
 		project.description = form.cleaned_data['description']
-		project.createdBy = get_current_user()
+		project.createdBy = request.user
 		project.save(False,True)
 		return True, {}
 	else:
@@ -238,7 +238,7 @@ def __task_edit( task, request):
 		task.type = form.cleaned_data['type']
 		task.deadline = form.cleaned_data['deadline']
 		task.description = form.cleaned_data['description']
-		task.createdBy = get_current_user()
+		task.createdBy = request.user
 		task.save(False,True)
 		__assign_person(task,request)
 		return True, {}

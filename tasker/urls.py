@@ -21,6 +21,8 @@ urlpatterns = patterns('',
 
 	# friends
 	url(r'^profile$', views.user_profile, name="user_profile"),
+	url(r'^logout$', views.logout_view, name="logout_view"),
+	url(r'^profile/edit$', views.profile_edit, name='profile_edit'),
 	url(r'^profile/(?P<id>\d+)$', views.public_profile, name="public_profile"),
-	url(r'^friends/(?P<id>\d+)$', views.friends_list, name="friends_list"),
+	url(r'^friends$', views.friends_list, name="friends_list"),
 )

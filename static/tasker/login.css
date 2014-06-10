@@ -39,6 +39,10 @@ input {
 /*	border: 1px solid red;*/
 }
 
+.invalid {
+  border: 1px solid red;
+}
+
 #login-logo {
 /*	border:1px solid green;*/
 	font-size: 7.4em;

@@ -6,7 +6,12 @@
 {% endblock %}
 
 {% block title %}
-    {{ current_user.get_profile() }}
+    {{ current_profile }}
+    {% if can_edit %}
+        <a href="{% url 'profile_edit'%}">
+                <span id="edit-button">edit</span>
+        </a>
+    {% endif %} 
 {% endblock %}
 
 {% block content %}
@@ -14,7 +19,7 @@
         <div class="left-cell">
             <!-- size of img should fit to size of div (with test)-->
             <div id="login-img-div">
-                <img id="login-img" src="{{ STATIC_URL }}stub_imgs/avatar2.jpg">
+                <img id="login-img" src="{{ STATIC_URL }}{{ current_profile.avatarPath }}">
                 <p>{{ current_user }} <br />
                 {{current_user.email }}</p>
             </div>
@@ -27,7 +32,7 @@
                     </li>
                     {% endfor %}
                 {% else %}
-                    <h1>No projects assigned</h1>
+                    <h2>No projects assigned</h2>
                 {% endif %}
             </ul>
         </div>
@@ -36,7 +41,7 @@
                     <li class="details-list-item">
                         <p><b>Gender</b>
                         <br />
-                        {% if current_user.get_profile.gender == "F" %}
+                        {% if current_profile.gender == "F" %}
                         <span class="details-info">Female</span></p>
                         {% else %}
                         <span class="details-info">Male</span></p>
@@ -45,20 +50,20 @@
                     <li class="details-list-item">
                         <p><b>Birthdate</b>
                         <br />
-                        <span class="details-info">{{ current_user.get_profile.birthdate }}</span></p>
+                        <span class="details-info">{{ current_profile.birthdate }}</span></p>
                     </li>
                     <li class="details-list-item">
-                        <p><b>Register date</b>
+                        <p><b>Registered</b>
                         <br />
                         <span class="details-info">{{ current_user.date_joined }}</span></p>
                     </li>
                     <li class="details-list-item">
                         <p><b>Modified</b>
                         <br />
-                        <span class="details-info">{{ current_user.get_profile.modifiedDate }}</span></p>
+                        <span class="details-info">{{ current_profile.modifiedDate }}</span></p>
                     </li>
                     <li class="details-list-item">
-                        <p><b>Last seen</b>
+                        <p><b>Last logged</b>
                         <br />
                         <span class="details-info">{{ current_user.last_login }}</span></p>
                     </li>

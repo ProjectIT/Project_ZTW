@@ -22,13 +22,15 @@
 
 		<!-- top navbar -->
 		<div id="navigation-bar" class="ui-mid-gray">
-            <!--TODO logout button-->
-			<span id="navigation-bar-logout" class="glyphicon glyphicon-remove navigation-bar-icon hoverable"></span>
-             <a href="{% url 'settings' %}">
-                 <span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
-             </a>
-            <img src="{{ STATIC_URL }}{{ user.get_profile.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
-
+            <a href="{% url 'logout_view' %}">
+                <span id="navigation-bar-logout" class="glyphicon glyphicon-remove navigation-bar-icon hoverable"></span>
+            </a>
+            <a href="{% url 'settings' %}">
+                <span id="navigation-bar-settings" class="glyphicon glyphicon-cog navigation-bar-icon hoverable"></span>
+            </a>
+            <a href="{% url 'user_profile' %}" class="navigation-bar-icon">
+                <img src="{{ STATIC_URL }}{{ user.get_profile.avatarPath }}" id="navigation-avatar" class="navigation-bar-icon">
+            </a>
             <!--TODO App tittle-->
 			<span id="brand" class="left-panel-size">App tittle</span>
 		</div>
@@ -61,7 +63,7 @@
                 </div>
              </a>
 
-            <a href="{% url 'friends_list' user.id %}">
+            <a href="{% url 'friends_list' %}">
                 <div data-page-type="friends" class="navigation-button">
                     <div id="color-strip-friends" class="navigation-button-color"></div>
                     <span class="glyphicon glyphicon-user navigation-panel-icon"></span>
