@@ -33,4 +33,17 @@ languages["pl"] = {
 	"person_last_name": "Nazwisko",
 	"person_username": "Login",
 	"add_to_the_project": "Dodaj do projektu",
+
+	"created_by": "Dodany przez",
+	"created_date": "Data utworzenia",
+	"comments": "Komentarze",
+	"new_task": "Utworz zadanie",
+
+	"task_name": "Nazwa zadania",
+	"task_status": "Status",
+	"task_assignment_change": "Zmień przydzieloną osobę",
+	"task_assign": "Przydziel",
+	"assign_to_the_task": "Przydziel osobę",
+
+	"task_comment_default": "Nowy komentarz..",
 }

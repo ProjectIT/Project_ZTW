@@ -38,14 +38,14 @@
 {% block content %}
 	<section class="clearfix">
         <div class="left-cell">
-            <h1>Description</h1>
-        <p>{{ task.description }}</p>
+            <h1 data-translate="description">Description</h1>
+            <p>{{ task.description }}</p>
         </div>
         <div class="right-cell">
             <ul id="details-list">
                 <li class="details-list-item">
                     <p>
-                        <b>Assigned to</b>
+                        <b data-translate="assigned_to">Assigned to</b>
                         <br />
                         <span class="details-info">
                             {% if task.personResponsible %}
@@ -53,18 +53,18 @@
                             {{ task.personResponsible.first_name|default:task.personResponsible.username }}&nbsp;{{ task.personResponsible.last_name }}
                             </a>
                             {% else %}
-                            Not assigned yet
+                            <span data-translate="not_assigned">Not assigned yet</span>
                             {% endif %}
                         </span>
                     </p>
                 </li>
                 <li class="details-list-item">
-                    <p><b>Deadline</b>
+                    <p><b data-translate="deadline">Deadline</b>
                     <br />
                     <span class="details-info">{{ task.deadline|date:"d-m-Y" }}</span></p>
                 </li>
                 <li class="details-list-item">
-                    <p><b>Created by</b>
+                    <p><b data-translate="created_by">Created by</b>
                         <br />
                         <a href="{% url 'public_profile' task.createdBy.id %}">
                         <span class="details-info" style="color: #428bca !important;">
@@ -74,7 +74,7 @@
                     </p>
                 </li>
                 <li class="details-list-item">
-                    <p><b>Creation date</b>
+                    <p><b data-translate="created_date">Creation date</b>
                     <br />
                     <span class="details-info">{{ task.created|date:"d-m-Y" }}</span></p>
                 </li>
@@ -83,7 +83,7 @@
     </section>
 
     <section class="data-section">
-        <header>Files</header>
+        <header data-translate="files">Files</header>
         <ul id="files-list" class="clearfix">
 
             {% for file in task.files %}
@@ -111,14 +111,13 @@
     </section>
 
     <section class="comments-section">
-        <header>Comments</header>
+        <header data-translate="comments">Comments</header>
         <ul id="comments-list">
 
             {% for taskComment in task.comments %}
                 <li class="comments-list-item">
                     <b>
                         {{ taskComment.createdBy.first_name|default:taskComment.createdBy.username }}&nbsp;{{ taskComment.createdBy.last_name }}
-
                     </b>
                     <span class="comments-time">{{ taskComment.created|date:"d-m-Y" }}</span>
                     <p>{{ taskComment.text }}</p>
@@ -130,7 +129,7 @@
     <!--TODO : canAddComment-->
     {% if canAddComment %}
     <form id="comment-form" action="" method="post">{% csrf_token %}
-        <textarea class="form-control" id="task-new-comment" rows="3" name="new-comment-text" placeholder="Comment text.."></textarea>
+        <textarea class="form-control" id="task-new-comment" rows="3" name="new-comment-text" placeholder="Comment text.." data-translate="task_comment_default"></textarea>
         <input type="submit" value="Add comment" class="task-button pull-right"/>
     </form>
     {% endif %}

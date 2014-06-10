@@ -5,13 +5,19 @@
 {% endblock %}
 
 {% block title %}
-	{{ task.title|default:"Create new task" }}
+        {% if new_task %}
+        <span data-translate="new_task">Create new task</span>
+        {% else %}
+        {{ task.title|default:"Create new task" }}
+        {% endif %}
 {% endblock %}
 
 {% block title_right %}
-    {% if not new_task %}
-          <h2>{{ task.type.1 }}</h2>
-    {% endif %}
+   {% for tT_short, tT_name in taskTypes %}
+        {% if task.type == tT_short %}
+            <h2>{{ tT_name }}</h2>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
 
 {% block page_end %}
@@ -50,12 +56,12 @@
     <section class="clearfix">
         <div class="left-cell">
             <section class="data-section">
-                <header>Name</header>
+                <header data-translate="task_name">Name</header>
                 <input class="form-control" id="task-name" type="text" name="title" placeholder="Name.." value="{{ task.title|default:"" }}">
             </section>
 
             <section class="data-section">
-                <header>Status</header>
+                <header data-translate="task_status">Status</header>
                 <select id="task-type" name="type">
                     {% for tT_short, tT_name in taskTypes %}
 
@@ -70,12 +76,12 @@
             <br />
 
             <section class="data-section">
-                <header>Deadline</header>
+                <header data-translate="deadline">Deadline</header>
                 <input class="form-control" id="task-deadline" type="date" name="deadline" value="{{ task.deadline|date:"Y-m-d"|default:"" }}" style="max-width: 300px;">
             </section>
 
             <section class="data-section">
-                <header>Description</header>
+                <header data-translate="description">Description</header>
                 <textarea class="form-control" id="project-note" rows="3" name="description" placeholder="Add description..">{{ task.description|default:"" }}</textarea>
             </section>
         </div>
@@ -87,14 +93,14 @@
         <div class="right-cell">
             <ul id="details-list">
                <li class="details-list-item">
-                    <p><b>Created by</b>
+                    <p><b data-translate="created_by">Created by</b>
                     <br />
                     <span class="details-info">
                         {{ task.createdBy.first_name|default:task.createdBy.username }}&nbsp;{{ task.createdBy.last_name }}
                     </span></p>
                 </li>
                 <li class="details-list-item">
-                    <p><b>Creation date</b>
+                    <p><b data-translate="created_date">Creation date</b>
                     <br />
                     <span class="details-info">{{ task.created|date:"d-m-Y" }}</span></p>
                 </li>
@@ -109,10 +115,10 @@
     <section class="data-section">
         <div id="view-header-right" class="clearfix">
             <div id="assign-person" class="task-button">
-                Change assignment
+                <span data-translate="task_assignment_change">Change assignment</span>
             </div>
         </div>
-        <header class="clearfix">Assign</header>
+        <header class="clearfix" data-translate="task_assign">Assign</header>
         <div id="assign-img-div" style="display:none" data-person-id="{{ task.personResponsible.id|default:"-1" }}">
              <p class="person-remove">
 					<span class="glyphicon glyphicon-remove"></span>
@@ -129,7 +135,7 @@
 {% if not new_task %}
 
     <section class="data-section">
-        <header>Files</header>
+        <header data-translate="files">Files</header>
         <ul id="files-list" class="clearfix">
 
             {% for file in task.files %}
@@ -185,7 +191,7 @@
     <span id="assignment-dialog-close" class="glyphicon glyphicon-remove"></span>
 
     <header id="assignment-dialog-title">
-    Assign to the task
+        <span data-translate="assign_to_the_task">Assign to the task</span>
     </header>
      <ul id="assignment-list" class="clearfix">
         {% for person in people_to_assign %}

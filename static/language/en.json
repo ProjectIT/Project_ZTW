@@ -36,9 +36,25 @@ languages["en"] = {
 	"person_username": "Username",
 	"add_to_the_project": "Add to the project",
 
-	"dashboard": "Search",
-	"dashboard": "Search",
-	"dashboard": "Search",
-	"dashboard": "Search",
-	"dashboard": "Search",
+	"created_by": "Created by",
+	"created_date": "Creation date",
+	"comments": "Comments",
+	"new_task": "Create new task",
+
+	"task_name": "Name",
+	"task_status": "Status",
+	"task_assignment_change": "Change assignment",
+	"task_assign": "Assign",
+	"assign_to_the_task": "Assign to the task",
+
+	"task_comment_default": "Comment text..",
+	"stub": "stub",
+	"stub": "stub",
+	"stub": "stub",
+	"stub": "stub",
+	"stub": "stub",
+	"stub": "stub",
+	"stub": "stub",
+	"stub": "stub",
+	
 }
